@@ -6,7 +6,8 @@ const router = Router();
 // AUTH ROUTES
 router.post("/auth/register", Auth.register);
 router.post("/auth/login", Auth.login);
-router.post("/auth/social/google", Auth.google);
+router.post("/auth/social/google", Auth.social);
+router.post("/auth/social/facebook", Auth.social);
 router.post("/auth/forgot-password", Auth.forgotPassword);
 router.post("/auth/recover-password", Auth.recoverPassword);
 
