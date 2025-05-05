@@ -96,39 +96,4 @@ export class UsersController {
       next(error);
     }
   };
-
-  static tasks: Handler = async (req, res, next) => {
-    try {
-    } catch (error) {
-      next(error);
-    }
-  };
-
-  static showTask: Handler = async (req, res, next) => {
-    try {
-    } catch (error) {
-      next(error);
-    }
-  };
-
-  static saveTask: Handler = async (req, res, next) => {
-    try {
-    } catch (error) {
-      next(error);
-    }
-  };
-
-  static updateTask: Handler = async (req, res, next) => {
-    try {
-    } catch (error) {
-      next(error);
-    }
-  };
-
-  static deleteTask: Handler = async (req, res, next) => {
-    try {
-    } catch (error) {
-      next(error);
-    }
-  };
 }

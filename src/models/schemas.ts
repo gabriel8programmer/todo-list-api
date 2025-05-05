@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 
 const taskSchema = new mongoose.Schema({
   title: {
@@ -17,6 +17,10 @@ const taskSchema = new mongoose.Schema({
     type: String,
     enum: ["low", "medium", "high"],
     default: "low",
+  },
+  userId: {
+    type: Types.ObjectId,
+    ref: "Users",
   },
 });
 

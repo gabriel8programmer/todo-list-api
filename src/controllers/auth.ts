@@ -44,7 +44,7 @@ export class AuthController {
       const user = new User(body);
       await user.save();
 
-      res.json({ message: "User regitered with successfuly!", user });
+      res.status(201).json({ message: "User regitered with successfuly!", user });
     } catch (error) {
       next(error);
     }
