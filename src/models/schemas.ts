@@ -1,5 +1,25 @@
 import mongoose from "mongoose";
 
+const taskSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    required: true,
+  },
+  description: {
+    type: String,
+  },
+  status: {
+    type: String,
+    enum: ["todo", "doing", "done"],
+    default: "todo",
+  },
+  priority: {
+    type: String,
+    enum: ["low", "medium", "high"],
+    default: "low",
+  },
+});
+
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -17,8 +37,19 @@ const userSchema = new mongoose.Schema({
     enum: ["ADMIN", "CLIENT"],
     default: "CLIENT",
   },
+  isWithGoogle: {
+    type: Boolean,
+    default: false,
+  },
+  isWithFacebook: {
+    type: Boolean,
+    default: false,
+  },
+  // list tasks
+  tasks: [taskSchema],
 });
 
 const User = mongoose.model("Users", userSchema);
+const Task = mongoose.model("Tasks", taskSchema);
 
-export { User };
+export { User, Task };

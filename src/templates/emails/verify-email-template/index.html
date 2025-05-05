@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Verificação de email</title>
+    <style>
+      body {
+        font-family: "Calibri";
+        height: 100vh;
+        display: grid;
+        place-items: center;
+        background-color: #aaa;
+      }
+
+      .box {
+        padding: 2rem 3rem;
+        background-color: #fff;
+        max-width: 400px;
+        border-radius: 0.75rem;
+      }
+
+      .container {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+      }
+
+      .btn {
+        display: inline-block;
+        background-color: rgb(78, 156, 0);
+        color: #fff;
+        padding: 0.5rem 2rem;
+        border: none;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        text-decoration: none;
+        text-transform: uppercase;
+      }
+
+      .btn:hover {
+        opacity: 0.9;
+      }
+    </style>
+  </head>
+  <body>
+    <table class="box">
+      <tr>
+        <h1>Verifique seu email</h1>
+      </tr>
+
+      <tr>
+        <h2>Olá, {{name}}</h2>
+      </tr>
+
+      <tr>
+        <p>Clique no botão abaixo para verificar seu email!</p>
+      </tr>
+
+      <tr>
+        <div class="container">
+          <a href="{{redirect_link}}" class="btn">Verificar Email</a>
+        </div>
+      </tr>
+
+      <tr>
+        <p>Se não fez a solicitação, apenas ignore este email.</p>
+      </tr>
+    </table>
+  </body>
+</html>
