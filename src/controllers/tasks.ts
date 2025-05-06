@@ -65,7 +65,7 @@ export class TasksController {
 
       const body = UpdateTaskSchema.parse(req.body);
       //   update task
-      const updatedTask = await Task.findByIdAndUpdate(id, body);
+      const updatedTask = await Task.findByIdAndUpdate(id, body, { new: true });
       res.json({ message: "Updated task successfuly!", data: updatedTask });
     } catch (error) {
       next(error);

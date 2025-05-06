@@ -79,7 +79,7 @@ export class UsersController {
       }
 
       //   update user
-      const userUpdated = await User.findByIdAndUpdate(id, body);
+      const userUpdated = await User.findByIdAndUpdate(id, body, { new: true });
       res.json({ message: "User updated successfuly!", data: userUpdated });
     } catch (error) {
       next(error);
@@ -139,7 +139,7 @@ export class UsersController {
       const user = await User.findById(userId);
       if (user) {
         const tasks = [...user.tasks, newTask._id];
-        await User.updateOne({ userId }, { tasks });
+        await User.findByIdAndUpdate(userId, { tasks });
       }
 
       res.json({ message: `Task created by user ${user?.name}`, data: newTask });
@@ -156,7 +156,7 @@ export class UsersController {
       const task = await Task.findById(taskId);
       if (!task) throw new HttpError(404, "Task not found!");
 
-      const updatedTask = await Task.findByIdAndUpdate(taskId, body);
+      const updatedTask = await Task.findByIdAndUpdate(taskId, body, { new: true });
 
       res.json({ message: "Task updated successfuly!", data: updatedTask });
     } catch (error) {
@@ -177,7 +177,7 @@ export class UsersController {
       // update user
       const userTasks = await Task.find({ userId });
       const tasks = userTasks.filter((task) => task._id.toString() !== taskId);
-      await User.updateOne({ userId }, { tasks });
+      await User.findByIdAndUpdate(userId, { tasks });
 
       res.json({ message: "Task deleted successfuly!" });
     } catch (error) {
