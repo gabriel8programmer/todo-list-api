@@ -1,6 +1,16 @@
 
 <h1 align="center">Lista de tarefas com NodeJS (Documentando...)</h1>
 
+<div align="center">
+  <a href="#instalation">Instalação</a> ◽
+  <a href="#routes">Rotas</a> ◽
+  <a href="#docs">Documentação</a> ◽
+  <a href="#org">Organização de pastas</a> ◽
+  <a href="#dev">Desenvolvedor</a>
+</div>
+
+<br/>
+
 <p>
   Esta é uma API simples desenvolvida para fins de aprendizado em backend e construção de APIs utilizando tecnologias modernas com Node.js.
   Ela oferece autenticação tradicional (e-mail e senha) e login social. Usuários podem cadastrar e gerenciar tarefas, enquanto administradores têm controle total sobre os usuários e suas respectivas tarefas.
@@ -17,12 +27,12 @@
 [![Zod](https://img.shields.io/badge/Zod-3E67B1.svg?style=for-the-badge&logo=Zod&logoColor=white)]()
 [![Insomnia](https://img.shields.io/badge/Insomnia-4000BF.svg?style=for-the-badge&logo=Insomnia&logoColor=white)]()
 
-<h2>Instalação</h2>
+<h2 id="instalation">Instalação</h2>
 
-<h2>Rotas</h2>
+<h2 id="routes">Rotas</h2>
 
-<h2>Documentação</h2>
+<h2 id="docs">Documentação</h2>
 
-<h2>Organização de pastas</h2>
+<h2 id="org">Organização de pastas</h2>
 
-<h2>Desenvolvedor</h2>
+<h2 id="dev">Desenvolvedor</h2>
