@@ -50,7 +50,10 @@ const userSchema = new mongoose.Schema({
     default: false,
   },
   // list tasks
-  tasks: [taskSchema],
+  tasks: {
+    type: [Types.ObjectId],
+    ref: "Tasks",
+  },
 });
 
 const User = mongoose.model("Users", userSchema);
