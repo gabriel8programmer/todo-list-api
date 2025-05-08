@@ -18,9 +18,10 @@ const taskSchema = new mongoose.Schema({
     enum: ["low", "medium", "high"],
     default: "low",
   },
-  userId: {
+  user: {
     type: Types.ObjectId,
     ref: "Users",
+    required: true,
   },
 });
 
@@ -49,10 +50,12 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  tasks: {
-    type: [Types.ObjectId],
-    ref: "Tasks",
-  },
+  tasks: [
+    {
+      type: Types.ObjectId,
+      ref: "Tasks",
+    },
+  ],
 });
 
 const User = mongoose.model("Users", userSchema);

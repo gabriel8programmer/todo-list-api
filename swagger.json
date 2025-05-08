@@ -379,7 +379,7 @@
           },
           "priority": {
             "type": "string",
-            "enum": ["low", "midium", "high"],
+            "enum": ["low", "medium", "high"],
             "default": "low"
           },
           "userId": {

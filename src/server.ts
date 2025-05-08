@@ -4,7 +4,7 @@ import cors from "cors";
 import router from "./routes";
 import swaggerUi from "swagger-ui-express";
 
-import swaggerDocs from "./swagger.json";
+import swaggerDocs from "../swagger.json";
 
 // connect with database
 import "./config/mongoose";

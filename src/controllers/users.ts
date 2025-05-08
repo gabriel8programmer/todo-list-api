@@ -1,5 +1,5 @@
 import { Handler } from "express";
-import { Task, User } from "../models/schemas";
+import { Task } from "../models/schemas";
 import { HttpError } from "../errors/HttpError";
 import { z } from "zod";
 import bcrypt from "bcrypt";
@@ -137,10 +137,11 @@ export class UsersController {
       await newTask.save();
 
       // update user
-      const user = await User.findById(userId);
+      const user = await UsersModel.findById(userId);
       if (user) {
-        const tasks = [...user.tasks, newTask._id];
-        await User.findByIdAndUpdate(userId, { tasks });
+        const taskIds = user.tasks?.map((task) => task._id) as any[];
+        const tasks = [...taskIds, newTask._id];
+        await UsersModel.updateById(userId, { tasks });
       }
 
       res.json({ message: `Task created by user ${user?.name}`, data: newTask });
@@ -178,7 +179,7 @@ export class UsersController {
       // update user
       const userTasks = await Task.find({ userId });
       const tasks = userTasks.filter((task) => task._id.toString() !== taskId);
-      await User.findByIdAndUpdate(userId, { tasks });
+      await UsersModel.updateById(userId, { tasks });
 
       res.json({ message: "Task deleted successfuly!" });
     } catch (error) {
