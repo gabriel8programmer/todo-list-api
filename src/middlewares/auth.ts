@@ -18,7 +18,7 @@ export const verifyToken: Handler = async (req, res, next) => {
 
     if (typeof payload !== "string" && payload?.email) {
       const user = await User.findOne({ email: payload.email });
-      if (!user) throw new HttpError(404, "User not found!");
+      if (!user) throw new HttpError(401, "Unauthorized!");
 
       const { _id, email, role } = user;
       req.user = { email, role };

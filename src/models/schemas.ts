@@ -49,7 +49,6 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  // list tasks
   tasks: {
     type: [Types.ObjectId],
     ref: "Tasks",

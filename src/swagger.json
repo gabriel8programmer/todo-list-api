@@ -1,0 +1,461 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Todo list API",
+    "description": "Esta API tem como objetivo permitir o cadastro de usuários e tarefas por papeis de administrador ou cliente",
+    "termsOfService": "http://localhost:3000/terms",
+    "contact": {
+      "email": "gabriel8titas@gmail.com"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000/api",
+      "description": "API de Teste"
+    }
+  ],
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "summary": "Fazer Login",
+        "description": "Fazer Login tradicional com email e senha",
+        "tags": ["Auth"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Login"
+              },
+              "examples": {
+                "login": {
+                  "value": {
+                    "email": "John Doe",
+                    "password": "123"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Invalid Credentials"
+          },
+          "200": {
+            "description": "OK!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "default": "Logged successfuly!"
+                    },
+                    "user": {
+                      "$ref": "#/components/schemas/DataRegisterLogin"
+                    },
+                    "accessToken": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "summary": "Registrar usuário",
+        "description": "Registrar um usuário com email e senha",
+        "tags": ["Auth"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Register"
+              },
+              "examples": {
+                "register": {
+                  "value": {
+                    "name": "John Doe",
+                    "email": "john@gmail.com",
+                    "password": "123"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "403": {
+            "description": "User email address already exists!"
+          },
+          "201": {
+            "description": "Created!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "default": "User regitered with successfuly!"
+                    },
+                    "user": {
+                      "$ref": "#/components/schemas/DataRegisterLogin"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/social/google": {
+      "post": {
+        "summary": "Login ou registro com o google",
+        "description": "Login ou registro com o google usando token de autenticação do google authenticator",
+        "tags": ["Auth"],
+        "security": [{ "googleAuthenticatorAuth": [] }],
+        "responses": {
+          "400": {
+            "description": "Bad Request!"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "200": {
+            "description": "OK!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "default": "Logged successfuly!"
+                    },
+                    "user": {
+                      "$ref": "#/components/schemas/DataRegisterLogin"
+                    },
+                    "accessToken": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "default": "User regitered with successfuly!"
+                    },
+                    "user": {
+                      "$ref": "#/components/schemas/DataRegisterLogin"
+                    },
+                    "accessToken": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/recover-password": {},
+    "/admin/users": {
+      "get": {
+        "summary": "Listar usuários",
+        "description": "Lista todos os usuários com suas tarefas",
+        "tags": ["users"],
+        "security": [{ "bearerAuth": [] }],
+
+        "responses": {
+          "400": {
+            "description": "Bad Request!"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "200": {
+            "description": "OK!",
+            "content": {
+              "aplication/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                },
+                "examples": {
+                  "login": {
+                    "value": {
+                      "name": "John Doe",
+                      "password": "123"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Criar um novo usuário",
+        "description": "Rota responsável por criar um novo usuário",
+        "tags": ["users"],
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "content": {
+            "aplication/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              },
+              "examples": {
+                "user": {
+                  "value": {
+                    "name": "Jonh doe",
+                    "email": "john@gmail.com",
+                    "password": "123",
+                    "role": "CLIENT"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request!"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "User email address already exists!"
+          },
+          "201": {
+            "description": "OK!",
+            "content": {
+              "aplication/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "default": "User created successfuly!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/users/{id}": {
+      "get": {
+        "summary": "Obter um usuário",
+        "description": "Obter um usuário a partir do seu id",
+        "tags": ["users"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Id de usuário",
+            "required": true
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "User not found!"
+          },
+          "200": {
+            "description": "OK!",
+            "content": {
+              "aplication/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Atualizar um usuário",
+        "description": "Atualizar um usuário a partir do seu id",
+        "tags": ["users"],
+        "security": [{ "bearerAuth": [] }]
+      },
+      "delete": {
+        "summary": "Remover um usuário",
+        "description": "Remover um usuário a partir do seu id",
+        "tags": ["users"],
+        "security": [{ "bearerAuth": [] }]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": ["ADMIN", "CLIENT"],
+            "default": "CLIENT"
+          },
+          "isWithGoogle": {
+            "type": "boolean",
+            "default": false
+          },
+          "isWithFacebook": {
+            "type": "boolean",
+            "default": false
+          },
+          "tasks": {
+            "type": "array",
+            "default": []
+          },
+          "_id": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "Task": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["todo", "doing", "done"],
+            "default": "todo"
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["low", "midium", "high"],
+            "default": "low"
+          },
+          "userId": {
+            "type": "string",
+            "nullable": true
+          },
+          "_id": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "Login": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "Register": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "DataRegisterLogin": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": ["ADMIN", "CLIENT"],
+            "default": "CLIENT"
+          },
+          "isWithGoogle": {
+            "type": "boolean",
+            "default": false
+          },
+          "isWithFacebook": {
+            "type": "boolean",
+            "default": false
+          },
+          "id": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "jsonwebtoken"
+      },
+      "googleAuthenticatorAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "jsonwebtoken"
+      }
+    }
+  }
+}
