@@ -1,15 +1,16 @@
 import { Handler } from "express";
-import { Task, User } from "../models/schemas";
 import { z } from "zod";
 import { HttpError } from "../errors/HttpError";
 import { TasksModel } from "../models/tasks";
+import { UsersModel } from "../models/users";
+import { Types } from "mongoose";
 
 export const SaveTaskSchema = z.object({
   title: z.string(),
   description: z.string().optional(),
   status: z.enum(["todo", "doing", "done"]).default("todo"),
   priority: z.enum(["low", "medium", "high"]).default("low"),
-  userId: z.string().optional(),
+  user: z.string(),
 });
 
 const UpdateTaskSchema = SaveTaskSchema.partial();
@@ -39,18 +40,7 @@ export class TasksController {
   static save: Handler = async (req, res, next) => {
     try {
       const body = SaveTaskSchema.parse(req.body);
-      const newTask = await TasksModel.create(body);
-
-      if (body.userId) {
-        const { userId: id } = body;
-        // update tasks list in user with userId
-        const user = await User.findById(id);
-        if (!user) throw new HttpError(404, `User with id (${id}) not found!`);
-
-        const tasks = [...user.tasks, newTask._id];
-        await User.findByIdAndUpdate(id, { tasks });
-      }
-
+      const newTask = await TasksModel.create({ ...body, user: parse(body.user) });
       res.status(201).json({ message: "Task created successfuly!", data: newTask });
     } catch (error) {
       next(error);
@@ -80,17 +70,6 @@ export class TasksController {
 
       //   delete task
       await TasksModel.deleteById(id);
-
-      // if task has a user then delete too
-      // if (task?.user) {
-      //   const { user } = task;
-      //   // update tasks list in user with userId
-      //   const user = await User.findById(id);
-      //   if (!user) throw new HttpError(404, `User with id (${id}) not found!`);
-
-      //   const tasks = user.tasks.filter((t) => t.id !== task.id);
-      //   await User.findByIdAndUpdate(id, { tasks });
-      // }
 
       res.json({ message: "Task deleted successfuly!" });
     } catch (error) {

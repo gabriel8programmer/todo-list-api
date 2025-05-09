@@ -1,10 +1,10 @@
 import { Handler } from "express";
-import { Task } from "../models/schemas";
 import { HttpError } from "../errors/HttpError";
 import { z } from "zod";
 import bcrypt from "bcrypt";
 import { SaveTaskSchema } from "./tasks";
-import { UsersModel } from "../models/users";
+import { IUserPopulated, UsersModel } from "../models/users";
+import { TasksModel } from "../models/tasks";
 
 const SaveUserSchema = z.object({
   name: z.string(),
@@ -15,7 +15,7 @@ const SaveUserSchema = z.object({
 
 const UpdateUserSchema = SaveUserSchema.partial();
 
-const SaveUserTaskSchema = SaveTaskSchema.omit({ userId: true });
+const SaveUserTaskSchema = SaveTaskSchema.omit({ user: true });
 
 const UpdateUserTaskSchema = SaveUserTaskSchema.partial();
 
@@ -23,7 +23,13 @@ export class UsersController {
   static index: Handler = async (req, res, next) => {
     try {
       const data = await UsersModel.find();
-      res.json(data);
+
+      const usersWithPassword = data.map((user) => {
+        const { _id, name, email, role, isWithGoogle, isWithFacebook, tasks } = user;
+        return { _id, name, email, role, isWithGoogle, isWithFacebook, tasks };
+      });
+
+      res.json(usersWithPassword);
     } catch (error) {
       next(error);
     }
@@ -35,7 +41,9 @@ export class UsersController {
       const user = await UsersModel.findById(id);
       if (!user) throw new HttpError(404, "User not found!");
 
-      res.json(user);
+      const { _id, name, email, role, isWithGoogle, isWithFacebook, tasks } = user;
+
+      res.json({ _id, name, email, role, isWithGoogle, isWithFacebook, tasks });
     } catch (error) {
       next(error);
     }
@@ -54,7 +62,18 @@ export class UsersController {
 
       const newUser = await UsersModel.create(body);
 
-      res.status(201).json({ message: "User created successfuly!", data: newUser });
+      const { _id, name, email, role, isWithGoogle, isWithFacebook, tasks } = newUser;
+
+      res.status(201).json({
+        message: "User created successfuly!",
+        data: _id,
+        name,
+        email,
+        role,
+        isWithGoogle,
+        isWithFacebook,
+        tasks,
+      });
     } catch (error) {
       next(error);
     }
@@ -80,7 +99,14 @@ export class UsersController {
 
       //   update user
       const userUpdated = await UsersModel.updateById(id, body);
-      res.json({ message: "User updated successfuly!", data: userUpdated });
+
+      const { _id, name, email, role, isWithGoogle, isWithFacebook, tasks } =
+        userUpdated as IUserPopulated;
+
+      res.json({
+        message: "User updated successfuly!",
+        data: { _id, name, email, role, isWithGoogle, isWithFacebook, tasks },
+      });
     } catch (error) {
       next(error);
     }
@@ -116,12 +142,15 @@ export class UsersController {
 
   static showTask: Handler = async (req, res, next) => {
     try {
-      const { taskId } = req.params;
+      const { id, taskId } = req.params;
 
-      const task = await Task.findById(taskId);
+      const user = await UsersModel.findById(id);
+      if (!user) throw new HttpError(404, "User not found!");
+      const task = await TasksModel.findById(taskId);
       if (!task) throw new HttpError(404, "Task not found!");
 
-      res.json(task);
+      const data = await UsersModel.findTaskById(id, taskId);
+      res.json(data);
     } catch (error) {
       next(error);
     }
@@ -129,20 +158,14 @@ export class UsersController {
 
   static saveTask: Handler = async (req, res, next) => {
     try {
-      const { id: userId } = req.params;
+      const { id } = req.params;
+
+      const user = await UsersModel.findById(id);
+      if (!user) throw new HttpError(404, "User not found!");
+
       const body = await SaveUserTaskSchema.parse(req.body);
-
       // create task
-      const newTask = new Task({ ...body, userId });
-      await newTask.save();
-
-      // update user
-      const user = await UsersModel.findById(userId);
-      if (user) {
-        const taskIds = user.tasks?.map((task) => task._id) as any[];
-        const tasks = [...taskIds, newTask._id];
-        await UsersModel.updateById(userId, { tasks });
-      }
+      const newTask = await UsersModel.createTask(id, body);
 
       res.json({ message: `Task created by user ${user?.name}`, data: newTask });
     } catch (error) {
@@ -152,14 +175,16 @@ export class UsersController {
 
   static updateTask: Handler = async (req, res, next) => {
     try {
-      const { taskId } = req.params;
-      const body = await UpdateUserTaskSchema.parse(req.body);
+      const { id, taskId } = req.params;
 
-      const task = await Task.findById(taskId);
+      const user = await UsersModel.findById(id);
+      if (!user) throw new HttpError(404, "User not found!");
+
+      const task = await TasksModel.findById(taskId);
       if (!task) throw new HttpError(404, "Task not found!");
 
-      const updatedTask = await Task.findByIdAndUpdate(taskId, body, { new: true });
-
+      const body = await UpdateUserTaskSchema.parse(req.body);
+      const updatedTask = await UsersModel.updateTaskById(id, taskId, body);
       res.json({ message: "Task updated successfuly!", data: updatedTask });
     } catch (error) {
       next(error);
@@ -168,19 +193,16 @@ export class UsersController {
 
   static deleteTask: Handler = async (req, res, next) => {
     try {
-      const { id: userId, taskId } = req.params;
+      const { id, taskId } = req.params;
 
-      const task = await Task.findById(taskId);
+      const user = await UsersModel.findById(id);
+      if (!user) throw new HttpError(404, "User not found!");
+
+      const task = await TasksModel.findById(taskId);
       if (!task) throw new HttpError(404, "Task not found!");
 
       // delete task
-      await Task.findByIdAndDelete(taskId);
-
-      // update user
-      const userTasks = await Task.find({ userId });
-      const tasks = userTasks.filter((task) => task._id.toString() !== taskId);
-      await UsersModel.updateById(userId, { tasks });
-
+      await UsersModel.deleteTaskById(id, taskId);
       res.json({ message: "Task deleted successfuly!" });
     } catch (error) {
       next(error);

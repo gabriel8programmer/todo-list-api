@@ -12,11 +12,13 @@ const taskSchema = new mongoose.Schema({
     type: String,
     enum: ["todo", "doing", "done"],
     default: "todo",
+    required: true,
   },
   priority: {
     type: String,
     enum: ["low", "medium", "high"],
     default: "low",
+    required: true,
   },
   user: {
     type: Types.ObjectId,
@@ -41,6 +43,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ["ADMIN", "CLIENT"],
     default: "CLIENT",
+    required: true,
   },
   isWithGoogle: {
     type: Boolean,
