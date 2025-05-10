@@ -2,8 +2,6 @@ import { Handler } from "express";
 import { z } from "zod";
 import { HttpError } from "../errors/HttpError";
 import { TasksModel } from "../models/tasks";
-import { UsersModel } from "../models/users";
-import { Types } from "mongoose";
 
 export const SaveTaskSchema = z.object({
   title: z.string(),
@@ -40,7 +38,7 @@ export class TasksController {
   static save: Handler = async (req, res, next) => {
     try {
       const body = SaveTaskSchema.parse(req.body);
-      const newTask = await TasksModel.create({ ...body, user: parse(body.user) });
+      const newTask = await TasksModel.create(body);
       res.status(201).json({ message: "Task created successfuly!", data: newTask });
     } catch (error) {
       next(error);

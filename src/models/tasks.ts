@@ -8,7 +8,7 @@ export interface ITask {
   description?: string | null;
   status: "todo" | "doing" | "done";
   priority: "low" | "medium" | "high";
-  user: Types.ObjectId;
+  user: Types.ObjectId | string;
 }
 
 export interface ITaskPopulated extends Omit<ITask, "user"> {

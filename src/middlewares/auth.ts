@@ -1,8 +1,7 @@
 import { Handler } from "express";
 import { HttpError } from "../errors/HttpError";
 import jwt from "jsonwebtoken";
-import { User } from "../models/schemas";
-import { hh } from "mongoose";
+import { UsersModel } from "../models/users";
 
 export const verifyToken: Handler = async (req, res, next) => {
   try {
@@ -17,10 +16,10 @@ export const verifyToken: Handler = async (req, res, next) => {
     const payload = jwt.verify(token, jwtKey);
 
     if (typeof payload !== "string" && payload?.email) {
-      const user = await User.findOne({ email: payload.email });
+      const user = await UsersModel.findByEmail(payload.email);
       if (!user) throw new HttpError(401, "Unauthorized!");
 
-      const { _id, email, role } = user;
+      const { email, role } = user;
       req.user = { email, role };
     }
     next();
