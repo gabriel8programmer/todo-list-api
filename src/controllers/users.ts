@@ -2,7 +2,6 @@ import { Handler } from "express";
 import { HttpError } from "../errors/HttpError";
 import { z } from "zod";
 import bcrypt from "bcrypt";
-import { SaveTaskSchema } from "./tasks";
 import { IUserPopulated, UsersModel } from "../models/users";
 import { TasksModel } from "../models/tasks";
 
@@ -14,10 +13,6 @@ const SaveUserSchema = z.object({
 });
 
 const UpdateUserSchema = SaveUserSchema.partial();
-
-const SaveUserTaskSchema = SaveTaskSchema.omit({ user: true });
-
-const UpdateUserTaskSchema = SaveUserTaskSchema.partial();
 
 export class UsersController {
   static index: Handler = async (req, res, next) => {
@@ -122,88 +117,10 @@ export class UsersController {
 
       // delete user
       await UsersModel.deleteById(id);
+      // delete all tasks in task's collection
+      await TasksModel.deleteAllTasksFromUserById(id);
+
       res.json({ message: "User delete successfuly!" });
-    } catch (error) {
-      next(error);
-    }
-  };
-
-  static tasks: Handler = async (req, res, next) => {
-    try {
-      const { id } = req.params;
-      const user = await UsersModel.findById(id);
-      if (!user) throw new HttpError(404, "User not found!");
-
-      res.json(user.tasks);
-    } catch (error) {
-      next(error);
-    }
-  };
-
-  static showTask: Handler = async (req, res, next) => {
-    try {
-      const { id, taskId } = req.params;
-
-      const user = await UsersModel.findById(id);
-      if (!user) throw new HttpError(404, "User not found!");
-      const task = await TasksModel.findById(taskId);
-      if (!task) throw new HttpError(404, "Task not found!");
-
-      const data = await UsersModel.findTaskById(id, taskId);
-      res.json(data);
-    } catch (error) {
-      next(error);
-    }
-  };
-
-  static saveTask: Handler = async (req, res, next) => {
-    try {
-      const { id } = req.params;
-
-      const user = await UsersModel.findById(id);
-      if (!user) throw new HttpError(404, "User not found!");
-
-      const body = await SaveUserTaskSchema.parse(req.body);
-      // create task
-      const newTask = await UsersModel.createTask(id, body);
-
-      res.json({ message: `Task created by user ${user?.name}`, data: newTask });
-    } catch (error) {
-      next(error);
-    }
-  };
-
-  static updateTask: Handler = async (req, res, next) => {
-    try {
-      const { id, taskId } = req.params;
-
-      const user = await UsersModel.findById(id);
-      if (!user) throw new HttpError(404, "User not found!");
-
-      const task = await TasksModel.findById(taskId);
-      if (!task) throw new HttpError(404, "Task not found!");
-
-      const body = await UpdateUserTaskSchema.parse(req.body);
-      const updatedTask = await UsersModel.updateTaskById(id, taskId, body);
-      res.json({ message: "Task updated successfuly!", data: updatedTask });
-    } catch (error) {
-      next(error);
-    }
-  };
-
-  static deleteTask: Handler = async (req, res, next) => {
-    try {
-      const { id, taskId } = req.params;
-
-      const user = await UsersModel.findById(id);
-      if (!user) throw new HttpError(404, "User not found!");
-
-      const task = await TasksModel.findById(taskId);
-      if (!task) throw new HttpError(404, "Task not found!");
-
-      // delete task
-      await UsersModel.deleteTaskById(id, taskId);
-      res.json({ message: "Task deleted successfuly!" });
     } catch (error) {
       next(error);
     }

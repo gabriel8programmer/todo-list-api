@@ -16,11 +16,12 @@ router.post("/auth/social/facebook", Auth.social);
 router.post("/auth/recover-password", Auth.recoverPassword);
 
 // USER TASKS PUBLIC ROUTES
-router.get("/users/:id/tasks", verify, v.validateUserByTask, Users.tasks);
-router.get("/users/:id/tasks/:taskId", verify, v.validateUserByTask, Users.showTask);
-router.post("/users/:id/tasks", verify, v.validateUserByTask, Users.saveTask);
-router.put("/users/:id/tasks/:taskId", verify, v.validateUserByTask, Users.updateTask);
-router.delete("/users/:id/tasks/:taskId", verify, v.validateUserByTask, Users.deleteTask);
+router.get("/users/:id/tasks", verify, v.validateUserByTask, Task.index);
+router.get("/users/:id/tasks/:taskId", verify, v.validateUserByTask, Task.show);
+router.post("/users/:id/tasks", verify, v.validateUserByTask, Task.save);
+router.put("/users/:id/tasks/:taskId", verify, v.validateUserByTask, Task.update);
+router.delete("/users/:id/tasks/:taskId", verify, v.validateUserByTask, Task.delete);
+router.delete("/users/:id/tasks/delete-all", verify, v.validateUserByTask, Task.deleteAll);
 
 // USER ROUTES ONLY ADMINS
 router.get("/admin/users", verify, isAdmin, Users.index);
@@ -29,10 +30,6 @@ router.post("/admin/users", verify, isAdmin, Users.save);
 router.put("/admin/users/:id", verify, isAdmin, Users.update);
 router.delete("/admin/users/:id", verify, isAdmin, Users.delete);
 // TASK ROUTES ONLY ADMINS
-router.get("/admin/tasks", verify, isAdmin, Task.index);
-router.get("/admin/tasks/:id", verify, isAdmin, Task.show);
-router.post("/admin/tasks", verify, isAdmin, Task.save);
-router.put("/admin/tasks/:id", verify, isAdmin, Task.update);
-router.delete("/admin/tasks/:id", verify, isAdmin, Task.delete);
+router.get("/admin/tasks", verify, isAdmin, Task.all);
 
 export default router;

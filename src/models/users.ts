@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
-import { ITask } from "./tasks";
-import { Task, User } from "./schemas";
+import { ITask, TasksModel } from "./tasks";
+import { User } from "./schemas";
 
 export interface IUser {
   _id?: Types.ObjectId;
@@ -33,79 +33,41 @@ export class UsersModel {
     return user as IUserPopulated | null;
   };
 
-  static create = async (params: Omit<IUser, "tasks">): Promise<IUser> => {
+  static create = async (params: Omit<IUser, "tasks" | "_id">): Promise<IUser> => {
     const newUser = await new User(params).save();
     return newUser.toObject() as IUser | any;
   };
 
   static updateById = async (
     id: string,
-    params: Partial<IUser>
+    params: Partial<Omit<IUser, "_id">>
   ): Promise<IUserPopulated | null> => {
     return User.findByIdAndUpdate(id, params, { new: true }).lean() as IUserPopulated | null | any;
   };
 
   static updatePasswordByEmail = async (email: string, password: string): Promise<void> => {
-    await User.findOneAndUpdate({ email }, { password }, { new: true });
+    await User.findOneAndUpdate({ email }, { password }, { new: true }).lean();
   };
 
   static deleteById = async (id: string): Promise<void> => {
     await User.findByIdAndDelete(id);
   };
 
-  static findTasks = async (id: string): Promise<ITask[]> => {
-    const tasks = await Task.find({ user: id });
-    return tasks as ITask[] | any[];
-  };
-
-  static findTaskById = async (id: string, taskId: string): Promise<ITask | null> => {
-    const task = await Task.find({ user: id, _id: taskId });
-    return task as ITask | null | any;
-  };
-
-  private static updateTasksFromUser = async (id: string): Promise<void> => {
-    const tasks = await UsersModel.findTasks(id);
+  static updateTasksFromUser = async (id: string): Promise<void> => {
+    const tasks = await TasksModel.findByUserId(id);
     const taskIds = tasks.map(({ _id }) => _id) as Types.ObjectId[];
     await UsersModel.updateById(id, { tasks: taskIds });
   };
 
-  private static deleteTaskFromUser = async (id: string, taskId: string): Promise<void> => {
-    const tasks = await UsersModel.findTasks(id);
+  static deleteTaskFromUser = async (id: string, taskId: string): Promise<void> => {
+    const tasks = await TasksModel.findByUserId(id);
 
-    const tasksRemaining = tasks.filter(({ _id }) => {
-      if (_id?.toString() !== taskId) return _id;
-    });
+    const taskIdsRemaining = tasks
+      .filter((task) => {
+        if (task._id?.toString() !== taskId) return task;
+      })
+      .map(({ _id }) => _id) as Types.ObjectId[];
 
-    const taskIds = tasksRemaining.map(({ _id }) => _id) as Types.ObjectId[];
-
-    await UsersModel.updateById(id, { tasks: taskIds });
-  };
-
-  static createTask = async (id: string, params: Omit<ITask, "user">): Promise<ITask> => {
-    const newTask = await new Task({ ...params, user: id }).save();
-    const plainTask = newTask.toObject();
-    const userId = plainTask.user.prototype?._id as Types.ObjectId;
-
-    // update user
-    await UsersModel.updateTasksFromUser(id);
-
-    return { ...plainTask, user: userId };
-  };
-
-  static updateTaskById = async (
-    id: string,
-    taskId: string,
-    params: Partial<Omit<ITask, "user">>
-  ): Promise<ITask | null> => {
-    const updatedTask = await Task.findOneAndUpdate({ user: id, _id: taskId }, params, {
-      new: true,
-    }).lean();
-    return updatedTask as ITask | null;
-  };
-
-  static deleteTaskById = async (id: string, taskId: string): Promise<void> => {
-    await Task.findOneAndDelete({ user: id, _id: taskId });
-    // update user
-    await UsersModel.deleteTaskFromUser(id, taskId);
+    await UsersModel.updateById(id, { tasks: taskIdsRemaining });
   };
 }
