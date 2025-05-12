@@ -192,6 +192,7 @@
             "application/json": {
               "schema": {
                 "type": "object",
+                "required": ["email", "password"],
                 "properties": {
                   "email": {
                     "type": "string"
@@ -258,7 +259,7 @@
               "aplication/json": {
                 "schema": {
                   "items": {
-                    "$ref": "#/components/schemas/UserResponseWithTasks"
+                    "$ref": "#/components/schemas/UserResponseWithPopulatedTasks"
                   }
                 }
               }
@@ -794,19 +795,11 @@
   },
   "components": {
     "schemas": {
-      "User": {
+      "BaseUserFields": {
         "type": "object",
-        "required": ["name", "email"],
         "properties": {
-          "name": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string"
-          },
-          "password": {
-            "type": "string"
-          },
+          "name": { "type": "string" },
+          "email": { "type": "string" },
           "role": {
             "type": "string",
             "enum": ["ADMIN", "CLIENT"],
@@ -821,200 +814,91 @@
             "default": false
           }
         }
+      },
+      "User": {
+        "allOf": [
+          { "$ref": "#/components/schemas/BaseUserFields" },
+          {
+            "type": "object",
+            "properties": {
+              "password": { "type": "string" }
+            },
+            "required": ["name", "email", "password"]
+          }
+        ]
       },
       "UpdateUser": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string"
-          },
-          "password": {
-            "type": "string"
-          },
-          "role": {
-            "type": "string",
-            "enum": ["ADMIN", "CLIENT"],
-            "default": "CLIENT"
-          },
-          "isWithGoogle": {
-            "type": "boolean",
-            "default": false
-          },
-          "isWithFacebook": {
-            "type": "boolean",
-            "default": false
+        "allOf": [
+          { "$ref": "#/components/schemas/BaseUserFields" },
+          {
+            "type": "object",
+            "properties": {
+              "password": { "type": "string" }
+            }
           }
-        }
+        ]
       },
-      "Task": {
-        "type": "object",
-        "required": ["title", "user"],
-        "properties": {
-          "title": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "status": {
-            "type": "string",
-            "enum": ["todo", "doing", "done"],
-            "default": "todo"
-          },
-          "priority": {
-            "type": "string",
-            "enum": ["low", "medium", "high"],
-            "default": "low"
-          },
-          "user": {
-            "type": "string"
+      "UserResponse": {
+        "allOf": [
+          { "$ref": "#/components/schemas/BaseUserFields" },
+          {
+            "type": "object",
+            "properties": {
+              "_id": { "type": "string" }
+            }
           }
-        }
+        ]
       },
-      "UpdateTask": {
-        "type": "object",
-        "properties": {
-          "title": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "status": {
-            "type": "string",
-            "enum": ["todo", "doing", "done"],
-            "default": "todo"
-          },
-          "priority": {
-            "type": "string",
-            "enum": ["low", "medium", "high"],
-            "default": "low"
+      "UserResponseWithTasks": {
+        "allOf": [
+          { "$ref": "#/components/schemas/UserResponse" },
+          {
+            "type": "object",
+            "properties": {
+              "tasks": { "type": "array" }
+            }
           }
-        }
+        ]
+      },
+      "UserResponseWithPopulatedTasks": {
+        "allOf": [
+          { "$ref": "#/components/schemas/UserResponse" },
+          {
+            "type": "object",
+            "properties": {
+              "tasks": {
+                "type": "array",
+                "items": { "$ref": "#/components/schemas/Task" }
+              }
+            }
+          }
+        ]
       },
       "Login": {
         "type": "object",
         "required": ["email", "password"],
         "properties": {
-          "email": {
-            "type": "string"
-          },
-          "password": {
-            "type": "string"
-          }
+          "email": { "type": "string" },
+          "password": { "type": "string" }
         }
       },
       "Register": {
-        "type": "object",
-        "required": ["name", "email", "password"],
-        "properties": {
-          "name": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string"
-          },
-          "password": {
-            "type": "string"
+        "allOf": [
+          { "$ref": "#/components/schemas/Login" },
+          {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" }
+            },
+            "required": ["name", "email", "password"]
           }
-        }
+        ]
       },
-      "UserResponse": {
+      "BaseTaskFields": {
         "type": "object",
         "properties": {
-          "_id": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string"
-          },
-          "role": {
-            "type": "string",
-            "enum": ["ADMIN", "CLIENT"]
-          },
-          "isWithGoogle": {
-            "type": "boolean"
-          },
-          "isWithFacebook": {
-            "type": "boolean"
-          }
-        }
-      },
-      "UserResponseWithTasks": {
-        "type": "object",
-        "properties": {
-          "_id": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string"
-          },
-          "role": {
-            "type": "string",
-            "enum": ["ADMIN", "CLIENT"]
-          },
-          "isWithGoogle": {
-            "type": "boolean"
-          },
-          "isWithFacebook": {
-            "type": "boolean"
-          },
-          "tasks": {
-            "type": "array"
-          }
-        }
-      },
-      "UserResponseWithPopulatedTasks": {
-        "type": "object",
-        "properties": {
-          "_id": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string"
-          },
-          "role": {
-            "type": "string",
-            "enum": ["ADMIN", "CLIENT"]
-          },
-          "isWithGoogle": {
-            "type": "boolean"
-          },
-          "isWithFacebook": {
-            "type": "boolean"
-          },
-          "tasks": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Task"
-            }
-          }
-        }
-      },
-      "TaskResponse": {
-        "type": "object",
-        "properties": {
-          "_id": {
-            "type": "string"
-          },
-          "title": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
+          "title": { "type": "string" },
+          "description": { "type": "string" },
           "status": {
             "type": "string",
             "enum": ["todo", "doing", "done"],
@@ -1024,43 +908,50 @@
             "type": "string",
             "enum": ["low", "medium", "high"],
             "default": "low"
-          },
-          "user": {
-            "type": "string"
           }
         }
       },
-      "TaskResponseWithUserPopulated": {
-        "type": "object",
-        "properties": {
-          "_id": {
-            "type": "string"
-          },
-          "title": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "status": {
-            "type": "string",
-            "enum": ["todo", "doing", "done"]
-          },
-          "priority": {
-            "type": "string",
-            "enum": ["low", "medium", "high"]
-          },
-          "user": {
+      "Task": {
+        "allOf": [
+          { "$ref": "#/components/schemas/BaseTaskFields" },
+          {
             "type": "object",
             "properties": {
-              "schema": {
+              "user": { "type": "string" }
+            },
+            "required": ["title", "user"]
+          }
+        ]
+      },
+      "UpdateTask": {
+        "allOf": [{ "$ref": "#/components/schemas/BaseTaskFields" }]
+      },
+      "TaskResponse": {
+        "allOf": [
+          { "$ref": "#/components/schemas/Task" },
+          {
+            "type": "object",
+            "properties": {
+              "_id": { "type": "string" }
+            }
+          }
+        ]
+      },
+      "TaskResponseWithUserPopulated": {
+        "allOf": [
+          { "$ref": "#/components/schemas/TaskResponse" },
+          {
+            "type": "object",
+            "properties": {
+              "user": {
                 "$ref": "#/components/schemas/UserResponse"
               }
             }
           }
-        }
+        ]
       }
     },
+
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
