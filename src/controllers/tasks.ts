@@ -16,7 +16,6 @@ const UpdateTaskSchema = SaveTaskSchema.partial();
 export class TasksController {
   static all: Handler = async (req, res, next) => {
     try {
-      const { id } = req.params;
       const tasks = await TasksModel.find();
       res.json(tasks);
     } catch (error) {

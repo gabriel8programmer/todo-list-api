@@ -40,7 +40,7 @@ export class UsersModel {
 
   static updateById = async (
     id: string,
-    params: Partial<Omit<IUser, "_id">>
+    params: Partial<Omit<IUser, "_id" | "tasks">>
   ): Promise<IUserPopulated | null> => {
     return User.findByIdAndUpdate(id, params, { new: true }).lean() as IUserPopulated | null | any;
   };
@@ -56,7 +56,7 @@ export class UsersModel {
   static updateTasksFromUser = async (id: string): Promise<void> => {
     const tasks = await TasksModel.findByUserId(id);
     const taskIds = tasks.map(({ _id }) => _id) as Types.ObjectId[];
-    await UsersModel.updateById(id, { tasks: taskIds });
+    await User.findByIdAndUpdate(id, { tasks: taskIds });
   };
 
   static deleteTaskFromUser = async (id: string, taskId: string): Promise<void> => {
@@ -68,6 +68,6 @@ export class UsersModel {
       })
       .map(({ _id }) => _id) as Types.ObjectId[];
 
-    await UsersModel.updateById(id, { tasks: taskIdsRemaining });
+    await User.findByIdAndUpdate(id, { tasks: taskIdsRemaining });
   };
 }

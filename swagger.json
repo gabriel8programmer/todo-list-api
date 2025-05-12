@@ -40,10 +40,10 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request"
+            "description": "Bad Request!"
           },
           "401": {
-            "description": "Invalid Credentials"
+            "description": "Unauthorized!"
           },
           "200": {
             "description": "OK!",
@@ -57,7 +57,7 @@
                       "default": "Logged successfuly!"
                     },
                     "user": {
-                      "$ref": "#/components/schemas/DataRegisterLogin"
+                      "$ref": "#/components/schemas/UserResponse"
                     },
                     "accessToken": {
                       "type": "string"
@@ -95,10 +95,10 @@
         },
         "responses": {
           "400": {
-            "description": "Bad Request"
+            "description": "Bad Request!"
           },
           "403": {
-            "description": "User email address already exists!"
+            "description": "Forbidden!"
           },
           "201": {
             "description": "Created!",
@@ -112,7 +112,7 @@
                       "default": "User regitered with successfuly!"
                     },
                     "user": {
-                      "$ref": "#/components/schemas/DataRegisterLogin"
+                      "$ref": "#/components/schemas/UserResponse"
                     }
                   }
                 }
@@ -133,7 +133,7 @@
             "description": "Bad Request!"
           },
           "401": {
-            "description": "Unauthorized"
+            "description": "Unauthorized!"
           },
           "200": {
             "description": "OK!",
@@ -147,7 +147,7 @@
                       "default": "Logged successfuly!"
                     },
                     "user": {
-                      "$ref": "#/components/schemas/DataRegisterLogin"
+                      "$ref": "#/components/schemas/UserResponse"
                     },
                     "accessToken": {
                       "type": "string"
@@ -169,7 +169,7 @@
                       "default": "User regitered with successfuly!"
                     },
                     "user": {
-                      "$ref": "#/components/schemas/DataRegisterLogin"
+                      "$ref": "#/components/schemas/UserResponse"
                     },
                     "accessToken": {
                       "type": "string"
@@ -182,12 +182,67 @@
         }
       }
     },
-    "/auth/recover-password": {},
+    "/auth/recover-password": {
+      "post": {
+        "summary": "Redefinir senha",
+        "description": "Redifinir senha passando um email e uma nova senha",
+        "tags": ["Auth"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              },
+              "examples": {
+                "recover password": {
+                  "value": {
+                    "email": "johndoe@gmail.com",
+                    "password": "321"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request!"
+          },
+          "404": {
+            "description": "Not Found!"
+          },
+          "200": {
+            "description": "OK!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "default": "Password recovered successfuly!"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/admin/users": {
       "get": {
         "summary": "Listar usuários",
         "description": "Lista todos os usuários com suas tarefas",
-        "tags": ["users"],
+        "tags": ["Admin (users)"],
         "security": [{ "bearerAuth": [] }],
 
         "responses": {
@@ -203,15 +258,7 @@
               "aplication/json": {
                 "schema": {
                   "items": {
-                    "$ref": "#/components/schemas/User"
-                  }
-                },
-                "examples": {
-                  "login": {
-                    "value": {
-                      "name": "John Doe",
-                      "password": "123"
-                    }
+                    "$ref": "#/components/schemas/UserResponseWithTasks"
                   }
                 }
               }
@@ -222,7 +269,7 @@
       "post": {
         "summary": "Criar um novo usuário",
         "description": "Rota responsável por criar um novo usuário",
-        "tags": ["users"],
+        "tags": ["Admin (users)"],
         "security": [{ "bearerAuth": [] }],
         "requestBody": {
           "content": {
@@ -248,13 +295,13 @@
             "description": "Bad Request!"
           },
           "401": {
-            "description": "Unauthorized"
+            "description": "Unauthorized!"
           },
           "403": {
-            "description": "User email address already exists!"
+            "description": "Forbidden!"
           },
           "201": {
-            "description": "OK!",
+            "description": "Created!",
             "content": {
               "aplication/json": {
                 "schema": {
@@ -265,7 +312,7 @@
                       "default": "User created successfuly!"
                     },
                     "data": {
-                      "$ref": "#/components/schemas/User"
+                      "$ref": "#/components/schemas/UserResponseWithTasks"
                     }
                   }
                 }
@@ -279,7 +326,7 @@
       "get": {
         "summary": "Obter um usuário",
         "description": "Obter um usuário a partir do seu id",
-        "tags": ["users"],
+        "tags": ["Admin (users)"],
         "security": [{ "bearerAuth": [] }],
         "parameters": [
           {
@@ -297,7 +344,7 @@
             "description": "Unauthorized"
           },
           "404": {
-            "description": "User not found!"
+            "description": "Not Found!"
           },
           "200": {
             "description": "OK!",
@@ -305,7 +352,7 @@
               "aplication/json": {
                 "schema": {
                   "type": "object",
-                  "$ref": "#/components/schemas/User"
+                  "$ref": "#/components/schemas/UserResponseWithPopulatedTasks"
                 }
               }
             }
@@ -315,20 +362,467 @@
       "put": {
         "summary": "Atualizar um usuário",
         "description": "Atualizar um usuário a partir do seu id",
-        "tags": ["users"],
-        "security": [{ "bearerAuth": [] }]
+        "tags": ["Admin (users)"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Id de usuário",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUser"
+              },
+              "examples": {
+                "User": {
+                  "value": {
+                    "name": "John Doe - Updated",
+                    "email": "johndoeupdated@gmail.com",
+                    "password": "321"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request!"
+          },
+          "401": {
+            "description": "Unauthorized!"
+          },
+          "403": {
+            "description": "Forbidden!"
+          },
+          "404": {
+            "description": "Not Found!"
+          },
+          "200": {
+            "description": "OK!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "default": "User id successfuly!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/UserResponseWithPopulatedTasks"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       },
       "delete": {
         "summary": "Remover um usuário",
         "description": "Remover um usuário a partir do seu id",
-        "tags": ["users"],
-        "security": [{ "bearerAuth": [] }]
+        "tags": ["Admin (users)"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Id do usuário",
+            "required": true
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request!"
+          },
+          "401": {
+            "description": "Unauthorized!"
+          },
+          "404": {
+            "description": "Not Found!"
+          },
+          "200": {
+            "description": "OK!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "default": "User deleted successfuly!"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/tasks": {
+      "get": {
+        "summary": "",
+        "description": "",
+        "tags": ["Admin (Tasks)"],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "400": {
+            "description": "Bad Request!"
+          },
+          "401": {
+            "description": "Unauthorized!"
+          },
+          "200": {
+            "description": "OK!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Task"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/:id/tasks": {
+      "get": {
+        "summary": "Obter todas as tasks",
+        "description": "Obter todas as tasks de um usuário específico",
+        "tags": ["User's Tasks"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Id do usuário",
+            "required": true
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request!"
+          },
+          "401": {
+            "description": "Unauthorized!"
+          },
+          "404": {
+            "description": "Not Found!"
+          },
+          "200": {
+            "description": "OK!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TaskResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Criar nova task",
+        "description": "Criar nova task para um usuário",
+        "tags": ["User's Tasks"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Id do usuário",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Task"
+              },
+              "examples": {
+                "Task": {
+                  "value": {
+                    "title": "New task",
+                    "description": "This is a new task",
+                    "status": "doing",
+                    "priority": "high",
+                    "user": "999a3ad3e1453aac1cc2ab5b"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request!"
+          },
+          "401": {
+            "description": "Unauthorized!"
+          },
+          "404": {
+            "description": "Not Found!"
+          },
+          "200": {
+            "description": "OK!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/:id/tasks/:taskId": {
+      "get": {
+        "summary": "Obter uma task",
+        "description": "Obter uma task pelo seu id",
+        "tags": ["User's Tasks"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Id do usuário",
+            "required": true
+          },
+          {
+            "name": "taskId",
+            "in": "path",
+            "description": "Id da task",
+            "required": true
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request!"
+          },
+          "401": {
+            "description": "Unauthorized!"
+          },
+          "404": {
+            "description": "Not Found!"
+          },
+          "200": {
+            "description": "OK!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskResponseWithUserPopulated"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Atualizar uma task",
+        "description": "Atualizar uma task pelo seu id",
+        "tags": ["User's Tasks"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Id do usuário",
+            "required": true
+          },
+          {
+            "name": "taskId",
+            "in": "path",
+            "description": "Id da task",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTask"
+              },
+              "examples": {
+                "Task": {
+                  "value": {
+                    "title": "Update task",
+                    "description": "This is a update task",
+                    "status": "done"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request!"
+          },
+          "401": {
+            "description": "Unauthorized!"
+          },
+          "404": {
+            "description": "Not Found!"
+          },
+          "200": {
+            "description": "OK!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "default": "Task updated successfuly!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/TaskResponse"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remover uma task",
+        "description": "Remover uma task pelo seu id",
+        "tags": ["User's Tasks"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Id do usuário",
+            "required": true
+          },
+          {
+            "name": "taskId",
+            "in": "path",
+            "description": "Id da task",
+            "required": true
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request!"
+          },
+          "401": {
+            "description": "Unauthorized!"
+          },
+          "404": {
+            "description": "Not Found!"
+          },
+          "200": {
+            "description": "OK!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "default": "Task deleted successfuly!"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/:id/tasks/delete-all": {
+      "delete": {
+        "summary": "Remover todas as tasks",
+        "description": "Remover todas as tasks",
+        "tags": ["User's Tasks"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Id do usuário",
+            "required": true
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request!"
+          },
+          "401": {
+            "description": "Unauthorized!"
+          },
+          "404": {
+            "description": "Not Found!"
+          },
+          "200": {
+            "description": "OK!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "default": "All tasks were deleted successfuly!"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
   },
   "components": {
     "schemas": {
       "User": {
+        "type": "object",
+        "required": ["name", "email"],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": ["ADMIN", "CLIENT"],
+            "default": "CLIENT"
+          },
+          "isWithGoogle": {
+            "type": "boolean",
+            "default": false
+          },
+          "isWithFacebook": {
+            "type": "boolean",
+            "default": false
+          }
+        }
+      },
+      "UpdateUser": {
         "type": "object",
         "properties": {
           "name": {
@@ -352,19 +846,12 @@
           "isWithFacebook": {
             "type": "boolean",
             "default": false
-          },
-          "tasks": {
-            "type": "array",
-            "default": []
-          },
-          "_id": {
-            "type": "string",
-            "nullable": true
           }
         }
       },
       "Task": {
         "type": "object",
+        "required": ["title", "user"],
         "properties": {
           "title": {
             "type": "string"
@@ -382,18 +869,35 @@
             "enum": ["low", "medium", "high"],
             "default": "low"
           },
-          "userId": {
-            "type": "string",
-            "nullable": true
+          "user": {
+            "type": "string"
+          }
+        }
+      },
+      "UpdateTask": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
           },
-          "_id": {
+          "description": {
+            "type": "string"
+          },
+          "status": {
             "type": "string",
-            "nullable": true
+            "enum": ["todo", "doing", "done"],
+            "default": "todo"
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["low", "medium", "high"],
+            "default": "low"
           }
         }
       },
       "Login": {
         "type": "object",
+        "required": ["email", "password"],
         "properties": {
           "email": {
             "type": "string"
@@ -405,6 +909,7 @@
       },
       "Register": {
         "type": "object",
+        "required": ["name", "email", "password"],
         "properties": {
           "name": {
             "type": "string"
@@ -417,9 +922,12 @@
           }
         }
       },
-      "DataRegisterLogin": {
+      "UserResponse": {
         "type": "object",
         "properties": {
+          "_id": {
+            "type": "string"
+          },
           "name": {
             "type": "string"
           },
@@ -428,19 +936,127 @@
           },
           "role": {
             "type": "string",
-            "enum": ["ADMIN", "CLIENT"],
-            "default": "CLIENT"
+            "enum": ["ADMIN", "CLIENT"]
           },
           "isWithGoogle": {
-            "type": "boolean",
-            "default": false
+            "type": "boolean"
           },
           "isWithFacebook": {
-            "type": "boolean",
-            "default": false
-          },
-          "id": {
+            "type": "boolean"
+          }
+        }
+      },
+      "UserResponseWithTasks": {
+        "type": "object",
+        "properties": {
+          "_id": {
             "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": ["ADMIN", "CLIENT"]
+          },
+          "isWithGoogle": {
+            "type": "boolean"
+          },
+          "isWithFacebook": {
+            "type": "boolean"
+          },
+          "tasks": {
+            "type": "array"
+          }
+        }
+      },
+      "UserResponseWithPopulatedTasks": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": ["ADMIN", "CLIENT"]
+          },
+          "isWithGoogle": {
+            "type": "boolean"
+          },
+          "isWithFacebook": {
+            "type": "boolean"
+          },
+          "tasks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Task"
+            }
+          }
+        }
+      },
+      "TaskResponse": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["todo", "doing", "done"],
+            "default": "todo"
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["low", "medium", "high"],
+            "default": "low"
+          },
+          "user": {
+            "type": "string"
+          }
+        }
+      },
+      "TaskResponseWithUserPopulated": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["todo", "doing", "done"]
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["low", "medium", "high"]
+          },
+          "user": {
+            "type": "object",
+            "properties": {
+              "schema": {
+                "$ref": "#/components/schemas/UserResponse"
+              }
+            }
           }
         }
       }

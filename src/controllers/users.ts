@@ -120,7 +120,7 @@ export class UsersController {
       // delete all tasks in task's collection
       await TasksModel.deleteAllTasksFromUserById(id);
 
-      res.json({ message: "User delete successfuly!" });
+      res.json({ message: "User deleted successfuly!" });
     } catch (error) {
       next(error);
     }
