@@ -26,6 +26,7 @@
 [![Google authenticator](https://img.shields.io/badge/Google%20Authenticator-4285F4.svg?style=for-the-badge&logo=Google-Authenticator&logoColor=white)]()
 [![Zod](https://img.shields.io/badge/Zod-3E67B1.svg?style=for-the-badge&logo=Zod&logoColor=white)]()
 [![Insomnia](https://img.shields.io/badge/Insomnia-4000BF.svg?style=for-the-badge&logo=Insomnia&logoColor=white)]()
+[![Swagger](https://img.shields.io/badge/Swagger-85EA2D.svg?style=for-the-badge&logo=Swagger&logoColor=black)]()
 
 <h2 id="instalation">Instalação</h2>
 
