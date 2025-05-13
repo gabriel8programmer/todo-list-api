@@ -8,7 +8,8 @@ const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const routes_1 = __importDefault(require("./routes"));
 const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
-const swagger_json_1 = __importDefault(require("../swagger.json"));
+const node_fs_1 = __importDefault(require("node:fs"));
+const node_path_1 = __importDefault(require("node:path"));
 // connect with database
 require("./config/mongoose");
 const handlerErrors_1 = require("./middlewares/handlerErrors");
@@ -24,7 +25,9 @@ app.use("/terms", (req, res) => {
     res.send("Termos of service!");
 });
 // use swagger for API documentation
-app.use("/api/docs", swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swagger_json_1.default));
+const swaggerPath = node_path_1.default.resolve(__dirname, "../swagger.json");
+const swaggerDocument = JSON.parse(node_fs_1.default.readFileSync(swaggerPath, "utf-8"));
+app.use("/api/docs", swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swaggerDocument));
 // handler errors
 app.use(handlerErrors_1.HandlerErrors);
 app.listen(PORT, () => console.log(`Server running in ${PORT}`));

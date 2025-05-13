@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
-    "start": "node build/src/server.js"
+    "start": "node build/server.js"
   },
   "keywords": [],
   "engines": {
