@@ -34,7 +34,7 @@
               "examples": {
                 "login": {
                   "value": {
-                    "email": "John Doe",
+                    "email": "John@gmail.com",
                     "password": "123"
                   }
                 }
