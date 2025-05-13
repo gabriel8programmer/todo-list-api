@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
-    "start": "node build/server.js"
+    "start": "node build/src/server.js"
   },
   "keywords": [],
   "engines": {
@@ -14,7 +14,7 @@
   },
   "author": "",
   "license": "ISC",
-  "type": "module",
+  "type": "commonjs",
   "dependencies": {
     "@types/jsonwebtoken": "^9.0.9",
     "bcrypt": "^5.1.1",
