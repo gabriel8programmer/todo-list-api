@@ -5,7 +5,7 @@
     "description": "Esta API tem como objetivo permitir o cadastro de usuários e tarefas por papeis de administrador ou cliente",
     "termsOfService": "https://todo-list-api-a73j.onrender.com/terms",
     "contact": {
-      "email": "gabriel8titas@gmail.com"
+      "email": "gabriel8webprogrammer@gmail.com"
     },
     "version": "1.0.0"
   },
@@ -13,10 +13,6 @@
     {
       "url": "http://localhost:3333/api",
       "description": "API de Teste (Local)"
-    },
-    {
-      "url": "https://todo-list-api-a73j.onrender.com/api",
-      "description": "API de Produção (Render)"
     }
   ],
   "paths": {
@@ -34,7 +30,7 @@
               "examples": {
                 "login": {
                   "value": {
-                    "email": "John@gmail.com",
+                    "email": "john@gmail.com",
                     "password": "123"
                   }
                 }
@@ -209,7 +205,7 @@
               "examples": {
                 "recover password": {
                   "value": {
-                    "email": "johndoe@gmail.com",
+                    "email": "john@gmail.com",
                     "password": "321"
                   }
                 }
@@ -387,7 +383,7 @@
                 "User": {
                   "value": {
                     "name": "John Doe - Updated",
-                    "email": "johndoeupdated@gmail.com",
+                    "email": "john123@gmail.com",
                     "password": "321"
                   }
                 }

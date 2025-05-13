@@ -1,26 +1,29 @@
 import mongoose from "mongoose";
+import "dotenv/config";
 import { z } from "zod";
 
-const ENV_SCHEMA = z.object({
-  MONGODB_DATABASE_NAME: z.string(),
-  MONGODB_PASSWORD: z.string(),
-  MONGODB_URL: z.string(),
+// transform enviroments variables
+const envSchema = z.object({
+  MONGODB_DATABASE: z.string(),
+  MONGODB_USER: z.string().optional(),
+  MONGODB_PASSWORD: z.string().optional(),
+  MONGODB_URL: z.string().optional(),
 });
 
-const { MONGODB_DATABASE_NAME, MONGODB_PASSWORD, MONGODB_URL } = ENV_SCHEMA.parse(process.env);
+const _env = envSchema.parse(process.env);
 
-// replace values in mongodb_url
-const MONGODB_URL_CONVERTED = MONGODB_URL.replace("<PASSWORD>", MONGODB_PASSWORD).replace(
-  "<DATABASE>",
-  MONGODB_DATABASE_NAME
-);
+let mongodbUrl: string;
 
-const connect = async () => {
-  return mongoose.connect(MONGODB_URL_CONVERTED);
-};
+if (_env.MONGODB_PASSWORD && _env.MONGODB_USER) {
+  const { MONGODB_PASSWORD: PASS, MONGODB_USER: USER, MONGODB_DATABASE: DATABASE } = _env;
+  mongodbUrl = `mongodb://${USER}:${PASS}@localhost:27017/${DATABASE}`;
+} else if (_env.MONGODB_URL) {
+  mongodbUrl = _env.MONGODB_URL;
+} else {
+  mongodbUrl = `mongodb://localhost:27017/${_env.MONGODB_DATABASE}`;
+}
 
-connect()
-  .then(() => {
-    console.log("successfully connected to the database!");
-  })
-  .catch((error) => console.log(error.message));
+mongoose
+  .connect(mongodbUrl)
+  .then(() => console.log("✅ Connection to mongodb successful!"))
+  .catch((err) => console.error("❌ Error on connect with mongoDB:", err));
