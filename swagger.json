@@ -3,7 +3,7 @@
   "info": {
     "title": "Todo list API",
     "description": "Esta API tem como objetivo permitir o cadastro de usuários e tarefas por papeis de administrador ou cliente",
-    "termsOfService": "http://localhost:3000/terms",
+    "termsOfService": "https://todo-list-api-a73j.onrender.com/terms",
     "contact": {
       "email": "gabriel8titas@gmail.com"
     },
@@ -11,8 +11,12 @@
   },
   "servers": [
     {
-      "url": "http://localhost:3000/api",
-      "description": "API de Teste"
+      "url": "http://localhost:3333/api",
+      "description": "API de Teste (Local)"
+    },
+    {
+      "url": "https://todo-list-api-a73j.onrender.com/api",
+      "description": "API de Produção (Render)"
     }
   ],
   "paths": {

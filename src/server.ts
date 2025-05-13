@@ -22,7 +22,7 @@ app.use("/api", router);
 
 // terms of service
 app.use("/terms", (req, res) => {
-  res.send("Termos of service!");
+  res.send("Terms of service here!"); // just example
 });
 
 // use swagger for API documentation
