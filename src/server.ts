@@ -11,7 +11,7 @@ import "./config/mongoose";
 import { HandlerErrors } from "./middlewares/handlerErrors";
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
 
 // config cors and json
 app.use(express.json());

@@ -4,7 +4,7 @@ import { z } from "zod";
 
 // transform enviroments variables
 const envSchema = z.object({
-  MONGODB_DATABASE: z.string(),
+  MONGODB_DATABASE: z.string().optional(),
   MONGODB_USER: z.string().optional(),
   MONGODB_PASSWORD: z.string().optional(),
   MONGODB_URL: z.string().optional(),
