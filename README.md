@@ -26,9 +26,7 @@
 [![Insomnia](https://img.shields.io/badge/Insomnia-4323d5.svg?style=for-the-badge&logo=Insomnia&logoColor=white)]()
 [![Swagger](https://img.shields.io/badge/Swagger-4323d5.svg?style=for-the-badge&logo=Swagger&logoColor=white)]()
 
-<h2 id="instalation">Instalação</h2>
-
-## 🚀 Instalação
+<h2 id="instalação">🚀 Instalação</h2>
 
 ### ✅ Requisitos
 
