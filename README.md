@@ -26,9 +26,7 @@
 [![Insomnia](https://img.shields.io/badge/Insomnia-4323d5.svg?style=for-the-badge&logo=Insomnia&logoColor=white)]()
 [![Swagger](https://img.shields.io/badge/Swagger-4323d5.svg?style=for-the-badge&logo=Swagger&logoColor=white)]()
 
-<h2 id="instalation">Instalação</h2>
-
-## 🚀 Instalação
+<h2 id="instalação">🚀 Instalação</h2>
 
 ### ✅ Requisitos
 
@@ -127,7 +125,34 @@ Isso é útil para testar endpoints em diferentes ambientes sem precisar sair da
 
 ![image](https://github.com/user-attachments/assets/792c1193-4432-4ab1-bbcf-4415d3d9d9ad)
 
-<h2 id="routes">Rotas</h2>
+<h2 id="routes">📡 Rotas</h2>
+
+1. Rotas de Autenticação
+
+| route                                       | description                            |
+| ------------------------------------------- | -------------------------------------- |
+| <kbd>POST /api/auth/login </kbd>            | Fazer login com email e senha          |
+| <kbd>POST /api/auth/register </kbd>         | Fazer registro com nome, email e senha |
+| <kbd>POST /api/auth/social/google </kbd>    | Fazer login com google                 |
+| <kbd>POST /api/auth/recover-password </kbd> | Recuperar senha                        |
+
+
+2. Rotas de usuários (Administrador)
+
+| route                                      | description                            |
+| ------------------------------------------ | -------------------------------------- |
+| <kbd>🔒 GET /api/admin/users </kbd>        | Fazer login com email e senha          |
+| <kbd>🔒 GET /api/admin/users/:id </kbd>    | Fazer login com email e senha          |
+| <kbd>🔒 POST /api/admin/users </kbd>       | Fazer registro com nome, email e senha |
+| <kbd>🔒 PUT /api/admin/users/:id </kbd>    | Fazer login com google                 |
+| <kbd>🔒 DELETE /api/admin/users/:id </kbd> | Recuperar senha                        |
+
+
+3. Rotas de Tasks (Administrador)
+
+4. Rotas de Tasks
+
+
 
 <h2 id="org">Organização de pastas</h2>
 
