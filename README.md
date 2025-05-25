@@ -1,5 +1,5 @@
 
-<h1 align="center">Lista de tarefas com NodeJS (Documentando...)</h1>
+<h1 align="center">Lista de tarefas com NodeJS</h1>
 
 <p align="center">
   <a href="#instalação">🚀 Instalação</a> •
