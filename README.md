@@ -4,7 +4,6 @@
 <p align="center">
   <a href="#instalação">🚀 Instalação</a> •
   <a href="#rotas">📡 Rotas</a> •
-  <a href="#organização-de-pastas">📁 Organização</a> •
   <a href="#desenvolvedor">👨‍💻 Dev</a>
 </p>
 
@@ -125,35 +124,72 @@ Isso é útil para testar endpoints em diferentes ambientes sem precisar sair da
 
 ![image](https://github.com/user-attachments/assets/792c1193-4432-4ab1-bbcf-4415d3d9d9ad)
 
-<h2 id="routes">📡 Rotas</h2>
+<h2 id="rotas">📡 Rotas</h2>
 
-1. Rotas de Autenticação
+### 🔑 Endpoints de Autenticação
 
-| route                                       | description                            |
-| ------------------------------------------- | -------------------------------------- |
-| <kbd>POST /api/auth/login </kbd>            | Fazer login com email e senha          |
-| <kbd>POST /api/auth/register </kbd>         | Fazer registro com nome, email e senha |
-| <kbd>POST /api/auth/social/google </kbd>    | Fazer login com google                 |
-| <kbd>POST /api/auth/recover-password </kbd> | Recuperar senha                        |
+| Método | Rota                         | Descrição                            | Autenticação |
+| ------ | ---------------------------- | ------------------------------------ | ------------ |
+| POST   | `/api/auth/login`            | Faz login com email e senha          | 🔓 Não       |
+| POST   | `/api/auth/register`         | Faz registro com nome, email e senha | 🔓 Não       |
+| POST   | `/api/auth/social/google`    | Faz login com google                 | 🔓 Não       |
+| POST   | `/api/auth/recover-password` | Recupera a senha                     | 🔓 Não       |
 
+### ✅ Endpoints públicos (requer autenticação com token de cliente ou admin)
 
-2. Rotas de usuários (Administrador)
-
-| route                                      | description                            |
-| ------------------------------------------ | -------------------------------------- |
-| <kbd>🔒 GET /api/admin/users </kbd>        | Fazer login com email e senha          |
-| <kbd>🔒 GET /api/admin/users/:id </kbd>    | Fazer login com email e senha          |
-| <kbd>🔒 POST /api/admin/users </kbd>       | Fazer registro com nome, email e senha |
-| <kbd>🔒 PUT /api/admin/users/:id </kbd>    | Fazer login com google                 |
-| <kbd>🔒 DELETE /api/admin/users/:id </kbd> | Recuperar senha                        |
-
-
-3. Rotas de Tasks (Administrador)
-
-4. Rotas de Tasks
+| Método | Rota                              | Descrição                                   | Autenticação |
+| ------ | --------------------------------- | ------------------------------------------- | ------------ |
+| GET    | `/api/users/:id/tasks`            | Lista todas as tasks de um usuario          | 🔒 Sim       |
+| GET    | `/api/users/:id/tasks/:taskId`    | Obtém uma task de um usuário pelo ID        | 🔒 Sim       |
+| POST   | `/api/users/:id/`                 | Cria uma nova task relacionado a um usuario | 🔒 Sim       |
+| PUT    | `/api/users/:id/tasks/:taskId`    | Atualiza uma task de um usuário pelo ID     | 🔒 Sim       |
+| DELETE | `/api/users/:id/tasks/:taskId`    | Remove uma task de um usuário pelo ID       | 🔒 Sim       |
+| DELETE | `/api/users/:id/tasks/delete-all` | Remove todas as tasks de um usuário         | 🔒 Sim       |
 
 
+### 🔐 Endpoints protegidos (requer autenticação com token de admin)
 
-<h2 id="org">Organização de pastas</h2>
+1. Usuários
 
-<h2 id="dev">Desenvolvedor</h2>
+| Método | Rota                              | Descrição                                      | Autenticação |
+|--------|-----------------------------------|-----------------------------------------------|--------------|
+| GET    | `/api/admin/users`               | Lista todos os usuários                        | 🔒 Sim       |
+| GET    | `/api/admin/users/:id`           | Obtém um usuário pelo ID                       | 🔒 Sim       |
+| POST   | `/api/admin/users`               | Cria um novo usuário                           | 🔒 Sim       |
+| PUT    | `/api/admin/users/:id`           | Atualiza um usuário pelo ID                    | 🔒 Sim       |
+| DELETE | `/api/admin/users/:id`           | Remove um usuário pelo ID                      | 🔒 Sim       |
+
+2. Tasks
+
+| Método | Rota                   | Descrição               | Autenticação |
+| ------ | ---------------------- | ----------------------- | ------------ |
+| GET    | `/api/admin/tasks`     | Lista todas as tasks    | 🔒 Sim       |
+| DELETE | `/api/admin/tasks/:id` | Remove uma task pelo ID | 🔒 Sim       |
+
+
+<h2 id="dev">👨‍💻 Desenvolvedor</h2>
+
+Este projeto foi desenvolvido por Gabriel Pereira, com foco em aprendizado de nodejs, express, mongodb e documentação básica de API com swagger.
+
+<div>
+  <img  style="height: 150px" src="https://github.com/user-attachments/assets/c4df01b4-a935-4613-9eb9-aaf04d07b296" alt="Foto de perfil" />
+</div>
+
+<a href="mailto:gabriel8webprogrammer@gmail.com" target="_blank">
+  <img src="https://img.shields.io/badge/Gmail-4323d5?style=for-the-badge&logo=gmail&logoColor=white" alt="gmail"/>
+</a>
+
+<a href="https://github.com/gabriel8programmer" target="_blank">
+  <img src="https://img.shields.io/badge/github-4323d5.svg?style=for-the-badge&logo=firefox&logoColor=white" alt="Github" />
+</a>
+
+<a href="https://www.linkedin.com/in/gabrielwebprogrammer" target="_blank">
+  <img src="https://img.shields.io/badge/linkedin-4323d5.svg?style=for-the-badge&logo=linkedin&logoColor=white" alt="Linkedin"/>
+</a>
+
+<a href="https://portfolio-backend-bay-two.vercel.app/" target="_blank">
+  <img src="https://img.shields.io/badge/Portfolio-4323d5.svg?style=for-the-badge&logo=firefox&logoColor=white" alt="Portfólio" />
+</a>
+
+Sinta-se à vontade para entrar em contato em caso de dúvidas, sugestões ou propostas de colaboração!
+
