@@ -4,7 +4,7 @@
 <p align="center">
   <a href="#instalação">🚀 Instalação</a> •
   <a href="#rotas">📡 Rotas</a> •
-  <a href="#desenvolvedor">👨‍💻 Dev</a>
+  <a href="#dev">👨‍💻 Dev</a>
 </p>
 
 <br/>
@@ -180,7 +180,7 @@ Este projeto foi desenvolvido por Gabriel Pereira, com foco em aprendizado de no
 </a>
 
 <a href="https://github.com/gabriel8programmer" target="_blank">
-  <img src="https://img.shields.io/badge/github-4323d5.svg?style=for-the-badge&logo=firefox&logoColor=white" alt="Github" />
+  <img src="https://img.shields.io/badge/GitHub-4323d5.svg?style=for-the-badge&logo=GitHub&logoColor=white" alt="Github" />
 </a>
 
 <a href="https://www.linkedin.com/in/gabrielwebprogrammer" target="_blank">
