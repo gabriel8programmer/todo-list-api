@@ -85,12 +85,18 @@ export class TasksController {
     }
   };
 
-  static delete: Handler = async (req, res, next) => {
+  static delete: Handler = async (req, res, next): Promise<any> => {
     try {
       const { id, taskId } = req.params;
 
       const task = await TasksModel.findById(taskId);
       if (!task) throw new HttpError(404, "Task not found!");
+
+      if (!id) {
+        // delete task
+        await TasksModel.deleteById(taskId);
+        return res.json({ message: "Task deleted successfuly!" });
+      }
 
       // delete task
       await TasksModel.deleteByUserIdAndTaskId(id, taskId);

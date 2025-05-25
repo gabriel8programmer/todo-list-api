@@ -12,7 +12,7 @@ const router = Router();
 router.post("/auth/register", Auth.register);
 router.post("/auth/login", Auth.login);
 router.post("/auth/social/google", oAuth.google, Auth.social);
-router.post("/auth/social/facebook", Auth.social);
+// router.post("/auth/social/facebook", Auth.social);
 router.post("/auth/recover-password", Auth.recoverPassword);
 
 // USER TASKS PUBLIC ROUTES
@@ -31,5 +31,6 @@ router.put("/admin/users/:id", verify, isAdmin, Users.update);
 router.delete("/admin/users/:id", verify, isAdmin, Users.delete);
 // TASK ROUTES ONLY ADMINS
 router.get("/admin/tasks", verify, isAdmin, Task.all);
+router.delete("/admin/tasks/:taskId", verify, isAdmin, Task.all);
 
 export default router;

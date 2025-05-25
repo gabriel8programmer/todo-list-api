@@ -498,6 +498,47 @@
             }
           }
         }
+      },
+      "delete": {
+        "summary": "",
+        "description": "",
+        "tags": ["Admin (Tasks)"],
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "taskId",
+            "description": "Id da task",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request!"
+          },
+          "401": {
+            "description": "Unauthorized!"
+          },
+          "404": {
+            "description": "Not Found!"
+          },
+          "200": {
+            "description": "OK!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "default": "Task deleted successfuly!"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/users/:id/tasks": {
