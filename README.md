@@ -154,6 +154,10 @@ Este projeto foi desenvolvido por Gabriel Pereira, com foco em aprendizado de no
   <img  style="height: 150px" src="https://github.com/user-attachments/assets/c4df01b4-a935-4613-9eb9-aaf04d07b296" alt="Foto de perfil" />
 </div>
 
+Sinta-se à vontade para entrar em contato em caso de dúvidas, sugestões ou propostas de colaboração!
+
+<br>
+
 <a href="mailto:gabriel8webprogrammer@gmail.com" target="_blank">
   <img src="https://img.shields.io/badge/Gmail-4323d5?style=for-the-badge&logo=gmail&logoColor=white" alt="gmail"/>
 </a>
@@ -170,4 +174,3 @@ Este projeto foi desenvolvido por Gabriel Pereira, com foco em aprendizado de no
   <img src="https://img.shields.io/badge/Portfolio-4323d5.svg?style=for-the-badge&logo=firefox&logoColor=white" alt="Portfólio" />
 </a>
 
-Sinta-se à vontade para entrar em contato em caso de dúvidas, sugestões ou propostas de colaboração!
