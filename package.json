@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
-    "start": "node build/server.js"
+    "start": "node build/server.js",
+    "db:create-admin-profile": "tsx src/database/mongodb/seeds/create-admin-profile.ts"
   },
   "keywords": [],
   "engines": {

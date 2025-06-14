@@ -1,5 +1,4 @@
-
-<h1 align="center">Lista de tarefas com NodeJS</h1>
+<h1 align="center">Lista de tarefas com NodeJS (Atualizando Documentação...)</h1>
 
 <p align="center">
   <a href="#instalação">🚀 Instalação</a> •
@@ -22,15 +21,15 @@
 [![Mongodb](https://img.shields.io/badge/MongoDB-4323d5.svg?style=for-the-badge&logo=MongoDB&logoColor=white)]()
 [![Mongoose](https://img.shields.io/badge/Mongoose-4323d5.svg?style=for-the-badge&logo=Mongoose&logoColor=white)]()
 [![Zod](https://img.shields.io/badge/Zod-4323d5.svg?style=for-the-badge&logo=Zod&logoColor=white)]()
-[![Insomnia](https://img.shields.io/badge/Insomnia-4323d5.svg?style=for-the-badge&logo=Insomnia&logoColor=white)]()
 [![Swagger](https://img.shields.io/badge/Swagger-4323d5.svg?style=for-the-badge&logo=Swagger&logoColor=white)]()
+[![Docker](https://img.shields.io/badge/Docker-4323d5.svg?style=for-the-badge&logo=Docker&logoColor=white)]()
 
 <h2 id="instalação">🚀 Instalação</h2>
 
 ### ✅ Requisitos
 
 - [Node.js](https://nodejs.org/pt) instalado
-- [MongoDB](https://www.mongodb.com/) instalado localmente (opcional — você pode usar o MongoDB Atlas)
+- [Docker](https://www.docker.com/products/docker-desktop/) Instalado
 - Criar um projeto no [Google Cloud Console](https://cloud.google.com/cloud-console?hl=pt_br) para configurar login com Google (OAuth2)
 
 Para entender como criar e configurar esse projeto, recomendo assistir a este vídeo explicativo:
@@ -48,25 +47,21 @@ git clone https://github.com/gabriel8programmer/todo-list-api
 cd todo-list-api
 ```
 
-#### 2. Crie o arquivo `.env` com o seguinte formato:
+#### 2. Rode o [docker compose](https://docs.docker.com/compose/) para criar o container da aplicação:
 
-Você pode escolher **uma** das formas abaixo para configurar a conexão com o banco de dados:
+```bash
+docker compose up
+```
+
+#### 2. Crie o arquivo `.env` com o seguinte formato:
 
 ```env
 # PORTA DO SERVIDOR (obrigatória)
 # A porta deve ser 3333 para que a documentação interativa da API (Swagger) funcione corretamente.
 PORT=3333
 
-# FORMA 1 — Apenas o nome da base (MongoDB local)
-MONGODB_DATABASE=mdb_todolist
-
-# FORMA 2 — Usuário e senha personalizados (MongoDB local)
-MONGODB_USER=<SEU_USUARIO>
-MONGODB_PASSWORD=<SUA_SENHA>
-MONGODB_DATABASE=mdb_todolist
-
-# FORMA 3 — MongoDB Atlas
-MONGODB_URL=<SUA_URL_ATLAS>
+//URL PADRÃO CONFIGURADA NO DOCKER COMPOSE
+MONGODB_URL=mongodb://user:mongodb@mongodb:27017/db-todolist
 
 # CHAVE SECRETA PARA JWT (obrigatória)
 JWT_SECRET_KEY=<SUA_CHAVE>
@@ -75,28 +70,13 @@ JWT_SECRET_KEY=<SUA_CHAVE>
 GOOGLE_AUDIENCE=<SUA_CREDENCIAL_GOOGLE>
 ```
 
-> ⚠️ **Atenção:** Use **apenas uma** das formas de conexão com o banco. As demais podem ser deixadas em branco ou removidas.
-
----
-
-#### 3. Instale as dependências e inicie o servidor
-
-```bash
-npm install
-npm run dev
-```
-
----
-
 ## 🛰️ Uso da API
 
 A API será executada localmente em:
 
 ```
-http://localhost:PORT
+http://localhost:3333
 ```
-
-Substitua `PORT` pelo valor definido no seu arquivo `.env` (Padrão: `3333` | Obrigatório pra funcionamento do swagger).
 
 ---
 
@@ -111,13 +91,14 @@ Você pode testar as rotas utilizando ferramentas como:
 
 Acesse a documentação interativa com Swagger no seguinte endereço:
 
-👉 [`http://localhost:3333/api/docs`](http://localhost:3333/api/docs)
+👉 [`http://localhost:3333/docs`](http://localhost:3333/docs)
 
 Ou acesse a versão de produção no seguinte endereço:
 
-👉 [`https://todo-list-api-yl9j.onrender.com/api/docs/`](https://todo-list-api-yl9j.onrender.com/api/docs/)
+👉 [`https://todo-list-api-yl9j.onrender.com/docs/`](https://todo-list-api-yl9j.onrender.com/docs/)
 
 ### 🔁 Alternância entre ambientes (Local e Produção)
+
 ⚙️ A própria interface da documentação Swagger permite alternar facilmente entre a versão local e a de produção da API.
 
 Isso é útil para testar endpoints em diferentes ambientes sem precisar sair da documentação.
@@ -146,18 +127,17 @@ Isso é útil para testar endpoints em diferentes ambientes sem precisar sair da
 | DELETE | `/api/users/:id/tasks/:taskId`    | Remove uma task de um usuário pelo ID       | 🔒 Sim       |
 | DELETE | `/api/users/:id/tasks/delete-all` | Remove todas as tasks de um usuário         | 🔒 Sim       |
 
-
 ### 🔐 Endpoints protegidos (requer autenticação com token de admin)
 
 1. Usuários
 
-| Método | Rota                              | Descrição                                      | Autenticação |
-|--------|-----------------------------------|-----------------------------------------------|--------------|
-| GET    | `/api/admin/users`               | Lista todos os usuários                        | 🔒 Sim       |
-| GET    | `/api/admin/users/:id`           | Obtém um usuário pelo ID                       | 🔒 Sim       |
-| POST   | `/api/admin/users`               | Cria um novo usuário                           | 🔒 Sim       |
-| PUT    | `/api/admin/users/:id`           | Atualiza um usuário pelo ID                    | 🔒 Sim       |
-| DELETE | `/api/admin/users/:id`           | Remove um usuário pelo ID                      | 🔒 Sim       |
+| Método | Rota                   | Descrição                   | Autenticação |
+| ------ | ---------------------- | --------------------------- | ------------ |
+| GET    | `/api/admin/users`     | Lista todos os usuários     | 🔒 Sim       |
+| GET    | `/api/admin/users/:id` | Obtém um usuário pelo ID    | 🔒 Sim       |
+| POST   | `/api/admin/users`     | Cria um novo usuário        | 🔒 Sim       |
+| PUT    | `/api/admin/users/:id` | Atualiza um usuário pelo ID | 🔒 Sim       |
+| DELETE | `/api/admin/users/:id` | Remove um usuário pelo ID   | 🔒 Sim       |
 
 2. Tasks
 
@@ -165,7 +145,6 @@ Isso é útil para testar endpoints em diferentes ambientes sem precisar sair da
 | ------ | ---------------------- | ----------------------- | ------------ |
 | GET    | `/api/admin/tasks`     | Lista todas as tasks    | 🔒 Sim       |
 | DELETE | `/api/admin/tasks/:id` | Remove uma task pelo ID | 🔒 Sim       |
-
 
 <h2 id="dev">👨‍💻 Desenvolvedor</h2>
 
@@ -192,4 +171,3 @@ Este projeto foi desenvolvido por Gabriel Pereira, com foco em aprendizado de no
 </a>
 
 Sinta-se à vontade para entrar em contato em caso de dúvidas, sugestões ou propostas de colaboração!
-
