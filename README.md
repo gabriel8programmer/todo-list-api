@@ -60,7 +60,7 @@ docker compose up
 # A porta deve ser 3333 para que a documentação interativa da API (Swagger) funcione corretamente.
 PORT=3333
 
-//URL PADRÃO CONFIGURADA NO DOCKER COMPOSE
+# URL PADRÃO CONFIGURADA NO DOCKER COMPOSE
 MONGODB_URL=mongodb://user:mongodb@mongodb:27017/db-todolist
 
 # CHAVE SECRETA PARA JWT (obrigatória)
@@ -122,7 +122,7 @@ Isso é útil para testar endpoints em diferentes ambientes sem precisar sair da
 | ------ | --------------------------------- | ------------------------------------------- | ------------ |
 | GET    | `/api/users/:id/tasks`            | Lista todas as tasks de um usuario          | 🔒 Sim       |
 | GET    | `/api/users/:id/tasks/:taskId`    | Obtém uma task de um usuário pelo ID        | 🔒 Sim       |
-| POST   | `/api/users/:id/`                 | Cria uma nova task relacionado a um usuario | 🔒 Sim       |
+| POST   | `/api/users/:id/tasks`            | Cria uma nova task relacionado a um usuario | 🔒 Sim       |
 | PUT    | `/api/users/:id/tasks/:taskId`    | Atualiza uma task de um usuário pelo ID     | 🔒 Sim       |
 | DELETE | `/api/users/:id/tasks/:taskId`    | Remove uma task de um usuário pelo ID       | 🔒 Sim       |
 | DELETE | `/api/users/:id/tasks/delete-all` | Remove todas as tasks de um usuário         | 🔒 Sim       |
