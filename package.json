@@ -7,7 +7,8 @@
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
     "start": "node build/server.js",
-    "db:create-admin-profile": "tsx src/database/mongodb/seeds/create-admin-profile.ts"
+    "db:create-admin-profile": "tsx src/database/mongodb/seeds/create-admin-profile.ts",
+    "test": "jest"
   },
   "keywords": [],
   "engines": {
@@ -28,6 +29,7 @@
     "mongoose": "^8.14.1",
     "nodemailer": "^7.0.0",
     "swagger-ui-express": "^5.0.1",
+    "uuid": "^11.1.0",
     "zod": "^3.24.3"
   },
   "devDependencies": {
@@ -35,10 +37,14 @@
     "@types/cors": "^2.8.17",
     "@types/dotenv": "^6.1.1",
     "@types/express": "^5.0.1",
+    "@types/jest": "^30.0.0",
     "@types/mongoose": "^5.11.96",
     "@types/node": "^22.15.3",
     "@types/nodemailer": "^6.4.17",
     "@types/swagger-ui-express": "^4.1.8",
+    "jest": "^30.0.0",
+    "ts-jest": "^29.4.0",
+    "ts-node": "^10.9.2",
     "tsx": "^4.19.4",
     "typescript": "^5.8.3"
   }
