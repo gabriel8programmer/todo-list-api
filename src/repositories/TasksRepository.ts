@@ -6,6 +6,8 @@ export interface ITaskBase {
   description?: string
   status: 'todo' | 'doing' | 'done'
   priority: 'low' | 'medium' | 'high'
+  createdAt: Date
+  updatedAt: Date
 }
 
 export interface ITaskPopulated extends ITaskBase {

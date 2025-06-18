@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Verificação de E-mail</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f6f6f6;
+        margin: 0;
+        padding: 0;
+      }
+
+      .container {
+        max-width: 600px;
+        margin: 30px auto;
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .header {
+        text-align: center;
+        padding-bottom: 20px;
+      }
+
+      .code {
+        font-size: 24px;
+        font-weight: bold;
+        background-color: #f1f1f1;
+        padding: 10px 20px;
+        display: inline-block;
+        border-radius: 5px;
+        margin-top: 20px;
+        letter-spacing: 4px;
+      }
+
+      .footer {
+        margin-top: 30px;
+        font-size: 12px;
+        color: #888888;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h2>Verificação de E-mail</h2>
+      </div>
+      <p>Olá,</p>
+      <p>Você está quase lá! Use o código abaixo para verificar seu endereço de e-mail:</p>
+
+      <div style="text-align: center">
+        <div class="code">{{CODE}}</div>
+      </div>
+
+      <p>Se você não solicitou este código, por favor ignore este e-mail.</p>
+
+      <div class="footer">© 2025 Easy Rentals. Todos os direitos reservados.</div>
+    </div>
+  </body>
+</html>

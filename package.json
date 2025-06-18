@@ -7,7 +7,7 @@
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
     "start": "node build/server.js",
-    "db:create-admin-profile": "tsx src/database/mongodb/seeds/create-admin-profile.ts",
+    "db:create-admin-profile": "tsx src/mongoose/seeds/create-admin-profile.ts",
     "test": "jest"
   },
   "keywords": [],

@@ -889,7 +889,7 @@
           {
             "type": "object",
             "properties": {
-              "_id": { "type": "string" }
+              "id": { "type": "string" }
             }
           }
         ]
@@ -977,7 +977,7 @@
           {
             "type": "object",
             "properties": {
-              "_id": { "type": "string" }
+              "id": { "type": "string" }
             }
           }
         ]

@@ -11,6 +11,8 @@ export interface IUserBase {
   emailVerified: boolean
   isWithGoogle: boolean
   isWithFacebook: boolean
+  createdAt: Date
+  updatedAt: Date
 }
 
 export interface IUserPopulated extends IUserBase {

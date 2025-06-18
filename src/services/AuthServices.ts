@@ -1,9 +1,8 @@
 import { IUsersRepository } from '../repositories/UsersRepository'
 import bcrypt from 'bcrypt'
-import jwt from 'jsonwebtoken'
 import { HttpError } from '../errors/HttpError'
-import { EnvSchema } from '../schemas/env'
 import { v4 as uuidv4 } from 'uuid'
+import { genDefaultJwt } from '../utils/jwt/genDefaultJwt'
 
 export class AuthServices {
   constructor(private readonly usersRepository: IUsersRepository) {}
@@ -12,6 +11,10 @@ export class AuthServices {
     const user = await this.usersRepository.findByEmail(email)
     if (!user) throw new HttpError(404, 'User not found!')
     return user
+  }
+
+  private async generateCodeAndSendEmail(email: string) {
+    const randomCode = Math.floor(Math.random() * 9999)
   }
 
   async register(params: { name: string; email: string; password: string }) {
@@ -25,7 +28,9 @@ export class AuthServices {
 
     const data = { name, email, password }
     const newUser = await this.usersRepository.create(data)
-    return { ...newUser, password: undefined }
+
+    const { password: _, ...userWithOutPassword } = newUser
+    return userWithOutPassword
   }
 
   async login(params: { email: string; password: string }) {
@@ -42,12 +47,11 @@ export class AuthServices {
     }
 
     //create access token
-    const jwtToken = EnvSchema.parse(process.env).JWT_SECRET_KEY || 'jwt_secret_key'
-    const payload = { id: user.id }
-    const accessToken = jwt.sign(payload, jwtToken, { expiresIn: '1d' })
+    const accessToken = genDefaultJwt({ id: user.id })
     const refreshToken = uuidv4()
 
-    return { accessToken, refreshToken, user: { ...user, password: undefined } }
+    const { password: _, ...userWithOutPassword } = user
+    return { accessToken, refreshToken, user: userWithOutPassword }
   }
 
   async verifyLogin(params: { email: string; verificationCode: string }) {}
