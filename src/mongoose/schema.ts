@@ -7,7 +7,7 @@ export const TaskSchema = new mongoose.Schema<ITask>({
   id: {
     type: String,
     required: true,
-    default: uuidv4(),
+    default: () => uuidv4(),
   },
   title: {
     type: String,
@@ -39,7 +39,7 @@ export const UserSchema = new mongoose.Schema<IUser>({
   id: {
     type: String,
     required: true,
-    default: uuidv4(),
+    default: () => uuidv4(),
   },
   name: {
     type: String,
@@ -59,6 +59,10 @@ export const UserSchema = new mongoose.Schema<IUser>({
     default: 'CLIENT',
     required: true,
   },
+  emailVerified: {
+    type: Boolean,
+    default: false,
+  },
   isWithGoogle: {
     type: Boolean,
     default: false,
@@ -75,7 +79,5 @@ export const UserSchema = new mongoose.Schema<IUser>({
   ],
 })
 
-const User = mongoose.model('Users', UserSchema)
-const Task = mongoose.model('Tasks', TaskSchema)
-
-export { User, Task }
+export const User = mongoose.model('Users', UserSchema)
+export const Task = mongoose.model('Tasks', TaskSchema)

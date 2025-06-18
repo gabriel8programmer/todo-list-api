@@ -1,11 +1,22 @@
-export interface ITask {
+import { IUserRaw } from './UsersRepository'
+
+export interface ITaskBase {
   id: string
   title: string
-  description: string
+  description?: string
   status: 'todo' | 'doing' | 'done'
   priority: 'low' | 'medium' | 'high'
+}
+
+export interface ITaskPopulated extends ITaskBase {
+  user: IUserRaw
+}
+
+export interface ITaskRaw extends ITaskBase {
   user: string
 }
+
+export type ITask = ITaskRaw | ITaskPopulated
 
 export interface ICreateTaskParams {
   title: string

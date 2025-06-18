@@ -1,4 +1,4 @@
-import { User } from '../../mongoose/schemas'
+import { User } from '../../mongoose/schema'
 import { ICreateUserParams, IUser, IUsersRepository } from '../UsersRepository'
 
 export class MongooseUsersRepository implements IUsersRepository {
@@ -7,7 +7,11 @@ export class MongooseUsersRepository implements IUsersRepository {
   }
 
   async findById(id: string): Promise<IUser | null> {
-    return await User.findById(id).lean()
+    return await User.findById(id).populate('tasks').lean()
+  }
+
+  async findByEmail(email: string): Promise<IUser | null> {
+    return await User.findOne({ email }).populate('tasks').lean()
   }
 
   async create(params: ICreateUserParams): Promise<IUser> {
