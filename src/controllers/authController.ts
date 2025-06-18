@@ -15,10 +15,17 @@ export class AuthController {
     }
   }
 
-  login: Handler = async (req, res, next) => {
+  login: Handler = async (req, res, next): Promise<any> => {
     try {
       const body = LoginSchema.parse(req.body)
       const data = await this.authServices.login(body)
+
+      if (data.requiresEmailVerification) {
+        return res.json({
+          message: 'Verification email required. Please, check your email inbox for to continue.',
+        })
+      }
+
       res.json({ message: 'Log in successfuly!', data })
     } catch (error) {
       next(error)

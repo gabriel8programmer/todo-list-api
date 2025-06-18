@@ -1,8 +1,13 @@
-import { IUsersRepository } from '../repositories/UsersRepository'
+import { IUser, IUsersRepository } from '../repositories/UsersRepository'
 import bcrypt from 'bcrypt'
 import { HttpError } from '../errors/HttpError'
 import { v4 as uuidv4 } from 'uuid'
 import { genDefaultJwt } from '../utils/jwt/genDefaultJwt'
+import { sendEmailWithVerificationCode } from '../utils/emails/sendEmailWithVerificationCode'
+import { genRandomCodes } from '../utils/codes/genRandomCode'
+import { createRandomCodeWithUserId } from '../utils/codes/createCodeWithUserId'
+import { getCodesByUserId } from '../utils/codes/getCodesByUserId'
+import { deleteCodesByUserId } from '../utils/codes/deleteCodesByUserId'
 
 export class AuthServices {
   constructor(private readonly usersRepository: IUsersRepository) {}
@@ -13,8 +18,20 @@ export class AuthServices {
     return user
   }
 
-  private async generateCodeAndSendEmail(email: string) {
-    const randomCode = Math.floor(Math.random() * 9999)
+  private async sendEmailWithVerificationCode(email: string) {
+    const { id } = await this.validateEmailUser(email)
+
+    //check if the number of codes requested by the user exceeds 3
+    const codes = await getCodesByUserId(id)
+    if (codes.length >= 3)
+      throw new HttpError(403, 'Exceed number of the codes verification for this user!')
+
+    //generate authentication code
+    const code = await genRandomCodes(4)
+    //send email
+    await sendEmailWithVerificationCode(email, code)
+    //save code in database
+    await createRandomCodeWithUserId(code, id)
   }
 
   async register(params: { name: string; email: string; password: string }) {
@@ -42,8 +59,8 @@ export class AuthServices {
     if (!matchedPassword) throw new HttpError(401, 'Invalid email or password!')
 
     if (!user.emailVerified) {
-      console.log('Verify your email')
-      return
+      await this.sendEmailWithVerificationCode(email)
+      return { requiresEmailVerification: true }
     }
 
     //create access token
@@ -54,7 +71,27 @@ export class AuthServices {
     return { accessToken, refreshToken, user: userWithOutPassword }
   }
 
-  async verifyLogin(params: { email: string; verificationCode: string }) {}
+  async verifyLogin(params: { email: string; verificationCode: string }) {
+    const { email, verificationCode } = params
+    const { id } = await this.validateEmailUser(email)
+
+    const codes = await getCodesByUserId(id)
+    const codeContainInCodes = codes.find(code => code.code === verificationCode)
+    if (!codeContainInCodes) throw new HttpError(400, 'Invalid verification code!')
+
+    //delete codes from user
+    await deleteCodesByUserId(id)
+
+    //update email verified in user
+    const userUpdated = await this.usersRepository.updateById(id, { emailVerified: true })
+
+    //create accesstoken and refreshToken
+    const accessToken = genDefaultJwt({ id })
+    const refreshToken = uuidv4()
+
+    const { password: _, ...userWithOutPassword } = userUpdated as IUser
+    return { accessToken, refreshToken, user: userWithOutPassword }
+  }
 
   async logout(params: { email: string }) {}
 
