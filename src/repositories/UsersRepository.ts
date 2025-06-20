@@ -7,17 +7,18 @@ export interface IUserBase {
   name: string
   email: string
   password?: string
-  role: IUserRole
-  emailVerified: boolean
-  isWithGoogle: boolean
-  isWithFacebook: boolean
-  createdAt: Date
-  updatedAt: Date
+  role?: IUserRole
+  emailVerified?: boolean
+  isWithGoogle?: boolean
+  isWithFacebook?: boolean
+  createdAt?: Date
+  updatedAt?: Date
 }
 
 export interface IUserPopulated extends IUserBase {
   tasks: ITaskRaw[]
 }
+
 export interface IUserRaw extends IUserBase {
   tasks: string[]
 }
