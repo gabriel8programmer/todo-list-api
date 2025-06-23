@@ -33,13 +33,14 @@ export interface ICreateUserParams {
   emailVerified?: boolean
   isWithGoogle?: boolean
   isWithFacebook?: boolean
+  updatedAt?: Date
 }
 
 export interface IUsersRepository {
   find: () => Promise<IUser[]>
   findById: (id: string) => Promise<IUser | null>
   findByEmail: (email: string) => Promise<IUser | null>
-  create: (params: ICreateUserParams) => Promise<IUser>
+  create: (params: Omit<ICreateUserParams, 'updatedAt'>) => Promise<IUser>
   updateById: (id: string, params: Partial<ICreateUserParams>) => Promise<IUser | null>
   deleteById: (id: string) => Promise<IUser | null>
 }

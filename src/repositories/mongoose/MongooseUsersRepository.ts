@@ -15,9 +15,9 @@ export class MongooseUsersRepository implements IUsersRepository {
   }
 
   async create(params: ICreateUserParams): Promise<IUser> {
-    const user = new User(params)
-    await user.save()
-    return user
+    const user = await User.create(params)
+    const { _id: _, __v: __, ...restUsers } = user.toObject()
+    return restUsers
   }
 
   async updateById(id: string, params: Partial<ICreateUserParams>): Promise<IUser | null> {
