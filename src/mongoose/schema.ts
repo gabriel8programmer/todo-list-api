@@ -9,6 +9,7 @@ export const TaskSchema = new mongoose.Schema<ITask>(
       type: String,
       required: true,
       default: () => uuidv4(),
+      unique: true,
     },
     title: {
       type: String,
@@ -35,7 +36,7 @@ export const TaskSchema = new mongoose.Schema<ITask>(
       required: true,
     },
   },
-  { timestamps: true },
+  { timestamps: true, versionKey: false },
 )
 
 export const UserSchema = new mongoose.Schema<IUser>(
@@ -44,6 +45,7 @@ export const UserSchema = new mongoose.Schema<IUser>(
       type: String,
       required: true,
       default: () => uuidv4(),
+      unique: true,
     },
     name: {
       type: String,
@@ -82,7 +84,7 @@ export const UserSchema = new mongoose.Schema<IUser>(
       },
     ],
   },
-  { timestamps: true },
+  { timestamps: true, versionKey: false },
 )
 
 export const CodeSchema = new mongoose.Schema(

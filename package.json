@@ -8,7 +8,8 @@
     "build": "tsc",
     "start": "node build/server.js",
     "db:create-admin-profile": "tsx src/mongoose/seeds/create-admin-profile.ts",
-    "test": "jest"
+    "test": "jest --watch",
+    "docker-test": "docker compose -f docker-compose.test.yaml up -d"
   },
   "keywords": [],
   "engines": {
@@ -46,6 +47,7 @@
     "@types/nodemon": "^1.19.6",
     "@types/swagger-ui-express": "^4.1.8",
     "jest": "^30.0.2",
+    "mongodb-memory-server": "^10.1.4",
     "ts-jest": "^29.4.0",
     "ts-node": "^10.9.2",
     "tsx": "^4.19.4",

@@ -3,35 +3,20 @@ import bcrypt from 'bcrypt'
 import { HttpError } from '../errors/HttpError'
 import { v4 as uuidv4 } from 'uuid'
 import { genDefaultJwt } from '../utils/jwt/genDefaultJwt'
-import { sendEmailWithVerificationCode } from '../utils/emails/sendEmailWithVerificationCode'
-import { genRandomCodes } from '../utils/codes/genRandomCode'
-import { createRandomCodeWithUserId } from '../utils/codes/createCodeWithUserId'
 import { getCodesByUserId } from '../utils/codes/getCodesByUserId'
 import { deleteCodesByUserId } from '../utils/codes/deleteCodesByUserId'
+import { EmailServices } from './EmailServices'
 
 export class AuthServices {
-  constructor(private readonly usersRepository: IUsersRepository) {}
+  constructor(
+    private readonly usersRepository: IUsersRepository,
+    private emailServices?: EmailServices,
+  ) {}
 
   private async validateEmailUser(email: string) {
     const user = await this.usersRepository.findByEmail(email)
     if (!user) throw new HttpError(404, 'User not found!')
     return user
-  }
-
-  private async sendEmailWithVerificationCode(email: string) {
-    const { id } = await this.validateEmailUser(email)
-
-    //check if the number of codes requested by the user exceeds 3
-    const codes = await getCodesByUserId(id)
-    if (codes.length >= 3)
-      throw new HttpError(403, 'Exceed number of the codes verification for this user!')
-
-    //generate authentication code
-    const code = await genRandomCodes(4)
-    //send email
-    await sendEmailWithVerificationCode(email, code)
-    //save code in database
-    await createRandomCodeWithUserId(code, id)
   }
 
   async register(params: { name: string; email: string; password: string }) {
@@ -59,7 +44,7 @@ export class AuthServices {
     if (!matchedPassword) throw new HttpError(401, 'Invalid email or password!')
 
     if (!user.emailVerified) {
-      await this.sendEmailWithVerificationCode(email)
+      await this.emailServices?.sendEmailWithVerificationCode(email, user.id)
       return { requiresEmailVerification: true }
     }
 

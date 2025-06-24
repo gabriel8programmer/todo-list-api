@@ -10,20 +10,10 @@ services:
       - "27017:27017"
     volumes:
       - mongodb:/var/lib/mongodb/data
-  mongodb_test:
-    image: mongo:6.0
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=test
-      - MONGO_INITDB_ROOT_PASSWORD=test
-    ports:
-      - "27018:27017"
-    volumes:
-      - mongodb_test:/var/lib/mongodb/data
   app:
     build: .
     depends_on:
       - mongodb
-      - mongodb_test
     ports:
       - "3333:3333"
     volumes:
@@ -31,8 +21,6 @@ services:
     environment:
       NODE_ENV: development
       MONGODB_URL: mongodb://user:mongodb@mongodb:27017/db-todolist?authSource=admin
-      MONGODB_TEST_URL: mongodb://test:test@mongodb_test:27018/db-todolist?authSource=admin
-
+      
 volumes:
   mongodb:
-  mongodb_test:
