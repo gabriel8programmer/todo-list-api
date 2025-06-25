@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Todo list API",
+    "title": "Api de Lista de Tarefas",
     "description": "Esta API tem como objetivo permitir o cadastro de usuários e tarefas por papeis de administrador ou cliente",
     "termsOfService": "https://todo-list-api-a73j.onrender.com/terms",
     "contact": {
@@ -126,6 +126,11 @@
         }
       }
     },
+    "/auth/verify-login": {},
+    "/auth/logout": {},
+    "/auth/refresh": {},
+    "/auth/forgot-password": {},
+    "/auth/reset-password": {},
     "/auth/social/google": {
       "post": {
         "summary": "Login ou registro com o google",
@@ -177,63 +182,6 @@
                     },
                     "accessToken": {
                       "type": "string"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/auth/recover-password": {
-      "post": {
-        "summary": "Redefinir senha",
-        "description": "Redifinir senha passando um email e uma nova senha",
-        "tags": ["Auth"],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": ["email", "password"],
-                "properties": {
-                  "email": {
-                    "type": "string"
-                  },
-                  "password": {
-                    "type": "string"
-                  }
-                }
-              },
-              "examples": {
-                "recover password": {
-                  "value": {
-                    "email": "john@gmail.com",
-                    "password": "321"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "400": {
-            "description": "Bad Request!"
-          },
-          "404": {
-            "description": "Not Found!"
-          },
-          "200": {
-            "description": "OK!",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "default": "Password recovered successfuly!"
                     }
                   }
                 }
@@ -938,6 +886,18 @@
             "required": ["name", "email", "password"]
           }
         ]
+      },
+      "VerifyLogin": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "verificationCode": {
+            "type": "string"
+          }
+        },
+        "required": ["email", "verificationCode"]
       },
       "BaseTaskFields": {
         "type": "object",

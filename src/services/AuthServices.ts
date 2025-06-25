@@ -3,13 +3,14 @@ import bcrypt from 'bcrypt'
 import { HttpError } from '../errors/HttpError'
 import { v4 as uuidv4 } from 'uuid'
 import { genDefaultJwt } from '../utils/jwt/genDefaultJwt'
-import { getCodesByUserId } from '../utils/codes/getCodesByUserId'
-import { deleteCodesByUserId } from '../utils/codes/deleteCodesByUserId'
 import { EmailServices } from './EmailServices'
+import { CodeServices } from './CodeServices'
 
 export class AuthServices {
   constructor(
     private readonly usersRepository: IUsersRepository,
+    //services
+    private codeServices: CodeServices,
     private emailServices?: EmailServices,
   ) {}
 
@@ -37,11 +38,10 @@ export class AuthServices {
 
   async login(params: { email: string; password: string }) {
     const { email, password } = params
-    const user = await this.validateEmailUser(email)
+    const user = await this.usersRepository.findByEmail(email)
+    const matchedPassword = user ? await bcrypt.compare(password, user.password as string) : null
 
-    const matchedPassword = await bcrypt.compare(password, user.password as string)
-
-    if (!matchedPassword) throw new HttpError(401, 'Invalid email or password!')
+    if (!user || !matchedPassword) throw new HttpError(400, 'Invalid email or password!')
 
     if (!user.emailVerified) {
       await this.emailServices?.sendEmailWithVerificationCode(email, user.id)
@@ -60,12 +60,16 @@ export class AuthServices {
     const { email, verificationCode } = params
     const { id } = await this.validateEmailUser(email)
 
-    const codes = await getCodesByUserId(id)
+    const codes = await this.codeServices.findCodeByUserId(id)
+
+    if (!codes || codes?.length <= 0)
+      throw new HttpError(400, 'There is no code available for this user!')
+
     const codeContainInCodes = codes.find(code => code.code === verificationCode)
     if (!codeContainInCodes) throw new HttpError(400, 'Invalid verification code!')
 
     //delete codes from user
-    await deleteCodesByUserId(id)
+    await this.codeServices.deleteAllCodesByUserId(id)
 
     //update email verified in user
     const userUpdated = await this.usersRepository.updateById(id, { emailVerified: true })

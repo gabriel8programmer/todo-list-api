@@ -1,13 +1,18 @@
 import { Handler } from 'express'
 import { AuthServices } from '../services/AuthServices'
-import { LoginSchema, RegisterSchema, SocialSchema } from '../schemas/auth'
+import {
+  LoginBodySchema,
+  RegisterBodySchema,
+  SocialBodySchema,
+  VerifyBodySchema,
+} from '../schemas/auth'
 
 export class AuthController {
   constructor(private readonly authServices: AuthServices) {}
 
   register: Handler = async (req, res, next) => {
     try {
-      const body = RegisterSchema.parse(req.body)
+      const body = RegisterBodySchema.parse(req.body)
       const newUser = await this.authServices.register(body)
       res.json({ message: 'User create succesfuly. Log in Now!', data: newUser })
     } catch (error) {
@@ -17,7 +22,7 @@ export class AuthController {
 
   login: Handler = async (req, res, next): Promise<any> => {
     try {
-      const body = LoginSchema.parse(req.body)
+      const body = LoginBodySchema.parse(req.body)
       const data = await this.authServices.login(body)
 
       if (data.requiresEmailVerification) {
@@ -34,6 +39,9 @@ export class AuthController {
 
   verify: Handler = async (req, res, next) => {
     try {
+      const body = VerifyBodySchema.parse(req.body)
+      const data = await this.authServices.verifyLogin(body)
+      res.json({ data, message: 'Login verified successfuly!' })
     } catch (error) {
       next(error)
     }
@@ -69,7 +77,6 @@ export class AuthController {
 
   social: Handler = async (req, res, next): Promise<void | any> => {
     try {
-      const body = SocialSchema.parse(req.user)
     } catch (error) {
       next(error)
     }

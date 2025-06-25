@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 import { ITask } from '../repositories/TasksRepository'
 import { v4 as uuidv4 } from 'uuid'
 import { IUser } from '../repositories/UsersRepository'
+import { ICode } from '../repositories/CodesRepository'
 
 export const TaskSchema = new mongoose.Schema<ITask>(
   {
@@ -87,7 +88,7 @@ export const UserSchema = new mongoose.Schema<IUser>(
   { timestamps: true, versionKey: false },
 )
 
-export const CodeSchema = new mongoose.Schema(
+export const CodeSchema = new mongoose.Schema<ICode>(
   {
     id: {
       type: String,
