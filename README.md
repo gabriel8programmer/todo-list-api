@@ -13,6 +13,14 @@
   Ela oferece autenticação tradicional (e-mail e senha) e login social. Usuários podem cadastrar e gerenciar tarefas, enquanto administradores têm controle total sobre os usuários e suas respectivas tarefas.
 </p>
 
+Este projeto foi desenvolvido com foco na prática de:
+
+- nodejs e express
+- mongodb com mongoose
+- testes automatizados
+- arquitetura de código
+- documentação básica de APIs com swagger
+
 <h2>Tecnologias</h2>
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-4323d5.svg?style=for-the-badge&logo=TypeScript&logoColor=white)]()
@@ -23,6 +31,7 @@
 [![Zod](https://img.shields.io/badge/Zod-4323d5.svg?style=for-the-badge&logo=Zod&logoColor=white)]()
 [![Swagger](https://img.shields.io/badge/Swagger-4323d5.svg?style=for-the-badge&logo=Swagger&logoColor=white)]()
 [![Docker](https://img.shields.io/badge/Docker-4323d5.svg?style=for-the-badge&logo=Docker&logoColor=white)]()
+[![Jest](https://img.shields.io/badge/Jest-4323d5.svg?style=for-the-badge&logo=Jest&logoColor=white)]()
 
 <h2 id="instalação">🚀 Instalação</h2>
 
@@ -52,6 +61,11 @@ cd todo-list-api
 ```bash
 docker compose up
 ```
+Ou, se preferir manter o terminal livre.
+
+```bash
+docker compose up -d
+```
 
 #### 2. Crie o arquivo `.env` com o seguinte formato:
 
@@ -66,7 +80,7 @@ MONGODB_URL=mongodb://user:mongodb@mongodb:27017/db-todolist
 # CHAVE SECRETA PARA JWT (obrigatória)
 JWT_SECRET_KEY=<SUA_CHAVE>
 
-# CREDENCIAL DE AUTENTICAÇÃO DO GOOGLE (obrigatória)
+# CREDENCIAL DE AUTENTICAÇÃO DO GOOGLE (obrigatória para registro com google)
 GOOGLE_AUDIENCE=<SUA_CREDENCIAL_GOOGLE>
 ```
 
@@ -104,6 +118,17 @@ Ou acesse a versão de produção no seguinte endereço:
 Isso é útil para testar endpoints em diferentes ambientes sem precisar sair da documentação.
 
 ![image](https://github.com/user-attachments/assets/792c1193-4432-4ab1-bbcf-4415d3d9d9ad)
+
+---
+
+## 🧪 Rodando os testes automatizados
+
+Você pode executar os testes para garantir que a aplicação está funcionando corretamente.  
+O projeto conta com testes unitários e de integração.
+
+```bash
+npm test
+```
 
 <h2 id="rotas">📡 Rotas</h2>
 
@@ -148,11 +173,17 @@ Isso é útil para testar endpoints em diferentes ambientes sem precisar sair da
 
 <h2 id="dev">👨‍💻 Desenvolvedor</h2>
 
-Este projeto foi desenvolvido por Gabriel Pereira, com foco em aprendizado de nodejs, express, mongodb e documentação básica de API com swagger.
+<a href="https://portfolio-backend-bay-two.vercel.app/" target="_blank">
+  <table>
+  <tr>
+    <td align="center">
+      <img src="https://github.com/user-attachments/assets/c4df01b4-a935-4613-9eb9-aaf04d07b296" height="150" /><br />
+      <strong>Gabriel Pereira</strong>
+    </td>
+  </tr>
+</table>
+</a>
 
-<div>
-  <img  style="height: 150px" src="https://github.com/user-attachments/assets/c4df01b4-a935-4613-9eb9-aaf04d07b296" alt="Foto de perfil" />
-</div>
 
 Sinta-se à vontade para entrar em contato em caso de dúvidas, sugestões ou propostas de colaboração!
 
