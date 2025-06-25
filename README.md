@@ -19,7 +19,7 @@ Este projeto foi desenvolvido com foco na prática de:
 - mongodb com mongoose
 - testes automatizados
 - arquitetura de código
-- documentação básica de APIs com swagger
+- documentação básica de APIs
 
 <h2>Tecnologias</h2>
 
