@@ -33,7 +33,7 @@ export class AuthServices {
     const newUser = await this.usersRepository.create(data)
 
     const { password: _, ...userWithOutPassword } = newUser
-    return userWithOutPassword
+    return { user: userWithOutPassword, message: 'User Registered successfuly. Log in now!' }
   }
 
   async login(params: { email: string; password: string }) {
@@ -45,7 +45,11 @@ export class AuthServices {
 
     if (!user.emailVerified) {
       await this.emailServices?.sendEmailWithVerificationCode(email, user.id)
-      return { requiresEmailVerification: true }
+      return {
+        requiresEmailVerification: true,
+        message:
+          'Verification email required. Please, check your inbox to receive the verification code.',
+      }
     }
 
     //create access token
@@ -53,13 +57,16 @@ export class AuthServices {
     const refreshToken = uuidv4()
 
     const { password: _, ...userWithOutPassword } = user
-    return { accessToken, refreshToken, user: userWithOutPassword }
+    return { accessToken, refreshToken, user: userWithOutPassword, message: 'Log in successfuly!' }
   }
 
   async verifyLogin(params: { email: string; verificationCode: string }) {
     const { email, verificationCode } = params
+
+    //validate user and destructuring
     const { id } = await this.validateEmailUser(email)
 
+    //validate code
     const codes = await this.codeServices.findCodeByUserId(id)
 
     if (!codes || codes?.length <= 0)
@@ -79,7 +86,12 @@ export class AuthServices {
     const refreshToken = uuidv4()
 
     const { password: _, ...userWithOutPassword } = userUpdated as IUser
-    return { accessToken, refreshToken, user: userWithOutPassword }
+    return {
+      accessToken,
+      refreshToken,
+      user: userWithOutPassword,
+      message: 'Login verified successfuly!',
+    }
   }
 
   async logout(params: { email: string }) {}
@@ -90,7 +102,41 @@ export class AuthServices {
 
   async LoginWithFacebook(params: { name: string; email: string; emailVerified: boolean }) {}
 
-  async forgotPassword(params: { email: string }) {}
+  async forgotPassword(params: { email: string }) {
+    const { email } = params
+    //validate user and destructuring
+    const { id: userId } = await this.validateEmailUser(email)
 
-  async resetPassword(params: { email: string; verificationCode: string }) {}
+    //send verification email
+    await this.emailServices?.sendEmailWithVerificationCode(email, userId)
+
+    return { message: 'Verification code sent.' }
+  }
+
+  async resetPassword(params: { email: string; newPassword: string; verificationCode: string }) {
+    const { email, newPassword, verificationCode } = params
+
+    //validate user and destructuring
+    const { id } = await this.validateEmailUser(email)
+
+    //validate code
+    const codes = await this.codeServices.findCodeByUserId(id)
+
+    if (!codes || codes?.length <= 0)
+      throw new HttpError(400, 'There is no code available for this user!')
+
+    const codeContainInCodes = codes.find(code => code.code === verificationCode)
+    if (!codeContainInCodes) throw new HttpError(400, 'Invalid verification code!')
+
+    //delete codes from user
+    await this.codeServices.deleteAllCodesByUserId(id)
+
+    //encrypt password
+    const password = await bcrypt.hash(newPassword, 10)
+
+    //update password
+    await this.usersRepository.updateById(id, { password })
+
+    return { message: 'Password successfuly reset.' }
+  }
 }

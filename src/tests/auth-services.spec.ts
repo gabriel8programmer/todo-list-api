@@ -17,7 +17,7 @@ beforeAll(() => {
   authServices = new AuthServices(usersRepository, codeServices)
 })
 
-const registerUserTest = async (overrides?: {}): Promise<IUser> => {
+const registerUserTest = async (overrides?: {}): Promise<{ user: IUser; message: string }> => {
   return await authServices.register({
     name: 'Teste',
     email: 'teste@gmail.com',
@@ -26,13 +26,13 @@ const registerUserTest = async (overrides?: {}): Promise<IUser> => {
   })
 }
 
+let userRegistered: IUser
+
+beforeEach(async () => {
+  userRegistered = (await registerUserTest()).user
+})
+
 describe('Register user service', () => {
-  let userRegistered: IUser
-
-  beforeEach(async () => {
-    userRegistered = await registerUserTest()
-  })
-
   it('Should be able to register a user', async () => {
     expect(userRegistered).toHaveProperty('id')
   })
@@ -45,12 +45,6 @@ describe('Register user service', () => {
 })
 
 describe('Login service', () => {
-  let userRegistered: IUser
-
-  beforeEach(async () => {
-    userRegistered = await registerUserTest()
-  })
-
   it("Should be able to log in normaly if the user's email is verified", async () => {
     //manipulating database to get expected response
     await usersRepository.updateById(userRegistered.id, { emailVerified: true })
@@ -92,12 +86,6 @@ describe('Login service', () => {
 })
 
 describe('Verify login service', () => {
-  let userRegistered: IUser
-
-  beforeEach(async () => {
-    userRegistered = await registerUserTest()
-  })
-
   it("Should be able to verify login when the user doesn't have verified email", async () => {
     // create manual code in database
     const randomCode = codeServices.getRandomCodeWithLength(4)
@@ -149,6 +137,74 @@ describe('Verify login service', () => {
       authServices.verifyLogin({
         email: 'teste@gmail.com',
         verificationCode: '1234', //invalid code
+      }),
+    ).rejects.toThrow('Invalid verification code!')
+  })
+})
+
+describe('Forgot password service', () => {
+  it('Should be able to request a verification code for to reset password', async () => {
+    const data = await authServices.forgotPassword({ email: userRegistered.email })
+    expect(data).toHaveProperty('message')
+    expect(data.message).toBe('Verification code sent.')
+  })
+
+  it('Should not be able to request a verification code with invalid email', async () => {
+    await expect(authServices.forgotPassword({ email: 'teste1@gmail.com' })).rejects.toThrow(
+      'User not found!',
+    )
+  })
+})
+
+describe('Reset password service', () => {
+  let code: string
+
+  //code required
+  beforeEach(async () => {
+    code = codeServices.getRandomCodeWithLength(4)
+    await codeServices.create({ code, userId: userRegistered.id })
+  })
+
+  it('Should be able to reset password', async () => {
+    const data = await authServices.resetPassword({
+      email: userRegistered.email,
+      newPassword: '321', // new password
+      verificationCode: code,
+    })
+
+    expect(data).toHaveProperty('message')
+    expect(data.message).toBe('Password successfuly reset.')
+  })
+
+  it('Should not be able to reset password with invalid email', async () => {
+    await expect(
+      authServices.resetPassword({
+        email: 'teste1@gmail.com', //invalid email
+        newPassword: '321', // valid password
+        verificationCode: code, // valid code
+      }),
+    ).rejects.toThrow('User not found!')
+  })
+
+  it('Should not be able to reset password if the user has not requested the verification code', async () => {
+    //delete codes for this user for to test
+    await codeServices.deleteAllCodesByUserId(userRegistered.id)
+
+    await expect(
+      authServices.resetPassword({
+        email: userRegistered.email, //valid email
+        newPassword: '321', // valid password
+        verificationCode: code, // the code no longer exists
+      }),
+    ).rejects.toThrow('There is no code available for this user!')
+  })
+
+  it("Should not be able to reset password if the user's code is invalid", async () => {
+    await expect(
+      authServices.resetPassword({
+        email: userRegistered.email, //valid email
+        newPassword: '321', // valid password
+        verificationCode: '1234', // invalid code
       }),
     ).rejects.toThrow('Invalid verification code!')
   })

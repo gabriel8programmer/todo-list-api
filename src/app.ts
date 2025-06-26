@@ -6,7 +6,11 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 // connect with database
-import './config/mongoose'
+
+if (process.env.NODE_ENV !== 'test') {
+  import('./config/mongoose')
+}
+
 import { HandlerErrorsMiddleware } from './middlewares/handlerErrorsMiddleware'
 
 // routers

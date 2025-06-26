@@ -1,8 +1,10 @@
 import { Handler } from 'express'
 import { AuthServices } from '../services/AuthServices'
 import {
+  ForgotBodySchema,
   LoginBodySchema,
   RegisterBodySchema,
+  ResetBodySchema,
   SocialBodySchema,
   VerifyBodySchema,
 } from '../schemas/auth'
@@ -13,25 +15,18 @@ export class AuthController {
   register: Handler = async (req, res, next) => {
     try {
       const body = RegisterBodySchema.parse(req.body)
-      const newUser = await this.authServices.register(body)
-      res.json({ message: 'User create succesfuly. Log in Now!', data: newUser })
+      const data = await this.authServices.register(body)
+      res.status(201).json(data)
     } catch (error) {
       next(error)
     }
   }
 
-  login: Handler = async (req, res, next): Promise<any> => {
+  login: Handler = async (req, res, next) => {
     try {
       const body = LoginBodySchema.parse(req.body)
       const data = await this.authServices.login(body)
-
-      if (data.requiresEmailVerification) {
-        return res.json({
-          message: 'Verification email required. Please, check your email inbox for to continue.',
-        })
-      }
-
-      res.json({ message: 'Log in successfuly!', data })
+      res.json(data)
     } catch (error) {
       next(error)
     }
@@ -41,7 +36,7 @@ export class AuthController {
     try {
       const body = VerifyBodySchema.parse(req.body)
       const data = await this.authServices.verifyLogin(body)
-      res.json({ data, message: 'Login verified successfuly!' })
+      res.json(data)
     } catch (error) {
       next(error)
     }
@@ -63,6 +58,9 @@ export class AuthController {
 
   forgot: Handler = async (req, res, next) => {
     try {
+      const body = ForgotBodySchema.parse(req.body)
+      const data = await this.authServices.forgotPassword(body)
+      res.json(data)
     } catch (error) {
       next(error)
     }
@@ -70,12 +68,15 @@ export class AuthController {
 
   reset: Handler = async (req, res, next) => {
     try {
+      const body = ResetBodySchema.parse(req.body)
+      const data = await this.authServices.resetPassword(body)
+      res.json(data)
     } catch (error) {
       next(error)
     }
   }
 
-  social: Handler = async (req, res, next): Promise<void | any> => {
+  social: Handler = async (req, res, next) => {
     try {
     } catch (error) {
       next(error)
