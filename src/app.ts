@@ -6,7 +6,6 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 // connect with database
-
 if (process.env.NODE_ENV !== 'test') {
   import('./config/mongoose')
 }
