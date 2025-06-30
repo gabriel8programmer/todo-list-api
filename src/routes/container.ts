@@ -10,12 +10,21 @@ import { EmailServices } from '../services/EmailServices'
 import { TaskServices } from '../services/TaskServices'
 import { UserServices } from '../services/UserServices'
 
+//test instances
+import { FakeEmailServices } from '../tests/mocks/fake-email-services'
+
 //codes
 export const codesRepository = new MongooseCodesRepository()
 export const codeServices = new CodeServices(codesRepository)
 
 //email services
-export const emailServices = new EmailServices(codeServices)
+export let emailServices: EmailServices
+
+if (process.env.NODE_ENV === 'test') {
+  emailServices = new FakeEmailServices(codeServices)
+} else {
+  emailServices = new EmailServices(codeServices)
+}
 
 //repositories
 export const usersRepository = new MongooseUsersRepository()

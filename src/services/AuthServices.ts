@@ -60,7 +60,7 @@ export class AuthServices {
     return { accessToken, refreshToken, user: userWithOutPassword, message: 'Log in successfuly!' }
   }
 
-  async verifyLogin(params: { email: string; verificationCode: string }) {
+  async verifyEmail(params: { email: string; verificationCode: string }) {
     const { email, verificationCode } = params
 
     //validate user and destructuring
@@ -79,19 +79,9 @@ export class AuthServices {
     await this.codeServices.deleteAllCodesByUserId(id)
 
     //update email verified in user
-    const userUpdated = await this.usersRepository.updateById(id, { emailVerified: true })
+    await this.usersRepository.updateById(id, { emailVerified: true })
 
-    //create accesstoken and refreshToken
-    const accessToken = genDefaultJwt({ id })
-    const refreshToken = uuidv4()
-
-    const { password: _, ...userWithOutPassword } = userUpdated as IUser
-    return {
-      accessToken,
-      refreshToken,
-      user: userWithOutPassword,
-      message: 'Login verified successfuly!',
-    }
+    return { message: 'Email verified successfuly!' }
   }
 
   async logout(params: { email: string }) {}

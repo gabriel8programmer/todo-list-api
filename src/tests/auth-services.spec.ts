@@ -85,32 +85,31 @@ describe('Login service', () => {
   })
 })
 
-describe('Verify login service', () => {
-  it("Should be able to verify login when the user doesn't have verified email", async () => {
+describe('Verify email service', () => {
+  it("Should be able to verify email when the user doesn't have verified email", async () => {
     // create manual code in database
     const randomCode = codeServices.getRandomCodeWithLength(4)
     const code = await codeServices.create({ code: randomCode, userId: userRegistered.id })
 
     //get result
-    const result = await authServices.verifyLogin({
+    const result = await authServices.verifyEmail({
       email: 'teste@gmail.com',
       verificationCode: code.code,
     })
 
-    expect(result).toHaveProperty('accessToken')
-    expect(result).toHaveProperty('refreshToken')
+    expect(result.message).toBe('Email verified successfuly!')
   })
 
-  it('Should not be able to verify login with invalid email', async () => {
+  it('Should not be able to verify email with invalid email', async () => {
     await expect(
-      authServices.verifyLogin({
+      authServices.verifyEmail({
         email: 'teste1@gmail.com', // invalid email
         verificationCode: '1234', // dummy code
       }),
     ).rejects.toThrow('User not found!')
   })
 
-  it('Should not be able to verify login if the user did not request a code', async () => {
+  it('Should not be able to verify email if the user did not request a code', async () => {
     // create manual code in database
     const randomCode = codeServices.getRandomCodeWithLength(4)
     const code = await codeServices.create({ code: randomCode, userId: userRegistered.id })
@@ -120,7 +119,7 @@ describe('Verify login service', () => {
 
     //try to verify login
     await expect(
-      authServices.verifyLogin({
+      authServices.verifyEmail({
         email: 'teste@gmail.com',
         verificationCode: code.code,
       }),
@@ -134,7 +133,7 @@ describe('Verify login service', () => {
 
     //try to verify login
     await expect(
-      authServices.verifyLogin({
+      authServices.verifyEmail({
         email: 'teste@gmail.com',
         verificationCode: '1234', //invalid code
       }),

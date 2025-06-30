@@ -35,7 +35,7 @@ export class AuthController {
   verify: Handler = async (req, res, next) => {
     try {
       const body = VerifyBodySchema.parse(req.body)
-      const data = await this.authServices.verifyLogin(body)
+      const data = await this.authServices.verifyEmail(body)
       res.json(data)
     } catch (error) {
       next(error)

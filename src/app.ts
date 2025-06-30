@@ -16,6 +16,7 @@ import { HandlerErrorsMiddleware } from './middlewares/handlerErrorsMiddleware'
 import { tasksRouter } from './routes/tasks'
 import { adminRouter } from './routes/admin'
 import { authRouter } from './routes/auth'
+import { usersRouter } from './routes/users'
 
 const app = express()
 
@@ -26,7 +27,8 @@ app.use(cors())
 // routes here
 app.use('/api/admin', adminRouter) // admin
 app.use('/api/auth', authRouter) // auth
-app.use('/api/users', tasksRouter) // tasks from users
+app.use('/api/users', usersRouter) // users
+app.use('/api/users/:id/tasks', tasksRouter) // tasks from users
 
 // terms of service
 app.use('/terms', (req, res) => {

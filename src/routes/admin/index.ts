@@ -6,7 +6,6 @@ const adminRouter = Router()
 
 // USER ROUTES ONLY ADMINS
 adminRouter.get('/users', verify, isAdmin, usersController.index)
-adminRouter.get('/users/:id', verify, isAdmin, usersController.show)
 adminRouter.post('/users', verify, isAdmin, usersController.save)
 adminRouter.put('/users/:id', verify, isAdmin, usersController.update)
 adminRouter.delete('/users/:id', verify, isAdmin, usersController.delete)

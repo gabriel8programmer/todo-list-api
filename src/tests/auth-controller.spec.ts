@@ -1,7 +1,14 @@
 import request, { Response } from 'supertest'
 import { app } from '../app'
+import { IUsersRepository } from '../repositories/UsersRepository'
+import { MongooseUsersRepository } from '../repositories/mongoose/MongooseUsersRepository'
 
+let usersRepository: IUsersRepository
 let userRegisteredResponse: Response
+
+beforeAll(() => {
+  usersRepository = new MongooseUsersRepository()
+})
 
 beforeEach(async () => {
   userRegisteredResponse = await request(app).post('/api/auth/register').send({
@@ -33,14 +40,32 @@ describe('Register controller method', () => {
 
 describe('Login controller method', () => {
   it("Should be able to log in normaly if the user's email is verified", async () => {
+    //manipuling body for to test
+    const { user } = userRegisteredResponse.body
+    await usersRepository.updateById(user.id, { emailVerified: true })
+
     const res = await request(app).post('/api/auth/login').send({
       email: 'teste@gmail.com',
       password: '123',
     })
 
-    //manipuling result
+    expect(res.status).toBe(200)
+    expect(res.body).toHaveProperty('accessToken')
+    expect(res.body).toHaveProperty('refreshToken')
+  })
+
+  it("Should not be able to log in with user's email not verified", async () => {
+    const res = await request(app).post('/api/auth/login').send({
+      email: 'teste@gmail.com',
+      password: '123',
+    })
 
     expect(res.status).toBe(200)
+    expect(res.body.accessToken).toBeUndefined()
+    expect(res.body.refreshToken).toBeUndefined()
+    expect(res.body.message).toBe(
+      'Verification email required. Please, check your inbox to receive the verification code.',
+    )
   })
 
   it('Should not be able to log in with invalid email or password', async () => {
@@ -65,5 +90,6 @@ describe('Login controller method', () => {
 })
 
 //describe('Verify login controller method', () => {})
+
 //describe('Forgot password controller method', () => {})
 //describe('Reset password controller method', () => {})
