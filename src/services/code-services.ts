@@ -1,4 +1,4 @@
-import { ICodesRepository } from '../repositories/CodesRepository'
+import { ICodesRepository } from '../repositories/codes-repository'
 
 export class CodeServices {
   constructor(private readonly codesRepository: ICodesRepository) {}

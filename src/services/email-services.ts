@@ -1,5 +1,5 @@
 import { sendEmailWithVerificationCode } from '../utils/emails/sendEmailWithVerificationCode'
-import { CodeServices } from './CodeServices'
+import { CodeServices } from './code-services'
 
 export class EmailServices {
   constructor(private codeServices: CodeServices) {}

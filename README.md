@@ -61,6 +61,7 @@ cd todo-list-api
 ```bash
 docker compose up
 ```
+
 Ou, se preferir manter o terminal livre.
 
 ```bash
@@ -69,18 +70,23 @@ docker compose up -d
 
 #### 2. Crie o arquivo `.env` com o seguinte formato:
 
-```env
-# PORTA DO SERVIDOR (obrigatória)
-# A porta deve ser 3333 para que a documentação interativa da API (Swagger) funcione corretamente.
+```yaml
+# Ambiente de execução (opcional)
+NODE_ENV=development
+
+# Porta do servidor (deve ser 3333 para o Swagger funcionar corretamente)
 PORT=3333
 
-# URL PADRÃO CONFIGURADA NO DOCKER COMPOSE
+# URL do MongoDB (configurada no Docker Compose)
 MONGODB_URL=mongodb://user:mongodb@mongodb:27017/db-todolist
 
-# CHAVE SECRETA PARA JWT (obrigatória)
+# Senha experimental para criar um usuário admin para testes
+EXPERIMENTAL_ADMIN_PASS=<SUA_SENHA>
+
+# Chave secreta para JWT (obrigatória)
 JWT_SECRET_KEY=<SUA_CHAVE>
 
-# CREDENCIAL DE AUTENTICAÇÃO DO GOOGLE (obrigatória para registro com google)
+# Credencial do Google (obrigatória para autenticação com Google)
 GOOGLE_AUDIENCE=<SUA_CREDENCIAL_GOOGLE>
 ```
 
@@ -134,17 +140,22 @@ npm test
 
 ### 🔑 Endpoints de Autenticação
 
-| Método | Rota                         | Descrição                            | Autenticação |
-| ------ | ---------------------------- | ------------------------------------ | ------------ |
-| POST   | `/api/auth/login`            | Faz login com email e senha          | 🔓 Não       |
-| POST   | `/api/auth/register`         | Faz registro com nome, email e senha | 🔓 Não       |
-| POST   | `/api/auth/social/google`    | Faz login com google                 | 🔓 Não       |
-| POST   | `/api/auth/recover-password` | Recupera a senha                     | 🔓 Não       |
+| Método | Rota                        | Descrição                            | Autenticação |
+| ------ | --------------------------- | ------------------------------------ | ------------ |
+| POST   | `/api/auth/login`           | Faz login com email e senha          | 🔓 Não       |
+| POST   | `/api/auth/register`        | Faz registro com nome, email e senha | 🔓 Não       |
+| POST   | `/api/auth/verify-email`    | Verifica o email com código          | 🔓 Não       |
+| POST   | `/api/auth/forgot-password` | Esqueceu a senha?                    | 🔓 Não       |
+| POST   | `/api/auth/reset-password`  | Recupera a senha                     | 🔓 Não       |
+| POST   | `/api/auth/social/google`   | Faz login com google                 | 🔓 Não       |
 
 ### ✅ Endpoints públicos (requer autenticação com token de cliente ou admin)
 
 | Método | Rota                              | Descrição                                   | Autenticação |
 | ------ | --------------------------------- | ------------------------------------------- | ------------ |
+| GET    | `/api/users/:id`                  | Obem um usuário pelo seu ID                 | 🔒 Sim       |
+| PUT    | `/api/users/:id`                  | Atualiza um usuário pelo seu ID             | 🔒 Sim       |
+| DELETE | `/api/users/:id`                  | Remove um usuário pelo seu ID               | 🔒 Sim       |
 | GET    | `/api/users/:id/tasks`            | Lista todas as tasks de um usuario          | 🔒 Sim       |
 | GET    | `/api/users/:id/tasks/:taskId`    | Obtém uma task de um usuário pelo ID        | 🔒 Sim       |
 | POST   | `/api/users/:id/tasks`            | Cria uma nova task relacionado a um usuario | 🔒 Sim       |
@@ -166,10 +177,14 @@ npm test
 
 2. Tasks
 
-| Método | Rota                   | Descrição               | Autenticação |
-| ------ | ---------------------- | ----------------------- | ------------ |
-| GET    | `/api/admin/tasks`     | Lista todas as tasks    | 🔒 Sim       |
-| DELETE | `/api/admin/tasks/:id` | Remove uma task pelo ID | 🔒 Sim       |
+| Método | Rota                          | Descrição                     | Autenticação |
+| ------ | ----------------------------- | ----------------------------- | ------------ |
+| GET    | `/api/admin/tasks`            | Lista todas as tasks          | 🔒 Sim       |
+| GET    | `/api/admin/tasks/:taskId`    | Obtem uma task pelo seu ID    | 🔒 Sim       |
+| POST   | `/api/admin/tasks`            | Cria uma nova task            | 🔒 Sim       |
+| PUT    | `/api/admin/tasks`            | Atualiza uma task pelo seu ID | 🔒 Sim       |
+| DELETE | `/api/admin/tasks/:taskId`    | Remove uma task pelo ID       | 🔒 Sim       |
+| DELETE | `/api/admin/tasks/delete-all` | Remove todas as tasks         | 🔒 Sim       |
 
 <h2 id="dev">👨‍💻 Desenvolvedor</h2>
 
@@ -183,7 +198,6 @@ npm test
   </tr>
 </table>
 </a>
-
 
 Sinta-se à vontade para entrar em contato em caso de dúvidas, sugestões ou propostas de colaboração!
 
@@ -204,4 +218,3 @@ Sinta-se à vontade para entrar em contato em caso de dúvidas, sugestões ou pr
 <a href="https://portfolio-backend-bay-two.vercel.app/" target="_blank">
   <img src="https://img.shields.io/badge/Portfolio-4323d5.svg?style=for-the-badge&logo=firefox&logoColor=white" alt="Portfólio" />
 </a>
-

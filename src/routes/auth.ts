@@ -1,6 +1,6 @@
 import { Router } from 'express'
-import { authController } from '../container'
-import { authGoogle } from '../../middlewares/oAuthGoogleMiddleware'
+import { authController } from './container'
+import { authGoogle } from '../middlewares/oauth-google-middleware'
 
 const authRouter = Router()
 

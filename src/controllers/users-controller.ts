@@ -1,6 +1,6 @@
 import { Handler } from 'express'
-import { UserServices } from '../services/UserServices'
-import { SaveUserSchema, UpdateUserSchema } from '../schemas/users'
+import { UserServices } from '../services/user-services'
+import { SaveUserSchema, UpdateUserSchema } from '../schemas/user-schemas'
 
 export class UsersController {
   constructor(private readonly userServices: UserServices) {}

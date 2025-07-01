@@ -1,6 +1,6 @@
 import { Handler } from 'express'
-import { HttpError } from '../errors/HttpError'
-import { MongooseUsersRepository } from '../repositories/mongoose/MongooseUsersRepository'
+import { HttpError } from '../errors/http-error'
+import { MongooseUsersRepository } from '../repositories/mongoose/mongoose-users-repository'
 
 const usersRepository = new MongooseUsersRepository()
 

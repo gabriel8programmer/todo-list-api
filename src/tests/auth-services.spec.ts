@@ -1,9 +1,9 @@
-import { ICodesRepository } from '../repositories/CodesRepository'
-import { MongooseCodesRepository } from '../repositories/mongoose/MongooseCodesRepository'
-import { MongooseUsersRepository } from '../repositories/mongoose/MongooseUsersRepository'
-import { IUser, IUsersRepository } from '../repositories/UsersRepository'
-import { AuthServices } from '../services/AuthServices'
-import { CodeServices } from '../services/CodeServices'
+import { ICodesRepository } from '../repositories/codes-repository'
+import { MongooseCodesRepository } from '../repositories/mongoose/mongoose-codes-repository'
+import { MongooseUsersRepository } from '../repositories/mongoose/mongoose-users-repository'
+import { IUser, IUsersRepository } from '../repositories/users-repository'
+import { AuthServices } from '../services/auth-services'
+import { CodeServices } from '../services/code-services'
 
 let usersRepository: IUsersRepository
 let codesRepository: ICodesRepository

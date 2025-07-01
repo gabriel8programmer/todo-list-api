@@ -1,5 +1,5 @@
-import { EnvSchema } from '../../schemas/env'
-import { MongooseUsersRepository } from '../../repositories/mongoose/MongooseUsersRepository'
+import { EnvSchema } from '../../schemas/env-schemas'
+import { MongooseUsersRepository } from '../../repositories/mongoose/mongoose-users-repository'
 import { encryptPassword } from '../../utils/passwords/encryptPassword'
 
 const _admin_experimental_pass = EnvSchema.parse(process.env).EXPERIMENTAL_ADMIN_PASS || '123'

@@ -1,5 +1,5 @@
 import { User } from '../../mongoose/schema'
-import { ICreateUserParams, IUser, IUsersRepository } from '../UsersRepository'
+import { ICreateUserParams, IUser, IUsersRepository } from '../users-repository'
 
 export class MongooseUsersRepository implements IUsersRepository {
   private formatUserForResponse(user: any): IUser {

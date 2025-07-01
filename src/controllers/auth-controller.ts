@@ -1,5 +1,5 @@
 import { Handler } from 'express'
-import { AuthServices } from '../services/AuthServices'
+import { AuthServices } from '../services/auth-services'
 import {
   ForgotBodySchema,
   LoginBodySchema,
@@ -7,7 +7,8 @@ import {
   ResetBodySchema,
   SocialBodySchema,
   VerifyBodySchema,
-} from '../schemas/auth'
+} from '../schemas/auth-schemas'
+import { userServices } from '../routes/container'
 
 export class AuthController {
   constructor(private readonly authServices: AuthServices) {}
@@ -78,6 +79,22 @@ export class AuthController {
 
   social: Handler = async (req, res, next) => {
     try {
+      const { name, email, emailVerified } = SocialBodySchema.parse(req.body)
+
+      let data
+
+      if (req.user) {
+        const { isWithFacebook, isWithGoogle } = req.user
+        data = await this.authServices.socialLogin({
+          name,
+          email,
+          emailVerified,
+          isWithGoogle,
+          isWithFacebook,
+        })
+      }
+
+      res.json(data)
     } catch (error) {
       next(error)
     }

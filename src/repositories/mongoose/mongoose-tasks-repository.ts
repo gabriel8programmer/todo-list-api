@@ -1,5 +1,5 @@
 import { Task } from '../../mongoose/schema'
-import { ICreateTaskParams, ITask, ITasksRepository } from '../TasksRepository'
+import { ICreateTaskParams, ITask, ITasksRepository } from '../tasks-repository'
 
 export class MongooseTasksRepository implements ITasksRepository {
   async find(): Promise<ITask[]> {

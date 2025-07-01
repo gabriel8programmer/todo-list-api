@@ -1,5 +1,5 @@
 import { createTransport } from 'nodemailer'
-import { EnvSchema } from '../schemas/env'
+import { EnvSchema } from '../schemas/env-schemas'
 
 const { NODEMAILER_HOST, NODEMAILER_PORT, NODEMAILER_USER, NODEMAILER_PASS } = EnvSchema.parse(
   process.env,

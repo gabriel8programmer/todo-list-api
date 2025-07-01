@@ -1,4 +1,4 @@
-import { IUserRaw } from './UsersRepository'
+import { IUserRaw } from './users-repository'
 
 export interface ITaskBase {
   id: string

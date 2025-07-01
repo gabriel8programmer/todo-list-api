@@ -1,6 +1,6 @@
 import { PassThrough } from 'stream'
-import { HttpError } from '../errors/HttpError'
-import { ICreateUserParams, IUsersRepository } from '../repositories/UsersRepository'
+import { HttpError } from '../errors/http-error'
+import { ICreateUserParams, IUsersRepository } from '../repositories/users-repository'
 import bcrypt from 'bcrypt'
 
 export class UserServices {

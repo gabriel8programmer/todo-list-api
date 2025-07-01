@@ -1,5 +1,5 @@
 import { app } from './app'
-import { EnvSchema } from './schemas/env'
+import { EnvSchema } from './schemas/env-schemas'
 
 const env = EnvSchema.parse(process.env)
 const port = env.PORT

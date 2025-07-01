@@ -1,10 +1,10 @@
-import { IUser, IUsersRepository } from '../repositories/UsersRepository'
+import { IUser, IUsersRepository } from '../repositories/users-repository'
 import bcrypt from 'bcrypt'
-import { HttpError } from '../errors/HttpError'
+import { HttpError } from '../errors/http-error'
 import { v4 as uuidv4 } from 'uuid'
 import { genDefaultJwt } from '../utils/jwt/genDefaultJwt'
-import { EmailServices } from './EmailServices'
-import { CodeServices } from './CodeServices'
+import { EmailServices } from './email-services'
+import { CodeServices } from './code-services'
 
 export class AuthServices {
   constructor(
@@ -52,7 +52,7 @@ export class AuthServices {
       }
     }
 
-    //create access token
+    //create access token and refresh token
     const accessToken = genDefaultJwt({ id: user.id })
     const refreshToken = uuidv4()
 
@@ -88,9 +88,26 @@ export class AuthServices {
 
   async refresh(params: { email: string }) {}
 
-  async LoginWithGoogle(params: { name: string; email: string; emailVerified: boolean }) {}
+  async socialLogin(params: {
+    name: string
+    email: string
+    emailVerified: boolean
+    isWithGoogle?: boolean
+    isWithFacebook?: boolean
+  }) {
+    const { email } = params
 
-  async LoginWithFacebook(params: { name: string; email: string; emailVerified: boolean }) {}
+    //validate user
+    this.validateEmailUser(email)
+
+    const user = await this.usersRepository.create(params)
+
+    //create access token and refresh token
+    const accessToken = genDefaultJwt({ id: user.id })
+    const refreshToken = uuidv4()
+
+    return { user, accessToken, refreshToken, message: 'Social Log in successfuly!' }
+  }
 
   async forgotPassword(params: { email: string }) {
     const { email } = params

@@ -1,7 +1,7 @@
 import fs from 'fs'
 import { resolve } from 'node:path'
 import { IEmailOptions, sendEmail } from '../../config/nodemailer'
-import { EnvSchema } from '../../schemas/env'
+import { EnvSchema } from '../../schemas/env-schemas'
 
 const emailTemplatePath = resolve('src', 'templates', 'emails', 'verify-email.html')
 const verifyEmailFileHtml = fs.readFileSync(emailTemplatePath, { encoding: 'utf-8' })

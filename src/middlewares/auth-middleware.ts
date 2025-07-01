@@ -1,7 +1,7 @@
 import { Handler } from 'express'
-import { HttpError } from '../errors/HttpError'
+import { HttpError } from '../errors/http-error'
 import jwt from 'jsonwebtoken'
-import { MongooseUsersRepository } from '../repositories/mongoose/MongooseUsersRepository'
+import { MongooseUsersRepository } from '../repositories/mongoose/mongoose-users-repository'
 
 const usersRepository = new MongooseUsersRepository()
 

@@ -30,6 +30,7 @@ export const ResetBodySchema = z.object({
 export const SocialBodySchema = z.object({
   name: z.string(),
   email: z.string().email(),
+  emailVerified: z.boolean().default(false),
   isWithGoogle: z.boolean().optional(),
   isWithFacebook: z.boolean().optional(),
 })

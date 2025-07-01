@@ -1,4 +1,4 @@
-import { ITaskRaw } from './TasksRepository'
+import { ITaskRaw } from './tasks-repository'
 
 export type IUserRole = 'ADMIN' | 'CLIENT'
 
@@ -33,7 +33,6 @@ export interface ICreateUserParams {
   emailVerified?: boolean
   isWithGoogle?: boolean
   isWithFacebook?: boolean
-  updatedAt?: Date
 }
 
 export interface IUsersRepository {

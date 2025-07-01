@@ -1,8 +1,8 @@
 import mongoose from 'mongoose'
-import { ITask } from '../repositories/TasksRepository'
+import { ITask } from '../repositories/tasks-repository'
 import { v4 as uuidv4 } from 'uuid'
-import { IUser } from '../repositories/UsersRepository'
-import { ICode } from '../repositories/CodesRepository'
+import { IUser } from '../repositories/users-repository'
+import { ICode } from '../repositories/codes-repository'
 
 export const TaskSchema = new mongoose.Schema<ITask>(
   {

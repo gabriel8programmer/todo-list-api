@@ -1,4 +1,4 @@
-import { ICreateTaskParams, ITasksRepository } from '../repositories/TasksRepository'
+import { ICreateTaskParams, ITasksRepository } from '../repositories/tasks-repository'
 
 export class TaskServices {
   constructor(private readonly tasksRepository: ITasksRepository) {}

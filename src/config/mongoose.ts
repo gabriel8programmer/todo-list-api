@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 import 'dotenv/config'
-import { EnvSchema } from '../schemas/env'
+import { EnvSchema } from '../schemas/env-schemas'
 
 const _env = EnvSchema.parse(process.env)
 

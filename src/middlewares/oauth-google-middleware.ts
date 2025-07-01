@@ -1,12 +1,13 @@
 import { Handler } from 'express'
-import { HttpError } from '../errors/HttpError'
+import { HttpError } from '../errors/http-error'
 import { OAuth2Client } from 'google-auth-library'
+import { EnvSchema } from '../schemas/env-schemas'
 
 // create google client
 const googleClient = new OAuth2Client()
 
 // enviroments
-const GOOGLE_CLIENT_ID = process.env.GOOGLE_AUDIENCE
+const GOOGLE_CLIENT_ID = EnvSchema.parse(process.env).GOOGLE_AUDIENCE
 
 export const authGoogle: Handler = async (req, res, next) => {
   try {

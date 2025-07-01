@@ -10,7 +10,7 @@ if (process.env.NODE_ENV !== 'test') {
   import('./config/mongoose')
 }
 
-import { HandlerErrorsMiddleware } from './middlewares/handlerErrorsMiddleware'
+import { HandlerErrorsMiddleware } from './middlewares/handler-errors-middleware'
 
 // routers
 import { tasksRouter } from './routes/tasks'

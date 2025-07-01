@@ -1,6 +1,6 @@
 import { Router } from 'express'
-import { isAdmin, verifyToken as verify } from '../../middlewares/auth'
-import { tasksController, usersController } from '../container'
+import { isAdmin, verifyToken as verify } from '../middlewares/auth-middleware'
+import { tasksController, usersController } from './container'
 
 const adminRouter = Router()
 

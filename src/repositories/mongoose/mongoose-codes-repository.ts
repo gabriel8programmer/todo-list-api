@@ -1,5 +1,5 @@
 import { Code } from '../../mongoose/schema'
-import { ICode, ICodesRepository, ICreateCodeParams } from '../CodesRepository'
+import { ICode, ICodesRepository, ICreateCodeParams } from '../codes-repository'
 
 export class MongooseCodesRepository implements ICodesRepository {
   private formatCodeForResponse(user: any): ICode {

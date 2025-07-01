@@ -1,7 +1,7 @@
 import request, { Response } from 'supertest'
 import { app } from '../app'
-import { IUsersRepository } from '../repositories/UsersRepository'
-import { MongooseUsersRepository } from '../repositories/mongoose/MongooseUsersRepository'
+import { IUsersRepository } from '../repositories/users-repository'
+import { MongooseUsersRepository } from '../repositories/mongoose/mongoose-users-repository'
 
 let usersRepository: IUsersRepository
 let userRegisteredResponse: Response
