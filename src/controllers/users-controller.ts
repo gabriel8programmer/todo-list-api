@@ -54,4 +54,11 @@ export class UsersController {
       next(error)
     }
   }
+
+  deleteAll: Handler = async (req, res, next) => {
+    try {
+    } catch (error) {
+      next(error)
+    }
+  }
 }
