@@ -16,6 +16,8 @@ export const LogoutBodyRequestSchema = z.object({
   email: z.string().email(),
 })
 
+export const RefreshBodyRequestSchema = LogoutBodyRequestSchema
+
 export const VerifyBodyRequestSchema = z.object({
   email: z.string().email(),
   verificationCode: z.string(),

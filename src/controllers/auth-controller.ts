@@ -3,6 +3,8 @@ import { AuthServices } from '../services/auth-services'
 import {
   ForgotBodyRequestSchema,
   LoginBodyRequestSchema,
+  LogoutBodyRequestSchema,
+  RefreshBodyRequestSchema,
   RegisterBodyRequestSchema,
   ResetBodyRequestSchema,
   SocialUserRequestSchema,
@@ -44,7 +46,7 @@ export class AuthController {
 
   logout: Handler = async (req, res, next) => {
     try {
-      const body = LoginBodyRequestSchema.parse(req.body)
+      const body = LogoutBodyRequestSchema.parse(req.body)
       const data = await this.authServices.logout(body)
       res.json(data)
     } catch (error) {
@@ -54,6 +56,9 @@ export class AuthController {
 
   refresh: Handler = async (req, res, next) => {
     try {
+      const body = RefreshBodyRequestSchema.parse(req.body)
+      const data = await this.authServices.refresh(body)
+      res.json(data)
     } catch (error) {
       next(error)
     }

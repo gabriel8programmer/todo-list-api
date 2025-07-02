@@ -5,9 +5,11 @@ import swaggerUi from 'swagger-ui-express'
 import fs from 'node:fs'
 import path from 'node:path'
 
+import { connect } from './config/mongoose'
+
 // connect with database
 if (process.env.NODE_ENV !== 'test') {
-  import('./config/mongoose')
+  connect().catch(error => console.log(error))
 }
 
 import { HandlerErrorsMiddleware } from './middlewares/handler-errors-middleware'

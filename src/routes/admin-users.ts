@@ -5,7 +5,7 @@ import { verifyToken } from '../middlewares/verify-token-middleware'
 
 const adminUsersRouter = Router()
 
-adminUsersRouter.get('/', verifyToken, isAdmin, usersController.index)
+adminUsersRouter.get('/', usersController.index)
 adminUsersRouter.get('/:id', verifyToken, isAdmin, usersController.show)
 adminUsersRouter.post('/', verifyToken, isAdmin, usersController.save)
 adminUsersRouter.put('/:id', verifyToken, isAdmin, usersController.update)
