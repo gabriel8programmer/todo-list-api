@@ -1,4 +1,4 @@
-import { Task } from '../../mongoose/schema'
+import { Task, User } from '../../mongoose/schema'
 import { ICreateTaskParams, ITask, ITasksRepository } from '../tasks-repository'
 
 export class MongooseTasksRepository implements ITasksRepository {
@@ -24,5 +24,9 @@ export class MongooseTasksRepository implements ITasksRepository {
   async deleteById(id: string): Promise<ITask | null> {
     const deletedTask = await Task.findByIdAndDelete(id)
     return deletedTask
+  }
+
+  async deleteAll(): Promise<number> {
+    return (await Task.deleteMany({})).deletedCount
   }
 }

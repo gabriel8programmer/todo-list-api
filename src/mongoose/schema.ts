@@ -131,10 +131,6 @@ export const RefreshTokenSchema = new mongoose.Schema<IRefreshToken>(
       default: Date.now,
       expires: 30 * 24 * 60 * 60, //default 30 days
     },
-    revoked: {
-      type: Boolean,
-      default: false,
-    },
   },
   { timestamps: false, versionKey: false },
 )

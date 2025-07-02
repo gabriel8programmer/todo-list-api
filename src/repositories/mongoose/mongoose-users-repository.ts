@@ -36,4 +36,8 @@ export class MongooseUsersRepository implements IUsersRepository {
     const user = await User.findOneAndDelete({ id }).lean()
     return user ? this.formatUserForResponse(user) : null
   }
+
+  async deleteAll(): Promise<number> {
+    return (await User.deleteMany({})).deletedCount
+  }
 }

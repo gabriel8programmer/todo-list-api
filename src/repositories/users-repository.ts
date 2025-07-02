@@ -42,4 +42,5 @@ export interface IUsersRepository {
   create: (params: Omit<ICreateUserParams, 'updatedAt'>) => Promise<IUser>
   updateById: (id: string, params: Partial<ICreateUserParams>) => Promise<IUser | null>
   deleteById: (id: string) => Promise<IUser | null>
+  deleteAll: () => Promise<number>
 }

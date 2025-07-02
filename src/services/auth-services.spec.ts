@@ -1,20 +1,27 @@
 import { ICodesRepository } from '../repositories/codes-repository'
 import { MongooseCodesRepository } from '../repositories/mongoose/mongoose-codes-repository'
+import { MongooseRefreshTokensRepository } from '../repositories/mongoose/mongoose-refresh-tokens-repository'
 import { MongooseUsersRepository } from '../repositories/mongoose/mongoose-users-repository'
+import { IRefreshTokensRepository } from '../repositories/refresh-tokens-repository'
 import { IUser, IUsersRepository } from '../repositories/users-repository'
-import { AuthServices } from '../services/auth-services'
-import { CodeServices } from '../services/code-services'
+import { AuthServices } from './auth-services'
+import { CodeServices } from './code-services'
+import { RefreshTokenServices } from './refresh-token-services'
 
 let usersRepository: IUsersRepository
 let codesRepository: ICodesRepository
+let refreshTokensRepository: IRefreshTokensRepository
 let codeServices: CodeServices
 let authServices: AuthServices
+let refreshTokenServices: RefreshTokenServices
 
 beforeAll(() => {
   usersRepository = new MongooseUsersRepository()
   codesRepository = new MongooseCodesRepository()
+  refreshTokensRepository = new MongooseRefreshTokensRepository()
+  refreshTokenServices = new RefreshTokenServices(refreshTokensRepository)
   codeServices = new CodeServices(codesRepository)
-  authServices = new AuthServices(usersRepository, codeServices)
+  authServices = new AuthServices(usersRepository, refreshTokenServices, codeServices)
 })
 
 const registerUserTest = async (overrides?: {}): Promise<{ user: IUser; message: string }> => {
@@ -54,6 +61,19 @@ describe('Login service', () => {
 
     expect(data).toHaveProperty('accessToken')
     expect(data).toHaveProperty('refreshToken')
+  })
+
+  it('Should not be able to log in for this user already authenticated with social method', async () => {
+    //manipulating database to get expected response
+    await usersRepository.updateById(userRegistered.id, {
+      isWithFacebook: true,
+      isWithGoogle: true,
+    })
+
+    //email and password valids
+    await expect(authServices.login({ email: 'teste@gmail.com', password: '123' })).rejects.toThrow(
+      'User already authenticated with social method!',
+    )
   })
 
   it("Should not log in if the user's email is not verified", async () => {
@@ -138,6 +158,60 @@ describe('Verify email service', () => {
         verificationCode: '1234', //invalid code
       }),
     ).rejects.toThrow('Invalid verification code!')
+  })
+})
+
+describe('Logout service', () => {
+  beforeEach(async () => {
+    //manipulating database to get expected response
+    await usersRepository.updateById(userRegistered.id, { emailVerified: true })
+
+    //valid login
+    await authServices.login({ email: 'teste@gmail.com', password: '123' })
+  })
+
+  it('Should be able to logout', async () => {
+    const data = await authServices.logout({ email: 'teste@gmail.com' })
+    expect(data.message).toBe('Logout done successfuly!')
+  })
+
+  it('Should not be able to logout with invalid email', async () => {
+    await expect(authServices.logout({ email: 'teste123@gmail.com' })).rejects.toThrow(
+      'User not found!',
+    )
+  })
+})
+
+describe('Refresh service', () => {
+  beforeEach(async () => {
+    //manipulating database to get expected response
+    await usersRepository.updateById(userRegistered.id, { emailVerified: true })
+
+    //valid login
+    await authServices.login({ email: 'teste@gmail.com', password: '123' })
+  })
+
+  it('Should be able to refresh tokens', async () => {
+    const data = await authServices.refresh({ email: 'teste@gmail.com' })
+
+    expect(data).toHaveProperty('accessToken')
+    expect(data).toHaveProperty('refreshToken')
+    expect(data.message).toBe('Access tokens refreshed successfuly!')
+  })
+
+  it('Should not be able to refresh tokens with invalid email', async () => {
+    await expect(authServices.refresh({ email: 'teste123@gmail.com' })).rejects.toThrow(
+      'User not found!',
+    )
+  })
+
+  it('Should not be able to refresh tokens if the user has not any refresh token saved', async () => {
+    // logout for to force error when to try refresh tokens
+    await authServices.logout({ email: 'teste@gmail.com' })
+
+    await expect(authServices.refresh({ email: 'teste@gmail.com' })).rejects.toThrow(
+      'Session expired or user is logged out!',
+    )
   })
 })
 

@@ -18,11 +18,11 @@ export class MongooseRefreshTokensRepository implements IRefreshTokensRepository
     return (await RefreshToken.create(params)).toObject()
   }
 
-  async revokeByToken(token: string): Promise<IRefreshToken | null> {
-    return await RefreshToken.findOneAndDelete({ token }).lean()
+  async deleteByToken(token: string): Promise<IRefreshToken | null> {
+    return await RefreshToken.findOneAndDelete({ token }, { new: true }).lean()
   }
 
-  async revokeAllByUserId(userId: string): Promise<number> {
-    return (await RefreshToken.deleteMany({ userId })).deletedCount
+  async deleteAllByUserId(userId: string): Promise<number> {
+    return (await RefreshToken.deleteMany({ userId }, { revoked: true })).deletedCount
   }
 }

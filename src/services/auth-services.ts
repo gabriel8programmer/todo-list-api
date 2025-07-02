@@ -1,15 +1,16 @@
-import { IUser, IUsersRepository } from '../repositories/users-repository'
+import { IUsersRepository } from '../repositories/users-repository'
 import bcrypt from 'bcrypt'
 import { HttpError } from '../errors/http-error'
 import { v4 as uuidv4 } from 'uuid'
 import { genDefaultJwt } from '../utils/jwt/genDefaultJwt'
 import { EmailServices } from './email-services'
 import { CodeServices } from './code-services'
+import { RefreshTokenServices } from './refresh-token-services'
 
 export class AuthServices {
   constructor(
     private readonly usersRepository: IUsersRepository,
-    //services
+    private refreshTokenServices: RefreshTokenServices,
     private codeServices: CodeServices,
     private emailServices?: EmailServices,
   ) {}
@@ -39,9 +40,13 @@ export class AuthServices {
   async login(params: { email: string; password: string }) {
     const { email, password } = params
     const user = await this.usersRepository.findByEmail(email)
-    const matchedPassword = user ? await bcrypt.compare(password, user.password as string) : null
+    if (!user) throw new HttpError(400, 'Invalid email or password!')
 
-    if (!user || !matchedPassword) throw new HttpError(400, 'Invalid email or password!')
+    if (user.isWithFacebook || user.isWithGoogle)
+      throw new HttpError(401, 'User already authenticated with social method!')
+
+    const matchedPassword = user ? await bcrypt.compare(password, user.password as string) : null
+    if (!matchedPassword) throw new HttpError(400, 'Invalid email or password!')
 
     if (!user.emailVerified) {
       await this.emailServices?.sendEmailWithVerificationCode(email, user.id)
@@ -52,9 +57,14 @@ export class AuthServices {
       }
     }
 
-    //create access token and refresh token
+    //create access token
     const accessToken = genDefaultJwt({ id: user.id })
-    const refreshToken = uuidv4()
+
+    //create refresh token
+    const { token: refreshToken } = await this.refreshTokenServices.createToken({
+      token: uuidv4(),
+      userId: user.id,
+    })
 
     const { password: _, ...userWithOutPassword } = user
     return { accessToken, refreshToken, user: userWithOutPassword, message: 'Log in successfuly!' }
@@ -84,9 +94,37 @@ export class AuthServices {
     return { message: 'Email verified successfuly!' }
   }
 
-  async logout(params: { email: string }) {}
+  async logout(params: { email: string }) {
+    const { email } = params
 
-  async refresh(params: { email: string }) {}
+    //validate user
+    const user = await this.validateEmailUser(email)
+
+    //remove refresh tokens this user
+    await this.refreshTokenServices.deleteTokensByUserId(user.id)
+
+    return { message: 'Logout done successfuly!' }
+  }
+
+  async refresh(params: { email: string }) {
+    const { email } = params
+
+    //validate user
+    const { id } = await this.validateEmailUser(email)
+
+    const tokens = await this.refreshTokenServices.getTokensByUserId(id)
+    if (tokens.length === 0) throw new HttpError(401, 'Session expired or user is logged out!')
+
+    //generate new accesstoken and refresh token
+    const accessToken = await genDefaultJwt({ id })
+
+    const { token: refreshToken } = await this.refreshTokenServices.createToken({
+      token: uuidv4(),
+      userId: id,
+    })
+
+    return { accessToken, refreshToken, message: 'Access tokens refreshed successfuly!' }
+  }
 
   async socialLogin(params: {
     name: string
@@ -106,7 +144,8 @@ export class AuthServices {
     const accessToken = genDefaultJwt({ id: user.id })
     const refreshToken = uuidv4()
 
-    return { user, accessToken, refreshToken, message: 'Social Log in successfuly!' }
+    const { password: _, ...restUser } = user
+    return { user: restUser, accessToken, refreshToken, message: 'Social Log in successfuly!' }
   }
 
   async forgotPassword(params: { email: string }) {

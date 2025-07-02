@@ -34,4 +34,5 @@ export interface ITasksRepository {
   create: (params: ICreateTaskParams) => Promise<ITask>
   updateById: (id: string, params: Partial<ICreateTaskParams>) => Promise<ITask | null>
   deleteById: (id: string) => Promise<ITask | null>
+  deleteAll: () => Promise<number>
 }

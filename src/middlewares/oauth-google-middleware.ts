@@ -1,6 +1,6 @@
 import { Handler } from 'express'
 import { HttpError } from '../errors/http-error'
-import { OAuth2Client } from 'google-auth-library'
+import { OAuth2Client, TokenPayload } from 'google-auth-library'
 import { EnvSchema } from '../schemas/env-schemas'
 
 // create google client
@@ -8,6 +8,11 @@ const googleClient = new OAuth2Client()
 
 // enviroments
 const GOOGLE_CLIENT_ID = EnvSchema.parse(process.env).GOOGLE_AUDIENCE
+
+interface CustomTokenPayload extends TokenPayload {
+  emailVerified?: boolean
+  isWithGoogle: boolean
+}
 
 export const authGoogle: Handler = async (req, res, next) => {
   try {
@@ -24,10 +29,13 @@ export const authGoogle: Handler = async (req, res, next) => {
       audience: GOOGLE_CLIENT_ID,
     })
 
-    const payload = ticket.getPayload()
-    const { email } = payload as any
-    req.user = { email, isWithGoogle: true }
+    const payload = ticket.getPayload() as CustomTokenPayload
 
+    //define properties
+    payload.emailVerified = payload.email_verified
+    payload.isWithGoogle = true
+
+    req.user = payload
     next()
   } catch (error: any) {
     if (error.message.startsWith('Token used too late')) {

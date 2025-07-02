@@ -1,11 +1,11 @@
 import { Router } from 'express'
-import { verifyToken as verify } from '../middlewares/auth-middleware'
 import { usersController } from './container'
+import { verifyToken } from '../middlewares/verify-token-middleware'
 
 const usersRouter = Router()
 
-usersRouter.get('/:id', verify, usersController.show)
-usersRouter.put('/:id', verify, usersController.update)
-usersRouter.delete('/:id', verify, usersController.delete)
+usersRouter.get('/:id', verifyToken, usersController.show)
+usersRouter.put('/:id', verifyToken, usersController.update)
+usersRouter.delete('/:id', verifyToken, usersController.delete)
 
 export { usersRouter }

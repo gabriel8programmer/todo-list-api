@@ -7,9 +7,8 @@ const usersRepository = new MongooseUsersRepository()
 export const validateUserByTask: Handler = async (req, res, next) => {
   try {
     const { id } = req.params
-    const email = req.user?.email as string
 
-    const user = await usersRepository.findById(email)
+    const user = await usersRepository.findById(id)
     if (!user) throw new HttpError(404, 'User not found!')
 
     if (user.role !== 'ADMIN') {
