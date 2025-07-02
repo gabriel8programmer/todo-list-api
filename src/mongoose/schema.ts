@@ -3,6 +3,7 @@ import { ITask } from '../repositories/tasks-repository'
 import { v4 as uuidv4 } from 'uuid'
 import { IUser } from '../repositories/users-repository'
 import { ICode } from '../repositories/codes-repository'
+import { IRefreshToken } from '../repositories/refresh-tokens-repository'
 
 export const TaskSchema = new mongoose.Schema<ITask>(
   {
@@ -106,12 +107,39 @@ export const CodeSchema = new mongoose.Schema<ICode>(
     createdAt: {
       type: Date,
       default: Date.now,
-      expires: 600,
+      expires: 600, // default 10 minutes
     },
   },
-  { timestamps: false },
+  { timestamps: false, versionKey: false },
+)
+
+export const RefreshTokenSchema = new mongoose.Schema<IRefreshToken>(
+  {
+    token: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    userId: {
+      type: String,
+      required: true,
+    },
+    userAgent: String,
+    ip: String,
+    createdAt: {
+      type: Date,
+      default: Date.now,
+      expires: 30 * 24 * 60 * 60, //default 30 days
+    },
+    revoked: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  { timestamps: false, versionKey: false },
 )
 
 export const User = mongoose.model('Users', UserSchema)
 export const Task = mongoose.model('Tasks', TaskSchema)
 export const Code = mongoose.model('Codes', CodeSchema)
+export const RefreshToken = mongoose.model('Refresh-tokens', RefreshTokenSchema)
