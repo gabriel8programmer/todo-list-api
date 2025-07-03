@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { authController } from './container'
-import { authGoogle } from '../middlewares/oauth-google-middleware'
+import { oAuthGoogle } from '../middlewares/oauth-google-middleware'
 
 const authRouter = Router()
 
@@ -12,6 +12,6 @@ authRouter.post('/logout', authController.logout)
 authRouter.post('/refresh', authController.refresh)
 authRouter.post('/forgot-password', authController.forgot)
 authRouter.post('/reset-password', authController.reset)
-authRouter.post('/social/google', authGoogle, authController.social)
+authRouter.post('/social/google', oAuthGoogle, authController.social)
 
 export { authRouter }

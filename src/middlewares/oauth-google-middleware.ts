@@ -14,7 +14,7 @@ interface CustomTokenPayload extends TokenPayload {
   isWithGoogle: boolean
 }
 
-export const authGoogle: Handler = async (req, res, next) => {
+export const oAuthGoogle: Handler = async (req, res, next) => {
   try {
     const completedToken = req.headers.authorization
     if (!completedToken?.startsWith('Bearer')) throw new HttpError(400, 'Invalid bearer token!')

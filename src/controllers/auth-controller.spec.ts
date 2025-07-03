@@ -89,6 +89,9 @@ describe('Login controller method', () => {
   })
 })
 
-//describe('Verify login controller method', () => {})
+//describe('Verify email controller method', () => {})
+//describe('Logout controller method', () => {})
+//describe('Refresh controller method', () => {})
 //describe('Forgot password controller method', () => {})
 //describe('Reset password controller method', () => {})
+//describe('Social controller method', ()=> {})

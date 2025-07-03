@@ -1,4 +1,5 @@
 import 'dotenv/config'
+
 import express, { NextFunction, Request, Response } from 'express'
 import cors from 'cors'
 import swaggerUi from 'swagger-ui-express'
@@ -6,11 +7,6 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 import { connect } from './config/mongoose'
-
-// connect with database
-if (process.env.NODE_ENV !== 'test') {
-  connect().catch(error => console.log(error))
-}
 
 import { HandlerErrorsMiddleware } from './middlewares/handler-errors-middleware'
 
@@ -20,8 +16,17 @@ import { adminUsersRouter } from './routes/admin-users'
 import { authRouter } from './routes/auth'
 import { usersRouter } from './routes/users'
 import { adminTasksRouter } from './routes/admin-tasks'
+import { createAdminProfileFake } from './mongoose/seeds/create-admin-profile-fake'
 
 const app = express()
+
+// connect with database
+if (process.env.NODE_ENV !== 'test') {
+  connect().catch(error => console.log(error))
+}
+
+//create admin profile fake
+createAdminProfileFake().catch(error => console.log(error.message))
 
 // config cors and json
 app.use(express.json())

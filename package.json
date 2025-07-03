@@ -7,9 +7,7 @@
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
     "start": "node build/server.js",
-    "db:create-admin-profile": "tsx src/mongoose/seeds/create-admin-profile.ts",
-    "test": "NODE_ENV=test jest --watchAll",
-    "docker-test": "docker compose -f docker-compose.test.yaml up -d"
+    "test": "NODE_ENV=test jest --watchAll"
   },
   "keywords": [],
   "engines": {

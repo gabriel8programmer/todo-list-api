@@ -1,7 +1,5 @@
 import { Router } from 'express'
 import { tasksController } from './container'
-import { ensureIsAdmin as isAdmin } from '../middlewares/ensure-is-admin-middleware'
-import { verifyToken } from '../middlewares/verify-token-middleware'
 
 const adminTasksRouter = Router()
 

@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { IUser } from '../repositories/users-repository'
 import { ICode } from '../repositories/codes-repository'
 import { IRefreshToken } from '../repositories/refresh-tokens-repository'
+import { createAdminProfileFake } from './seeds/create-admin-profile-fake'
 
 export const TaskSchema = new mongoose.Schema<ITask>(
   {

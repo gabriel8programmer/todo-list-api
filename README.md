@@ -80,9 +80,6 @@ PORT=3333
 # URL do MongoDB (configurada no Docker Compose)
 MONGODB_URL=mongodb://user:mongodb@mongodb:27017/db-todolist
 
-# Senha experimental para criar um usuário admin para testes
-EXPERIMENTAL_ADMIN_PASS=<SUA_SENHA>
-
 # Chave secreta para JWT (obrigatória)
 JWT_SECRET_KEY=<SUA_CHAVE>
 
