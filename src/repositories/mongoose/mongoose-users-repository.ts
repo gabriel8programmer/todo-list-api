@@ -13,7 +13,7 @@ export class MongooseUsersRepository implements IUsersRepository {
   }
 
   async findById(id: string): Promise<IUser | null> {
-    const user = await User.findById(id).populate('tasks').lean()
+    const user = await User.findOne({ id }).populate('tasks').lean()
     return user ? this.formatUserForResponse(user) : null
   }
 

@@ -94,6 +94,7 @@ export const CodeSchema = new mongoose.Schema<ICode>(
     id: {
       type: String,
       required: true,
+      unique: true,
       default: () => uuidv4(),
     },
     code: {

@@ -1,17 +1,14 @@
-import 'dotenv/config'
-
-import { EnvSchema } from '../../schemas/env-schemas'
-import { MongooseUsersRepository } from '../../repositories/mongoose/mongoose-users-repository'
-import { encryptPassword } from '../../utils/passwords/encryptPassword'
-
 import { connect } from '../../config/mongoose'
+import { User } from '../schema'
 
-console.log(EnvSchema.parse(process.env).MONGODB_URL)
+connect().catch(error => console.log(error))
 
-connect()
-  .then(res => {
-    console.log(res)
-  })
-  .catch(error => {
-    console.log(error)
-  })
+User.create({
+  name: 'admin',
+  email: 'admin@gmail.com',
+  password: '123',
+  emailVerified: true,
+  role: 'ADMIN',
+})
+  .then(() => console.log('Experimental admin created!'))
+  .catch(error => console.log(error))
