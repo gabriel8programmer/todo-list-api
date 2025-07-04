@@ -16,17 +16,12 @@ import { adminUsersRouter } from './routes/admin-users'
 import { authRouter } from './routes/auth'
 import { usersRouter } from './routes/users'
 import { adminTasksRouter } from './routes/admin-tasks'
-import { createAdminProfileFake } from './mongoose/seeds/create-admin-profile-fake'
 
 const app = express()
 
-// connect with database
 if (process.env.NODE_ENV !== 'test') {
   connect().catch(error => console.log(error))
 }
-
-//create admin profile fake
-createAdminProfileFake().catch(error => console.log(error.message))
 
 // config cors and json
 app.use(express.json())

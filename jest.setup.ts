@@ -1,5 +1,12 @@
+import 'dotenv/config'
+
 import { MongoMemoryServer } from 'mongodb-memory-server'
 import mongoose from 'mongoose'
+
+//global mocks
+jest.mock('./src/config/mongoose')
+jest.mock('./src/config/nodemailer')
+jest.mock('./src/services/email-services')
 
 let mongo: MongoMemoryServer
 

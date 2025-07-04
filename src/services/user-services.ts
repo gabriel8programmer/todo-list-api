@@ -1,4 +1,3 @@
-import { PassThrough } from 'stream'
 import { HttpError } from '../errors/http-error'
 import { ICreateUserParams, IUser, IUsersRepository } from '../repositories/users-repository'
 import bcrypt from 'bcrypt'
@@ -6,7 +5,7 @@ import bcrypt from 'bcrypt'
 export class UserServices {
   constructor(private readonly usersRepository: IUsersRepository) {}
 
-  formatUserWithPassword(user: IUser) {
+  formatUserWithOutPassword(user: IUser) {
     const { password: _, ...rest } = user
     return rest
   }
@@ -14,14 +13,14 @@ export class UserServices {
   async getAllUsers() {
     const users = await this.usersRepository.find()
     return users.map(user => {
-      return this.formatUserWithPassword(user)
+      return this.formatUserWithOutPassword(user)
     })
   }
 
   async validateUserById(id: string) {
     const user = await this.usersRepository.findById(id)
     if (!user) throw new HttpError(404, 'User not found!')
-    return this.formatUserWithPassword(user)
+    return this.formatUserWithOutPassword(user)
   }
 
   async getUserById(id: string) {
@@ -36,7 +35,8 @@ export class UserServices {
     const userData = { ...params, password }
 
     const newUser = await this.usersRepository.create(userData)
-    return this.formatUserWithPassword(newUser)
+    const user = this.formatUserWithOutPassword(newUser)
+    return { message: 'User created successfuly!', user }
   }
 
   async updateUserById(id: string, params: Partial<ICreateUserParams>) {
@@ -51,12 +51,23 @@ export class UserServices {
     const updatedUser = await this.usersRepository.updateById(id, params)
     if (!updatedUser) throw new HttpError(404, 'User not found!')
 
-    return { user: this.formatUserWithPassword(updatedUser), message: 'User updated successfuly!' }
+    return {
+      user: this.formatUserWithOutPassword(updatedUser),
+      message: 'User updated successfuly!',
+    }
   }
 
   async deleteUserById(id: string) {
     const deletedUser = await this.usersRepository.deleteById(id)
     if (!deletedUser) throw new HttpError(404, 'User not found!')
-    return { user: this.formatUserWithPassword(deletedUser), message: 'User deleted successfuly!' }
+    return {
+      user: this.formatUserWithOutPassword(deletedUser),
+      message: 'User deleted successfuly!',
+    }
+  }
+
+  async deleteAllUsers() {
+    const result = await this.usersRepository.deleteAll()
+    return { message: 'All users are deleted successfuly!', count: result }
   }
 }

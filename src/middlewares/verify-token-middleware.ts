@@ -28,12 +28,14 @@ export function makeVerifyTokenMiddleware(
 
       if (typeof tokenDecoded === 'string') throw new HttpError(401, 'Invalid token format!')
 
-      //save user in request
+      //validate user
       const user = await userServices.getUserById(tokenDecoded.id)
 
+      //verify if the user is logged
       const tokens = await refreshTokensRepository.findByUserId(user.id)
       if (tokens.length === 0) throw new HttpError(401, 'Session expired or user is logged out!')
 
+      //save user in request
       req.user = user
       next()
     } catch (error) {

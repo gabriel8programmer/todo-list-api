@@ -12,31 +12,18 @@ import { RefreshTokenServices } from '../services/refresh-token-services'
 import { TaskServices } from '../services/task-services'
 import { UserServices } from '../services/user-services'
 
-//test instances
-import { FakeEmailServices } from '../tests/mocks/fake-email-services'
-
-//codes
-export const codesRepository = new MongooseCodesRepository()
-export const codeServices = new CodeServices(codesRepository)
-
-//email services
-export let emailServices: EmailServices
-
-if (process.env.NODE_ENV === 'test') {
-  emailServices = new FakeEmailServices(codeServices)
-} else {
-  emailServices = new EmailServices(codeServices)
-}
-
 //repositories
 export const usersRepository = new MongooseUsersRepository()
 export const tasksRepository = new MongooseTasksRepository()
 export const refreshTokensRepository = new MongooseRefreshTokensRepository()
+export const codesRepository = new MongooseCodesRepository()
 
 //services
 export const userServices = new UserServices(usersRepository)
 export const taskServices = new TaskServices(tasksRepository)
 export const refreshTokenServices = new RefreshTokenServices(refreshTokensRepository)
+export const codeServices = new CodeServices(codesRepository)
+export const emailServices = new EmailServices(codeServices)
 export const authServices = new AuthServices(
   usersRepository,
   refreshTokenServices,
@@ -48,3 +35,5 @@ export const authServices = new AuthServices(
 export const authController = new AuthController(authServices)
 export const usersController = new UsersController(userServices)
 export const tasksController = new TasksController(taskServices)
+
+//middlewares

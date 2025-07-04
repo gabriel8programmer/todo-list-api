@@ -1,4 +1,4 @@
-import { sendEmailWithVerificationCode } from '../utils/emails/sendEmailWithVerificationCode'
+import { sendEmailWithVerificationCode } from '../utils/emails/send-email-with-verification-code'
 import { CodeServices } from './code-services'
 
 export class EmailServices {

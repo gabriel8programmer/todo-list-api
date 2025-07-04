@@ -27,8 +27,8 @@ export class UsersController {
   save: Handler = async (req, res, next) => {
     try {
       const body = SaveUserSchema.parse(req.body)
-      const newUser = await this.userServices.createUser(body)
-      res.json({ message: 'User created successfuly!', data: newUser })
+      const data = await this.userServices.createUser(body)
+      res.json(data)
     } catch (error) {
       next(error)
     }
@@ -38,8 +38,8 @@ export class UsersController {
     try {
       const id = req.params.id
       const body = UpdateUserSchema.parse(req.body)
-      const updatedUser = await this.userServices.updateUserById(id, body)
-      res.json({ message: 'User updated successfuly!', data: updatedUser })
+      const data = await this.userServices.updateUserById(id, body)
+      res.json(data)
     } catch (error) {
       next(error)
     }
@@ -48,8 +48,8 @@ export class UsersController {
   delete: Handler = async (req, res, next) => {
     try {
       const id = req.params.id
-      await this.userServices.deleteUserById(id)
-      res.json({ message: 'User deleted successfuly!' })
+      const data = await this.userServices.deleteUserById(id)
+      res.json(data)
     } catch (error) {
       next(error)
     }
@@ -57,6 +57,8 @@ export class UsersController {
 
   deleteAll: Handler = async (req, res, next) => {
     try {
+      const data = await this.userServices.deleteAllUsers()
+      res.json({})
     } catch (error) {
       next(error)
     }

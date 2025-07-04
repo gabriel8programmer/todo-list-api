@@ -4,9 +4,9 @@ import { MongooseRefreshTokensRepository } from '../repositories/mongoose/mongoo
 import { MongooseUsersRepository } from '../repositories/mongoose/mongoose-users-repository'
 import { IRefreshTokensRepository } from '../repositories/refresh-tokens-repository'
 import { IUser, IUsersRepository } from '../repositories/users-repository'
-import { AuthServices } from './auth-services'
-import { CodeServices } from './code-services'
-import { RefreshTokenServices } from './refresh-token-services'
+import { AuthServices } from '../services/auth-services'
+import { CodeServices } from '../services/code-services'
+import { RefreshTokenServices } from '../services/refresh-token-services'
 
 let usersRepository: IUsersRepository
 let codesRepository: ICodesRepository
@@ -34,6 +34,8 @@ const registerUserTest = async (overrides?: {}): Promise<{ user: IUser; message:
 }
 
 let userRegistered: IUser
+
+jest.mock('')
 
 beforeEach(async () => {
   userRegistered = (await registerUserTest()).user
