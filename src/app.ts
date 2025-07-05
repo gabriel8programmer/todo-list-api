@@ -11,7 +11,6 @@ import { connect } from './config/mongoose'
 import { HandlerErrorsMiddleware } from './middlewares/handler-errors-middleware'
 
 // routers
-import { tasksRouter } from './routes/tasks'
 import { adminUsersRouter } from './routes/admin-users'
 import { authRouter } from './routes/auth'
 import { usersRouter } from './routes/users'
@@ -32,7 +31,6 @@ app.use('/api/admin/users', adminUsersRouter) // admin users
 app.use('/api/admin/tasks', adminTasksRouter) // admin tasks
 app.use('/api/auth', authRouter) // auth
 app.use('/api/users', usersRouter) // users
-app.use('/api/users/:id/tasks', tasksRouter) // tasks to common users
 
 // terms of service
 app.use('/terms', (req, res) => {

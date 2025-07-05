@@ -1,6 +1,9 @@
 import { AuthController } from '../controllers/auth-controller'
 import { TasksController } from '../controllers/tasks-controller'
 import { UsersController } from '../controllers/users-controller'
+import { makeVerifyAdminMiddleware } from '../middlewares/verify-admin-middleware'
+import { makeVerifyTokenMiddleware } from '../middlewares/verify-token-middleware'
+import { makeVerifyUserAccessMiddleware } from '../middlewares/verify-user-access-middleware'
 import { MongooseCodesRepository } from '../repositories/mongoose/mongoose-codes-repository'
 import { MongooseRefreshTokensRepository } from '../repositories/mongoose/mongoose-refresh-tokens-repository'
 import { MongooseTasksRepository } from '../repositories/mongoose/mongoose-tasks-repository'
@@ -37,3 +40,6 @@ export const usersController = new UsersController(userServices)
 export const tasksController = new TasksController(taskServices)
 
 //middlewares
+export const verifyToken = makeVerifyTokenMiddleware(userServices, refreshTokensRepository)
+export const verifyAdmin = makeVerifyAdminMiddleware()
+export const verifyUserAccess = makeVerifyUserAccessMiddleware()

@@ -1,4 +1,4 @@
-import { ITaskRaw } from './tasks-repository'
+import { ICreateTaskParams, ITask, ITaskRaw } from './tasks-repository'
 
 export type IUserRole = 'ADMIN' | 'CLIENT'
 

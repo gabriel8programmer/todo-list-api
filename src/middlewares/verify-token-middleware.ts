@@ -38,7 +38,10 @@ export function makeVerifyTokenMiddleware(
       //save user in request
       req.user = user
       next()
-    } catch (error) {
+    } catch (error: any) {
+      if (error.message.startsWith('Token used too late')) {
+        return next(new HttpError(401, 'Expired token!'))
+      }
       next(error)
     }
   }

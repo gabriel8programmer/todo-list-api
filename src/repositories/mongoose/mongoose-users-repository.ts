@@ -1,4 +1,5 @@
-import { User } from '../../mongoose/schema'
+import { Task, User } from '../../mongoose/schema'
+import { ICreateTaskParams, ITask } from '../tasks-repository'
 import { ICreateUserParams, IUser, IUsersRepository } from '../users-repository'
 
 export class MongooseUsersRepository implements IUsersRepository {
@@ -40,4 +41,35 @@ export class MongooseUsersRepository implements IUsersRepository {
   async deleteAll(): Promise<number> {
     return (await User.deleteMany({})).deletedCount
   }
+
+  async findTasksByUserId(id: string): Promise<ITask[]> {
+    const tasks = await Task.find({ user: id }).lean()
+    return tasks
+  }
+
+  async findTaskByIdByUserIdWithTaskId(id: string, taskId: string): Promise<ITask | null> {
+    const task = await Task.findOne({ user: id, id: taskId }).lean()
+    return task
+  }
+
+  /*async addTaskByUserId(id: string, params: Omit<ICreateTaskParams, 'user'>): Promise<ITask> {}
+
+  async updateTaskByIdByUserIdWithTaskId(
+    id: string,
+    taskId: string,
+    params: Partial<Omit<ICreateTaskParams, 'user'>>,
+  ): Promise<ITask | null> {}
+
+  async deleteTaskByIdByUserIdWithTaskId(id: string, taskId: string): Promise<ITask | null> {}
+
+  findTasksByUserId: (id: string) => Promise<ITask[]>
+  findTaskByIdByUserIdWithTaskId: (id: string, taskId: string) => Promise<ITask | null>
+  addTaskByUserId: (id: string, params: Omit<ICreateTaskParams, 'user'>) => Promise<ITask>
+  updateTaskByIdByUserIdWithTaskId: (
+    id: string,
+    taskId: string,
+    params: Partial<Omit<ICreateTaskParams, 'user'>>,
+  ) => Promise<ITask | null>
+  deleteTaskByIdByUserIdWithTaskId: (id: string, taskId: string) => Promise<ITask | null>
+  */
 }

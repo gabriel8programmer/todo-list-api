@@ -1,13 +1,13 @@
 import { Router } from 'express'
 import { usersController } from './container'
 
-const adminUsersRouter = Router()
+const router = Router()
 
-adminUsersRouter.get('/', usersController.index)
-adminUsersRouter.get('/:id', usersController.show)
-adminUsersRouter.post('/', usersController.save)
-adminUsersRouter.put('/:id', usersController.update)
-adminUsersRouter.delete('/:id', usersController.delete)
-adminUsersRouter.delete('/delete-all', usersController.deleteAll)
+router.get('/', usersController.index)
+router.get('/:id', usersController.show)
+router.post('/', usersController.save)
+router.put('/:id', usersController.update)
+router.delete('/:id', usersController.delete)
+router.delete('/delete-all', usersController.deleteAll)
 
-export { adminUsersRouter }
+export { router as adminUsersRouter }

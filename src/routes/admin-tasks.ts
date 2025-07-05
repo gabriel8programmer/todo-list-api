@@ -1,13 +1,13 @@
 import { Router } from 'express'
 import { tasksController } from './container'
 
-const adminTasksRouter = Router()
+const router = Router()
 
-adminTasksRouter.get('/', tasksController.index)
-adminTasksRouter.get('/:taskId', tasksController.show)
-adminTasksRouter.post('/', tasksController.save)
-adminTasksRouter.put('/:taskId', tasksController.update)
-adminTasksRouter.delete('/:taskId', tasksController.delete)
-adminTasksRouter.delete('/delete-all', tasksController.deleteAll)
+router.get('/', tasksController.index)
+router.get('/:taskId', tasksController.show)
+router.post('/', tasksController.save)
+router.put('/:taskId', tasksController.update)
+router.delete('/:taskId', tasksController.delete)
+router.delete('/delete-all', tasksController.deleteAll)
 
-export { adminTasksRouter }
+export { router as adminTasksRouter }

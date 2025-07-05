@@ -1,17 +1,16 @@
 import { Router } from 'express'
 import { authController } from './container'
-import { oAuthGoogle } from '../middlewares/oauth-google-middleware'
+import { oAuthGoogle as google } from '../middlewares/oauth-google-middleware'
 
-const authRouter = Router()
+const router = Router()
 
-// AUTH ROUTES
-authRouter.post('/register', authController.register)
-authRouter.post('/login', authController.login)
-authRouter.post('/verify-email', authController.verify)
-authRouter.post('/logout', authController.logout)
-authRouter.post('/refresh', authController.refresh)
-authRouter.post('/forgot-password', authController.forgot)
-authRouter.post('/reset-password', authController.reset)
-authRouter.post('/social/google', oAuthGoogle, authController.social)
+router.post('/register', authController.register)
+router.post('/login', authController.login)
+router.post('/verify-email', authController.verify)
+router.post('/logout', authController.logout)
+router.post('/refresh', authController.refresh)
+router.post('/forgot-password', authController.forgot)
+router.post('/reset-password', authController.reset)
+router.post('/social/google', google, authController.social)
 
-export { authRouter }
+export { router as authRouter }

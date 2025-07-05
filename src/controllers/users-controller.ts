@@ -63,4 +63,39 @@ export class UsersController {
       next(error)
     }
   }
+
+  tasks: Handler = async (req, res, next) => {
+    try {
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  showTask: Handler = async (req, res, next) => {
+    try {
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  addTask: Handler = async (req, res, next) => {
+    try {
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  updateTask: Handler = async (req, res, next) => {
+    try {
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  removeTask: Handler = async (req, res, next) => {
+    try {
+    } catch (error) {
+      next(error)
+    }
+  }
 }
