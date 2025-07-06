@@ -142,6 +142,8 @@ npm test
 | POST   | `/api/auth/login`           | Faz login com email e senha          | 🔓 Não       |
 | POST   | `/api/auth/register`        | Faz registro com nome, email e senha | 🔓 Não       |
 | POST   | `/api/auth/verify-email`    | Verifica o email com código          | 🔓 Não       |
+| POST   | `/api/auth/logout`    | Faz logout         | 🔓 Não       |
+| POST   | `/api/auth/refresh`    | Faz refresh de tokens de autenticação         | 🔓 Não       |
 | POST   | `/api/auth/forgot-password` | Esqueceu a senha?                    | 🔓 Não       |
 | POST   | `/api/auth/reset-password`  | Recupera a senha                     | 🔓 Não       |
 | POST   | `/api/auth/social/google`   | Faz login com google                 | 🔓 Não       |
