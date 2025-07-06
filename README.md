@@ -56,18 +56,6 @@ git clone https://github.com/gabriel8programmer/todo-list-api
 cd todo-list-api
 ```
 
-#### 2. Rode o [docker compose](https://docs.docker.com/compose/) para criar o container da aplicação:
-
-```bash
-docker compose up
-```
-
-Ou, se preferir manter o terminal livre.
-
-```bash
-docker compose up -d
-```
-
 #### 2. Crie o arquivo `.env` com o seguinte formato:
 
 ```yaml
@@ -85,6 +73,18 @@ JWT_SECRET_KEY=<SUA_CHAVE>
 
 # Credencial do Google (obrigatória para autenticação com Google)
 GOOGLE_AUDIENCE=<SUA_CREDENCIAL_GOOGLE>
+```
+
+#### 3. Rode o [docker compose](https://docs.docker.com/compose/) para criar o container da aplicação:
+
+```bash
+docker compose up
+```
+
+Ou, se preferir manter o terminal livre.
+
+```bash
+docker compose up -d
 ```
 
 ## 🛰️ Uso da API
