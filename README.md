@@ -171,6 +171,7 @@ npm test
 | POST   | `/api/admin/users`     | Cria um novo usuário        | 🔒 Sim       |
 | PUT    | `/api/admin/users/:id` | Atualiza um usuário pelo ID | 🔒 Sim       |
 | DELETE | `/api/admin/users/:id` | Remove um usuário pelo ID   | 🔒 Sim       |
+| DELETE | `/api/admin/users/delete-all` | Remove todos os usuários  | 🔒 Sim       |
 
 2. Tasks
 
