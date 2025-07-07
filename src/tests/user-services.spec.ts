@@ -14,7 +14,7 @@ let taskServices: TaskServices
 beforeAll(() => {
   usersRepository = new MongooseUsersRepository()
   tasksRepository = new MongooseTasksRepository()
-  taskServices = new TaskServices(tasksRepository)
+  taskServices = new TaskServices(tasksRepository, usersRepository)
   userServices = new UserServices(usersRepository, taskServices)
 })
 

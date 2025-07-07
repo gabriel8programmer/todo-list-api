@@ -22,7 +22,7 @@ let verifyToken: Handler
 beforeAll(async () => {
   usersRepository = new MongooseUsersRepository()
   tasksRepository = new MongooseTasksRepository()
-  taskServices = new TaskServices(tasksRepository)
+  taskServices = new TaskServices(tasksRepository, usersRepository)
   userServices = new UserServices(usersRepository, taskServices)
   refreshTokensRepository = new MongooseRefreshTokensRepository()
   verifyToken = await makeVerifyTokenMiddleware(userServices, refreshTokensRepository)

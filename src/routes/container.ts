@@ -27,7 +27,7 @@ export const refreshTokensRepository = new MongooseRefreshTokensRepository()
 export const codesRepository = new MongooseCodesRepository()
 
 //services
-export const taskServices = new TaskServices(tasksRepository)
+export const taskServices = new TaskServices(tasksRepository, usersRepository)
 export const userServices = new UserServices(usersRepository, taskServices)
 export const refreshTokenServices = new RefreshTokenServices(refreshTokensRepository)
 export const codeServices = new CodeServices(codesRepository)

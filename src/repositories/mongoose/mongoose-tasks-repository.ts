@@ -4,6 +4,7 @@ import {
   IFindTasksWhereParams,
   ITask,
   ITasksRepository,
+  IUpdateTaskParams,
 } from '../tasks-repository'
 
 export class MongooseTasksRepository implements ITasksRepository {
@@ -19,7 +20,7 @@ export class MongooseTasksRepository implements ITasksRepository {
     return (await Task.create(params)).toObject()
   }
 
-  async updateById(id: string, params: Partial<ICreateTaskParams>): Promise<ITask | null> {
+  async updateById(id: string, params: IUpdateTaskParams): Promise<ITask | null> {
     return await Task.findByIdAndUpdate(id, params, { set: true }).lean()
   }
 
