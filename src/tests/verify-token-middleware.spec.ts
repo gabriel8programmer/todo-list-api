@@ -7,15 +7,23 @@ import { IRefreshTokensRepository } from '../repositories/refresh-tokens-reposit
 import { MongooseRefreshTokensRepository } from '../repositories/mongoose/mongoose-refresh-tokens-repository'
 import { HttpError } from '../errors/http-error'
 import { genDefaultJwt } from '../utils/jwt/genDefaultJwt'
+import { ITasksRepository } from '../repositories/tasks-repository'
+import { MongooseTasksRepository } from '../repositories/mongoose/mongoose-tasks-repository'
+import { TaskServices } from '../services/task-services'
+import { Types } from 'mongoose'
 
+let tasksRepository: ITasksRepository
 let usersRepository: IUsersRepository
 let userServices: UserServices
+let taskServices: TaskServices
 let refreshTokensRepository: IRefreshTokensRepository
 let verifyToken: Handler
 
 beforeAll(async () => {
   usersRepository = new MongooseUsersRepository()
-  userServices = new UserServices(usersRepository)
+  tasksRepository = new MongooseTasksRepository()
+  taskServices = new TaskServices(tasksRepository)
+  userServices = new UserServices(usersRepository, taskServices)
   refreshTokensRepository = new MongooseRefreshTokensRepository()
   verifyToken = await makeVerifyTokenMiddleware(userServices, refreshTokensRepository)
 })
@@ -62,7 +70,8 @@ describe('Verify token middleware', () => {
 
   it('Should not be able to verify token with invalid user', async () => {
     //create valid jwt
-    const fakeJwtToken = genDefaultJwt({ id: '1234' }) //invalid user id
+    const fakeId = new Types.ObjectId()
+    const fakeJwtToken = genDefaultJwt({ id: fakeId.toString() }) //invalid user id
 
     const req = mockReq(fakeJwtToken)
     const res = mockRes()
@@ -85,7 +94,7 @@ describe('Verify token middleware', () => {
     })
 
     //create fake token
-    const fakeJwtToken = genDefaultJwt({ id: user.id })
+    const fakeJwtToken = genDefaultJwt({ id: user._id })
 
     const req = mockReq(fakeJwtToken)
     const res = mockRes()

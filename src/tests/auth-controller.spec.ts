@@ -29,7 +29,7 @@ describe('Register controller method', () => {
   it('Should be able to register a user', async () => {
     expect(userRegisteredResponse.status).toBe(201)
     expect(userRegisteredResponse.body).toHaveProperty('user')
-    expect(userRegisteredResponse.body.user).toHaveProperty('id')
+    expect(userRegisteredResponse.body.user).toHaveProperty('_id')
   })
 
   it('Should not be able to register a user with the same email', async () => {
@@ -49,7 +49,7 @@ describe('Login controller method', () => {
   it("Should be able to log in normaly if the user's email is verified", async () => {
     //manipuling body for to test
     const { user } = userRegisteredResponse.body
-    await usersRepository.updateById(user.id, { emailVerified: true })
+    await usersRepository.updateById(user._id, { emailVerified: true })
 
     const res = await request(app).post('/api/auth/login').send({
       email: 'teste@gmail.com',
@@ -101,7 +101,7 @@ describe('Verify email controller method', () => {
     //create fake code
     const { code: verificationCode } = await codeServices.create({
       code: codeServices.getRandomCodeWithLength(4),
-      userId: userRegisteredResponse.body.user.id,
+      userId: userRegisteredResponse.body.user._id,
     })
 
     const email = userRegisteredResponse.body.user.email
@@ -119,7 +119,7 @@ describe('Verify email controller method', () => {
     //create fake code
     const { code: verificationCode } = await codeServices.create({
       code: codeServices.getRandomCodeWithLength(4),
-      userId: userRegisteredResponse.body.user.id,
+      userId: userRegisteredResponse.body.user._id,
     })
 
     const email = 'teste123@gmail.com'
@@ -149,7 +149,7 @@ describe('Verify email controller method', () => {
     //create fake code
     await codeServices.create({
       code: codeServices.getRandomCodeWithLength(4),
-      userId: userRegisteredResponse.body.user.id,
+      userId: userRegisteredResponse.body.user._id,
     })
 
     const email = userRegisteredResponse.body.user.email

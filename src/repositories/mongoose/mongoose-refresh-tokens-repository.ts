@@ -23,6 +23,6 @@ export class MongooseRefreshTokensRepository implements IRefreshTokensRepository
   }
 
   async deleteAllByUserId(userId: string): Promise<number> {
-    return (await RefreshToken.deleteMany({ userId }, { revoked: true })).deletedCount
+    return (await RefreshToken.deleteMany({ userId })).deletedCount
   }
 }

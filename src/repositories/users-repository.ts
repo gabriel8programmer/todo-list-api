@@ -1,9 +1,9 @@
-import { ICreateTaskParams, ITask, ITaskRaw } from './tasks-repository'
+import { ITaskRaw } from './tasks-repository'
 
 export type IUserRole = 'ADMIN' | 'CLIENT'
 
 export interface IUserBase {
-  id: string
+  _id: string
   name: string
   email: string
   password?: string
@@ -43,4 +43,7 @@ export interface IUsersRepository {
   updateById: (id: string, params: Partial<ICreateUserParams>) => Promise<IUser | null>
   deleteById: (id: string) => Promise<IUser | null>
   deleteAll: () => Promise<number>
+  addTaskById: (id: string, taskId: string) => Promise<void>
+  removeTaskById: (id: string, taskId: string) => Promise<void>
+  clearTaskById: (id: string) => Promise<void>
 }

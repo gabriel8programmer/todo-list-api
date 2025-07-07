@@ -1,15 +1,16 @@
 import { Router } from 'express'
 import { usersController } from './container'
 
-const usersRouter = Router()
+const router = Router()
 
-usersRouter.get('/:id', usersController.show)
-usersRouter.put('/:id', usersController.update)
-usersRouter.delete('/:id', usersController.delete)
-usersRouter.get('/:id/tasks', usersController.tasks)
-usersRouter.get('/:id/tasks/:taskId', usersController.showTask)
-usersRouter.post('/:id/tasks', usersController.addTask)
-usersRouter.put('/:id/tasks/:taskId', usersController.updateTask)
-usersRouter.delete('/:id/tasks/:taskId', usersController.removeTask)
+router.get('/:id', usersController.show)
+router.put('/:id', usersController.update)
+router.delete('/:id', usersController.delete)
+router.get('/:id/tasks', usersController.tasks)
+router.get('/:id/tasks/:taskId', usersController.showTask)
+router.post('/:id/tasks', usersController.addTask)
+router.put('/:id/tasks/:taskId', usersController.updateTask)
+router.delete('/:id/tasks/delete-all', usersController.removeAllTasks)
+router.delete('/:id/tasks/:taskId', usersController.removeTask)
 
-export { usersRouter }
+export { router as usersRouter }

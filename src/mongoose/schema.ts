@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import mongoose, { Types } from 'mongoose'
 import { ITask } from '../repositories/tasks-repository'
 import { v4 as uuidv4 } from 'uuid'
 import { IUser } from '../repositories/users-repository'
@@ -7,12 +7,6 @@ import { IRefreshToken } from '../repositories/refresh-tokens-repository'
 
 export const TaskSchema = new mongoose.Schema<ITask>(
   {
-    id: {
-      type: String,
-      required: true,
-      default: () => uuidv4(),
-      unique: true,
-    },
     title: {
       type: String,
       required: true,
@@ -33,7 +27,7 @@ export const TaskSchema = new mongoose.Schema<ITask>(
       required: true,
     },
     user: {
-      type: String,
+      type: Types.ObjectId,
       ref: 'Users',
       required: true,
     },
@@ -46,12 +40,6 @@ export const TaskSchema = new mongoose.Schema<ITask>(
 
 export const UserSchema = new mongoose.Schema<IUser>(
   {
-    id: {
-      type: String,
-      required: true,
-      default: () => uuidv4(),
-      unique: true,
-    },
     name: {
       type: String,
       required: true,
@@ -84,7 +72,7 @@ export const UserSchema = new mongoose.Schema<IUser>(
     },
     tasks: [
       {
-        type: String,
+        type: Types.ObjectId,
         ref: 'Tasks',
       },
     ],
@@ -97,12 +85,6 @@ export const UserSchema = new mongoose.Schema<IUser>(
 
 export const CodeSchema = new mongoose.Schema<ICode>(
   {
-    id: {
-      type: String,
-      required: true,
-      unique: true,
-      default: () => uuidv4(),
-    },
     code: {
       type: String,
       required: true,

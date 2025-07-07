@@ -49,7 +49,7 @@ export class AuthServices {
     if (!matchedPassword) throw new HttpError(400, 'Invalid email or password!')
 
     if (!user.emailVerified) {
-      await this.emailServices?.sendEmailWithVerificationCode(email, user.id)
+      await this.emailServices?.sendEmailWithVerificationCode(email, user._id)
       return {
         requiresEmailVerification: true,
         message:
@@ -58,12 +58,12 @@ export class AuthServices {
     }
 
     //create access token
-    const accessToken = genDefaultJwt({ id: user.id })
+    const accessToken = genDefaultJwt({ id: user._id })
 
     //create refresh token
     const { token: refreshToken } = await this.refreshTokenServices.createToken({
       token: uuidv4(),
-      userId: user.id,
+      userId: user._id,
     })
 
     const { password: _, ...userWithOutPassword } = user
@@ -74,10 +74,10 @@ export class AuthServices {
     const { email, verificationCode } = params
 
     //validate user and destructuring
-    const { id } = await this.validateEmailUser(email)
+    const { _id } = await this.validateEmailUser(email)
 
     //validate code
-    const codes = await this.codeServices.findCodeByUserId(id)
+    const codes = await this.codeServices.findCodeByUserId(_id)
 
     if (!codes || codes?.length <= 0)
       throw new HttpError(400, 'There is no code available for this user!')
@@ -86,10 +86,10 @@ export class AuthServices {
     if (!codeContainInCodes) throw new HttpError(400, 'Invalid verification code!')
 
     //delete codes from user
-    await this.codeServices.deleteAllCodesByUserId(id)
+    await this.codeServices.deleteAllCodesByUserId(_id)
 
     //update email verified in user
-    await this.usersRepository.updateById(id, { emailVerified: true })
+    await this.usersRepository.updateById(_id, { emailVerified: true })
 
     return { message: 'Email verified successfuly!' }
   }
@@ -101,7 +101,7 @@ export class AuthServices {
     const user = await this.validateEmailUser(email)
 
     //remove refresh tokens this user
-    await this.refreshTokenServices.deleteTokensByUserId(user.id)
+    await this.refreshTokenServices.deleteTokensByUserId(user._id)
 
     return { message: 'Logout done successfuly!' }
   }
@@ -110,17 +110,17 @@ export class AuthServices {
     const { email } = params
 
     //validate user
-    const { id } = await this.validateEmailUser(email)
+    const { _id } = await this.validateEmailUser(email)
 
-    const tokens = await this.refreshTokenServices.getTokensByUserId(id)
+    const tokens = await this.refreshTokenServices.getTokensByUserId(_id)
     if (tokens.length === 0) throw new HttpError(401, 'Session expired or user is logged out!')
 
     //generate new accesstoken and refresh token
-    const accessToken = await genDefaultJwt({ id })
+    const accessToken = await genDefaultJwt({ id: _id })
 
     const { token: refreshToken } = await this.refreshTokenServices.createToken({
       token: uuidv4(),
-      userId: id,
+      userId: _id,
     })
 
     return { accessToken, refreshToken, message: 'Access tokens refreshed successfuly!' }
@@ -141,7 +141,7 @@ export class AuthServices {
     const user = await this.usersRepository.create(params)
 
     //create access token and refresh token
-    const accessToken = genDefaultJwt({ id: user.id })
+    const accessToken = genDefaultJwt({ id: user._id })
     const refreshToken = uuidv4()
 
     const { password: _, ...restUser } = user
@@ -151,7 +151,7 @@ export class AuthServices {
   async forgotPassword(params: { email: string }) {
     const { email } = params
     //validate user and destructuring
-    const { id: userId } = await this.validateEmailUser(email)
+    const { _id: userId } = await this.validateEmailUser(email)
 
     //send verification email
     await this.emailServices?.sendEmailWithVerificationCode(email, userId)
@@ -163,10 +163,10 @@ export class AuthServices {
     const { email, newPassword, verificationCode } = params
 
     //validate user and destructuring
-    const { id } = await this.validateEmailUser(email)
+    const { _id } = await this.validateEmailUser(email)
 
     //validate code
-    const codes = await this.codeServices.findCodeByUserId(id)
+    const codes = await this.codeServices.findCodeByUserId(_id)
 
     if (!codes || codes?.length <= 0)
       throw new HttpError(400, 'There is no code available for this user!')
@@ -175,13 +175,13 @@ export class AuthServices {
     if (!codeContainInCodes) throw new HttpError(400, 'Invalid verification code!')
 
     //delete codes from user
-    await this.codeServices.deleteAllCodesByUserId(id)
+    await this.codeServices.deleteAllCodesByUserId(_id)
 
     //encrypt password
     const password = await bcrypt.hash(newPassword, 10)
 
     //update password
-    await this.usersRepository.updateById(id, { password })
+    await this.usersRepository.updateById(_id, { password })
 
     return { message: 'Password successfuly reset.' }
   }

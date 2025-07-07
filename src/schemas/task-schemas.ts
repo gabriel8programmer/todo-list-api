@@ -1,10 +1,11 @@
 import { z } from 'zod'
 
-export const SaveTaskSchema = z.object({
+export const SaveTaskRequestBodySchema = z.object({
   title: z.string(),
   description: z.string().optional(),
   status: z.enum(['todo', 'doing', 'done']).default('todo'),
   priority: z.enum(['low', 'medium', 'high']).default('low'),
+  user: z.string(),
 })
 
-export const UpdateTaskSchema = SaveTaskSchema.partial()
+export const UpdateTaskRequestBodySchema = SaveTaskRequestBodySchema.partial()

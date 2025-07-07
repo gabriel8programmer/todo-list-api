@@ -11,10 +11,7 @@ import { connect } from './config/mongoose'
 import { HandlerErrorsMiddleware } from './middlewares/handler-errors-middleware'
 
 // routers
-import { adminUsersRouter } from './routes/admin-users'
-import { authRouter } from './routes/auth'
-import { usersRouter } from './routes/users'
-import { adminTasksRouter } from './routes/admin-tasks'
+import { adminTasksRouter, usersRouter, authRouter, adminUsersRouter } from './routes'
 
 const app = express()
 

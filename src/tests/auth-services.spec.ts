@@ -43,7 +43,7 @@ beforeEach(async () => {
 
 describe('Register user service', () => {
   it('Should be able to register a user', async () => {
-    expect(userRegistered).toHaveProperty('id')
+    expect(userRegistered).toHaveProperty('_id')
   })
 
   it('Should not be able to register a user with the same email', async () => {
@@ -56,7 +56,7 @@ describe('Register user service', () => {
 describe('Login service', () => {
   it("Should be able to log in normaly if the user's email is verified", async () => {
     //manipulating database to get expected response
-    await usersRepository.updateById(userRegistered.id, { emailVerified: true })
+    await usersRepository.updateById(userRegistered._id, { emailVerified: true })
 
     //email and password valids
     const data = await authServices.login({ email: 'teste@gmail.com', password: '123' })
@@ -67,7 +67,7 @@ describe('Login service', () => {
 
   it('Should not be able to log in for this user already authenticated with social method', async () => {
     //manipulating database to get expected response
-    await usersRepository.updateById(userRegistered.id, {
+    await usersRepository.updateById(userRegistered._id, {
       isWithFacebook: true,
       isWithGoogle: true,
     })
@@ -111,7 +111,7 @@ describe('Verify email service', () => {
   it("Should be able to verify email when the user doesn't have verified email", async () => {
     // create manual code in database
     const randomCode = codeServices.getRandomCodeWithLength(4)
-    const code = await codeServices.create({ code: randomCode, userId: userRegistered.id })
+    const code = await codeServices.create({ code: randomCode, userId: userRegistered._id })
 
     //get result
     const result = await authServices.verifyEmail({
@@ -134,7 +134,7 @@ describe('Verify email service', () => {
   it('Should not be able to verify email if the user did not request a code', async () => {
     // create manual code in database
     const randomCode = codeServices.getRandomCodeWithLength(4)
-    const code = await codeServices.create({ code: randomCode, userId: userRegistered.id })
+    const code = await codeServices.create({ code: randomCode, userId: userRegistered._id })
 
     // delete the code to force the error
     await codeServices.deleteAllCodesByUserId(code.userId)
@@ -151,7 +151,7 @@ describe('Verify email service', () => {
   it('Should not be able to verify email if the code is invalid', async () => {
     // create manual code in database
     const randomCode = codeServices.getRandomCodeWithLength(4)
-    const code = await codeServices.create({ code: randomCode, userId: userRegistered.id })
+    const code = await codeServices.create({ code: randomCode, userId: userRegistered._id })
 
     //try to verify login
     await expect(
@@ -166,7 +166,7 @@ describe('Verify email service', () => {
 describe('Logout service', () => {
   beforeEach(async () => {
     //manipulating database to get expected response
-    await usersRepository.updateById(userRegistered.id, { emailVerified: true })
+    await usersRepository.updateById(userRegistered._id, { emailVerified: true })
 
     //valid login
     await authServices.login({ email: 'teste@gmail.com', password: '123' })
@@ -187,7 +187,7 @@ describe('Logout service', () => {
 describe('Refresh service', () => {
   beforeEach(async () => {
     //manipulating database to get expected response
-    await usersRepository.updateById(userRegistered.id, { emailVerified: true })
+    await usersRepository.updateById(userRegistered._id, { emailVerified: true })
 
     //valid login
     await authServices.login({ email: 'teste@gmail.com', password: '123' })
@@ -237,7 +237,7 @@ describe('Reset password service', () => {
   //code required
   beforeEach(async () => {
     code = codeServices.getRandomCodeWithLength(4)
-    await codeServices.create({ code, userId: userRegistered.id })
+    await codeServices.create({ code, userId: userRegistered._id })
   })
 
   it('Should be able to reset password', async () => {
@@ -263,7 +263,7 @@ describe('Reset password service', () => {
 
   it('Should not be able to reset password if the user has not requested the verification code', async () => {
     //delete codes for this user for to test
-    await codeServices.deleteAllCodesByUserId(userRegistered.id)
+    await codeServices.deleteAllCodesByUserId(userRegistered._id)
 
     await expect(
       authServices.resetPassword({

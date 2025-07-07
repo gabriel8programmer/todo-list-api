@@ -1,6 +1,7 @@
 import { z } from 'zod'
+import { SaveTaskRequestBodySchema } from './task-schemas'
 
-export const SaveUserSchema = z.object({
+export const SaveUserRequestBodySchema = z.object({
   name: z.string(),
   email: z.string().email(),
   password: z.string(),
@@ -8,4 +9,7 @@ export const SaveUserSchema = z.object({
   emailVerified: z.boolean().default(false),
 })
 
-export const UpdateUserSchema = SaveUserSchema.partial()
+export const UpdateUserRequestBodySchema = SaveUserRequestBodySchema.partial()
+
+export const AddTaskRequestBodySchema = SaveTaskRequestBodySchema.omit({ user: true })
+export const UpdateTaskRequestBodySchema = AddTaskRequestBodySchema.partial()

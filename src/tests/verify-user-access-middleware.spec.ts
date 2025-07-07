@@ -33,7 +33,7 @@ describe('Verify user access middleware', () => {
   it('Should not be able the user perform a operation in other user with out admin credentials', async () => {
     const users = await usersRepository.find()
     //get user ids
-    const userId = users[0].id
+    const userId = users[0]._id
     const user2 = users[1]
 
     //test userId of the user1 with userId of the user2

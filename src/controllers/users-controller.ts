@@ -1,6 +1,11 @@
 import { Handler } from 'express'
 import { UserServices } from '../services/user-services'
-import { SaveUserSchema, UpdateUserSchema } from '../schemas/user-schemas'
+import {
+  AddTaskRequestBodySchema,
+  SaveUserRequestBodySchema,
+  UpdateTaskRequestBodySchema,
+  UpdateUserRequestBodySchema,
+} from '../schemas/user-schemas'
 
 export class UsersController {
   constructor(private readonly userServices: UserServices) {}
@@ -26,7 +31,7 @@ export class UsersController {
 
   save: Handler = async (req, res, next) => {
     try {
-      const body = SaveUserSchema.parse(req.body)
+      const body = SaveUserRequestBodySchema.parse(req.body)
       const data = await this.userServices.createUser(body)
       res.json(data)
     } catch (error) {
@@ -37,7 +42,7 @@ export class UsersController {
   update: Handler = async (req, res, next) => {
     try {
       const id = req.params.id
-      const body = UpdateUserSchema.parse(req.body)
+      const body = UpdateUserRequestBodySchema.parse(req.body)
       const data = await this.userServices.updateUserById(id, body)
       res.json(data)
     } catch (error) {
@@ -58,7 +63,7 @@ export class UsersController {
   deleteAll: Handler = async (req, res, next) => {
     try {
       const data = await this.userServices.deleteAllUsers()
-      res.json({})
+      res.json(data)
     } catch (error) {
       next(error)
     }
@@ -66,6 +71,9 @@ export class UsersController {
 
   tasks: Handler = async (req, res, next) => {
     try {
+      const { id } = req.params
+      const data = await this.userServices.getTasksFromUserById(id)
+      res.json(data)
     } catch (error) {
       next(error)
     }
@@ -73,6 +81,9 @@ export class UsersController {
 
   showTask: Handler = async (req, res, next) => {
     try {
+      const { id, taskId } = req.params
+      const data = await this.userServices.getTaskFromUserByIdWithTaskId(id, taskId)
+      res.json(data)
     } catch (error) {
       next(error)
     }
@@ -80,6 +91,10 @@ export class UsersController {
 
   addTask: Handler = async (req, res, next) => {
     try {
+      const { id } = req.params
+      const body = AddTaskRequestBodySchema.parse(req.body)
+      const data = await this.userServices.createTaskFromUserById(id, body)
+      res.status(201).json(data)
     } catch (error) {
       next(error)
     }
@@ -87,6 +102,10 @@ export class UsersController {
 
   updateTask: Handler = async (req, res, next) => {
     try {
+      const { id, taskId } = req.params
+      const body = UpdateTaskRequestBodySchema.parse(req.body)
+      const data = await this.userServices.updateTaskFromUserByIdWithTaskId(id, taskId, body)
+      res.json(data)
     } catch (error) {
       next(error)
     }
@@ -94,6 +113,19 @@ export class UsersController {
 
   removeTask: Handler = async (req, res, next) => {
     try {
+      const { id, taskId } = req.params
+      const data = await this.userServices.removeTaskFromUserByIdWithTaskId(id, taskId)
+      res.json(data)
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  removeAllTasks: Handler = async (req, res, next) => {
+    try {
+      const { id } = req.params
+      const data = await this.userServices.removeAllTasksFromUserById(id)
+      res.json(data)
     } catch (error) {
       next(error)
     }

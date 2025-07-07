@@ -2,19 +2,12 @@ import { Code } from '../../mongoose/schema'
 import { ICode, ICodesRepository, ICreateCodeParams } from '../codes-repository'
 
 export class MongooseCodesRepository implements ICodesRepository {
-  private formatCodeForResponse(user: any): ICode {
-    const { _id: _, ...rest } = user
-    return rest
-  }
-
   async findByUserId(userId: string): Promise<ICode[] | null> {
-    const codes = await Code.find({ userId }).lean()
-    return codes.map(code => this.formatCodeForResponse(code))
+    return await Code.find({ userId }).lean()
   }
 
   async create(params: ICreateCodeParams): Promise<ICode> {
-    const newCode = await Code.create(params)
-    return this.formatCodeForResponse(newCode.toObject())
+    return await Code.create(params)
   }
 
   async deleteByUserId(userId: string): Promise<void> {

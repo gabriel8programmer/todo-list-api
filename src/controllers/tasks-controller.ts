@@ -1,22 +1,13 @@
 import { Handler } from 'express'
 import { TaskServices } from '../services/task-services'
+import { SaveTaskRequestBodySchema, UpdateTaskRequestBodySchema } from '../schemas/task-schemas'
 
 export class TasksController {
   constructor(private readonly taskServices: TaskServices) {}
 
-  all: Handler = async (req, res, next) => {
-    try {
-      const tasks = await this.taskServices.getAllTasks()
-      res.json({ data: tasks })
-    } catch (error) {
-      next(error)
-    }
-  }
-
   index: Handler = async (req, res, next) => {
     try {
-      const { id } = req.params
-      const tasks = await this.taskServices.getTaskById(id)
+      const tasks = await this.taskServices.getAllTasks()
       res.json(tasks)
     } catch (error) {
       next(error)
@@ -25,7 +16,9 @@ export class TasksController {
 
   show: Handler = async (req, res, next) => {
     try {
-      const { id, taskId } = req.params
+      const { taskId } = req.params
+      const data = await this.taskServices.getTaskById(taskId)
+      res.json(data)
     } catch (error) {
       next(error)
     }
@@ -33,7 +26,9 @@ export class TasksController {
 
   save: Handler = async (req, res, next) => {
     try {
-      const { id } = req.params
+      const body = SaveTaskRequestBodySchema.parse(req.body)
+      const data = await this.taskServices.createTask(body)
+      res.status(201).json(data)
     } catch (error) {
       next(error)
     }
@@ -41,7 +36,10 @@ export class TasksController {
 
   update: Handler = async (req, res, next) => {
     try {
-      const { id, taskId } = req.params
+      const { taskId } = req.params
+      const body = UpdateTaskRequestBodySchema.parse(req.body)
+      const data = await this.taskServices.updateTaskById(taskId, body)
+      res.json(data)
     } catch (error) {
       next(error)
     }
@@ -49,7 +47,9 @@ export class TasksController {
 
   delete: Handler = async (req, res, next): Promise<any> => {
     try {
-      const { id, taskId } = req.params
+      const { taskId } = req.params
+      const data = await this.taskServices.deleteTaskById(taskId)
+      res.json(data)
     } catch (error) {
       next(error)
     }
@@ -57,7 +57,8 @@ export class TasksController {
 
   deleteAll: Handler = async (req, res, next) => {
     try {
-      const { id } = req.params
+      const data = await this.taskServices.deleteAllTasks()
+      res.json(data)
     } catch (error) {
       next(error)
     }

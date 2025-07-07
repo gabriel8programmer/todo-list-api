@@ -1,4 +1,5 @@
 export interface IRefreshToken {
+  _id: string
   token: string
   userId: string
   createdAt: Date

@@ -32,7 +32,7 @@ export function makeVerifyTokenMiddleware(
       const user = await userServices.getUserById(tokenDecoded.id)
 
       //verify if the user is logged
-      const tokens = await refreshTokensRepository.findByUserId(user.id)
+      const tokens = await refreshTokensRepository.findByUserId(user._id)
       if (tokens.length === 0) throw new HttpError(401, 'Session expired or user is logged out!')
 
       //save user in request

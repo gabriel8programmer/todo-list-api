@@ -1,7 +1,7 @@
 import { IUserRaw } from './users-repository'
 
 export interface ITaskBase {
-  id: string
+  _id: string
   title: string
   description?: string
   status: 'todo' | 'doing' | 'done'
@@ -28,11 +28,16 @@ export interface ICreateTaskParams {
   user: string
 }
 
+export interface IFindTasksWhereParams {
+  user?: string
+}
+
 export interface ITasksRepository {
-  find: () => Promise<ITask[]>
+  find: (where: IFindTasksWhereParams) => Promise<ITask[]>
   findById: (id: string) => Promise<ITask | null>
   create: (params: ICreateTaskParams) => Promise<ITask>
   updateById: (id: string, params: Partial<ICreateTaskParams>) => Promise<ITask | null>
   deleteById: (id: string) => Promise<ITask | null>
   deleteAll: () => Promise<number>
+  deleteAllByUserId: (userId: string) => Promise<number>
 }

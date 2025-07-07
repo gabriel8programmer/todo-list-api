@@ -1,38 +1,37 @@
-import { Task, User } from '../../mongoose/schema'
-import { ICreateTaskParams, ITask, ITasksRepository } from '../tasks-repository'
+import { Task } from '../../mongoose/schema'
+import {
+  ICreateTaskParams,
+  IFindTasksWhereParams,
+  ITask,
+  ITasksRepository,
+} from '../tasks-repository'
 
 export class MongooseTasksRepository implements ITasksRepository {
-  private formatTaskForResponse(task: any): ITask {
-    const { _id: _, ...rest } = task
-    return rest
-  }
-
-  async find(): Promise<ITask[]> {
-    const tasks = await Task.find({}).lean()
-    return tasks.map(task => this.formatTaskForResponse(task))
+  async find(where: IFindTasksWhereParams): Promise<ITask[]> {
+    return await Task.find(where).lean()
   }
 
   async findById(id: string): Promise<ITask | null> {
-    const task = await Task.findOne({ id }).populate('users').lean()
-    return this.formatTaskForResponse(task)
+    return await Task.findById(id).populate('users').lean()
   }
 
   async create(params: ICreateTaskParams): Promise<ITask> {
-    const task = (await Task.create(params)).toObject()
-    return this.formatTaskForResponse(task)
+    return (await Task.create(params)).toObject()
   }
 
   async updateById(id: string, params: Partial<ICreateTaskParams>): Promise<ITask | null> {
-    const updatedTask = await Task.findByIdAndUpdate(id, params, { set: true }).lean()
-    return this.formatTaskForResponse(updatedTask)
+    return await Task.findByIdAndUpdate(id, params, { set: true }).lean()
   }
 
   async deleteById(id: string): Promise<ITask | null> {
-    const deletedTask = await Task.findByIdAndDelete(id).lean()
-    return this.formatTaskForResponse(deletedTask)
+    return await Task.findByIdAndDelete(id).lean()
   }
 
   async deleteAll(): Promise<number> {
     return (await Task.deleteMany({})).deletedCount
+  }
+
+  async deleteAllByUserId(userId: string): Promise<number> {
+    return (await Task.deleteMany({ user: userId })).deletedCount
   }
 }

@@ -1,5 +1,5 @@
 export interface ICode {
-  id: string
+  _id: string
   code: string
   userId: string
   createdAt: Date

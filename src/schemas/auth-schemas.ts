@@ -1,39 +1,39 @@
 import { z } from 'zod'
 
 // zod schemas
-export const RegisterBodyRequestSchema = z.object({
+export const RegisterRequestBodySchema = z.object({
   name: z.string(),
   email: z.string().email(),
   password: z.string().min(1),
 })
 
-export const LoginBodyRequestSchema = z.object({
+export const LoginRequestBodySchema = z.object({
   email: z.string().email(),
   password: z.string().min(1),
 })
 
-export const LogoutBodyRequestSchema = z.object({
+export const LogoutRequestBodySchema = z.object({
   email: z.string().email(),
 })
 
-export const RefreshBodyRequestSchema = LogoutBodyRequestSchema
+export const RefreshRequestBodySchema = LogoutRequestBodySchema
 
-export const VerifyBodyRequestSchema = z.object({
+export const VerifyRequestBodySchema = z.object({
   email: z.string().email(),
   verificationCode: z.string(),
 })
 
-export const ForgotBodyRequestSchema = z.object({
+export const ForgotRequestBodySchema = z.object({
   email: z.string().email(),
 })
 
-export const ResetBodyRequestSchema = z.object({
+export const ResetRequestBodySchema = z.object({
   email: z.string().email(),
   newPassword: z.string().min(1),
   verificationCode: z.string(),
 })
 
-export const SocialUserRequestSchema = z.object({
+export const SocialRequestUserSchema = z.object({
   name: z.string(),
   email: z.string().email(),
   emailVerified: z.boolean().default(false),
