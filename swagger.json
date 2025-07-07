@@ -136,7 +136,7 @@
         "summary": "Login ou registro com o google",
         "description": "Login ou registro com o google usando token de autenticação do google authenticator",
         "tags": ["Auth"],
-        "security": [{ "googleAuthenticatorAuth": [] }],
+        "security": [{ "bearer_oauth_google": [] }],
         "responses": {
           "400": {
             "description": "Bad Request!"
@@ -196,7 +196,7 @@
         "summary": "Listar usuários",
         "description": "Lista todos os usuários com suas tarefas",
         "tags": ["Admin (users)"],
-        "security": [{ "bearerAuth": [] }],
+        "security": [{ "bearer_auth": [] }],
 
         "responses": {
           "400": {
@@ -223,7 +223,7 @@
         "summary": "Criar um novo usuário",
         "description": "Rota responsável por criar um novo usuário",
         "tags": ["Admin (users)"],
-        "security": [{ "bearerAuth": [] }],
+        "security": [{ "bearer_auth": [] }],
         "requestBody": {
           "content": {
             "aplication/json": {
@@ -280,7 +280,7 @@
         "summary": "Obter um usuário",
         "description": "Obter um usuário a partir do seu id",
         "tags": ["Admin (users)"],
-        "security": [{ "bearerAuth": [] }],
+        "security": [{ "bearer_auth": [] }],
         "parameters": [
           {
             "name": "id",
@@ -316,7 +316,7 @@
         "summary": "Atualizar um usuário",
         "description": "Atualizar um usuário a partir do seu id",
         "tags": ["Admin (users)"],
-        "security": [{ "bearerAuth": [] }],
+        "security": [{ "bearer_auth": [] }],
         "parameters": [
           {
             "name": "id",
@@ -381,7 +381,7 @@
         "summary": "Remover um usuário",
         "description": "Remover um usuário a partir do seu id",
         "tags": ["Admin (users)"],
-        "security": [{ "bearerAuth": [] }],
+        "security": [{ "bearer_auth": [] }],
         "parameters": [
           {
             "name": "id",
@@ -424,7 +424,7 @@
         "summary": "",
         "description": "",
         "tags": ["Admin (Tasks)"],
-        "security": [{ "bearerAuth": [] }],
+        "security": [{ "bearer_auth": [] }],
         "responses": {
           "400": {
             "description": "Bad Request!"
@@ -451,7 +451,7 @@
         "summary": "",
         "description": "",
         "tags": ["Admin (Tasks)"],
-        "security": [{ "bearerAuth": [] }],
+        "security": [{ "bearer_auth": [] }],
         "parameters": [
           {
             "name": "taskId",
@@ -494,7 +494,7 @@
         "summary": "Obter todas as tasks",
         "description": "Obter todas as tasks de um usuário específico",
         "tags": ["User's Tasks"],
-        "security": [{ "bearerAuth": [] }],
+        "security": [{ "bearer_auth": [] }],
         "parameters": [
           {
             "name": "id",
@@ -532,7 +532,7 @@
         "summary": "Criar nova task",
         "description": "Criar nova task para um usuário",
         "tags": ["User's Tasks"],
-        "security": [{ "bearerAuth": [] }],
+        "security": [{ "bearer_auth": [] }],
         "parameters": [
           {
             "name": "id",
@@ -589,7 +589,7 @@
         "summary": "Obter uma task",
         "description": "Obter uma task pelo seu id",
         "tags": ["User's Tasks"],
-        "security": [{ "bearerAuth": [] }],
+        "security": [{ "bearer_auth": [] }],
         "parameters": [
           {
             "name": "id",
@@ -630,7 +630,7 @@
         "summary": "Atualizar uma task",
         "description": "Atualizar uma task pelo seu id",
         "tags": ["User's Tasks"],
-        "security": [{ "bearerAuth": [] }],
+        "security": [{ "bearer_auth": [] }],
         "parameters": [
           {
             "name": "id",
@@ -698,7 +698,7 @@
         "summary": "Remover uma task",
         "description": "Remover uma task pelo seu id",
         "tags": ["User's Tasks"],
-        "security": [{ "bearerAuth": [] }],
+        "security": [{ "bearer_auth": [] }],
         "parameters": [
           {
             "name": "id",
@@ -747,7 +747,7 @@
         "summary": "Remover todas as tasks",
         "description": "Remover todas as tasks",
         "tags": ["User's Tasks"],
-        "security": [{ "bearerAuth": [] }],
+        "security": [{ "bearer_auth": [] }],
         "parameters": [
           {
             "name": "id",
@@ -958,12 +958,12 @@
     },
 
     "securitySchemes": {
-      "bearerAuth": {
+      "bearer_auth": {
         "type": "http",
         "scheme": "bearer",
         "bearerFormat": "jsonwebtoken"
       },
-      "googleAuthenticatorAuth": {
+      "bearer_oauth_google": {
         "type": "http",
         "scheme": "bearer",
         "bearerFormat": "jsonwebtoken"
