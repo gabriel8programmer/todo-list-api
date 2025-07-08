@@ -284,3 +284,49 @@ describe('Reset password service', () => {
     ).rejects.toThrow('Invalid verification code!')
   })
 })
+
+describe('Social login service', () => {
+  it('Should be able to create a new user with social method if it does not exists', async () => {
+    const data = await authServices.socialLogin({
+      name: 'teste2',
+      email: 'teste2@gmail.com',
+      emailVerified: true,
+      isWithGoogle: true,
+    })
+
+    const data2 = await authServices.socialLogin({
+      name: 'teste3',
+      email: 'teste3@gmail.com',
+      emailVerified: true,
+      isWithFacebook: true,
+    })
+
+    expect(data).toHaveProperty('accessToken')
+    expect(data).toHaveProperty('refreshToken')
+    expect(data.message).toBe('Logged in with Google successfully!')
+
+    expect(data2).toHaveProperty('accessToken')
+    expect(data2).toHaveProperty('refreshToken')
+    expect(data2.message).toBe('Logged in with Facebook successfully!')
+  })
+
+  it('Should not be able to log in with user authenticated with email and password', async () => {
+    await expect(
+      authServices.socialLogin({
+        name: 'teste',
+        email: 'teste@gmail.com',
+        emailVerified: true,
+        isWithGoogle: true,
+      }),
+    ).rejects.toThrow('Email already registered with traditional login. Cannot use Google.')
+
+    await expect(
+      authServices.socialLogin({
+        name: 'teste',
+        email: 'teste@gmail.com',
+        emailVerified: true,
+        isWithFacebook: true,
+      }),
+    ).rejects.toThrow('Email already registered with traditional login. Cannot use Facebook.')
+  })
+})

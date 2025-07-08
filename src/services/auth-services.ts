@@ -23,8 +23,9 @@ export class AuthServices {
 
   async register(params: { name: string; email: string; password: string }) {
     const { name, email, password: rawPassword } = params
-    const userAlreadyExists = await this.usersRepository.findByEmail(email)
 
+    //validate user
+    const userAlreadyExists = await this.usersRepository.findByEmail(email)
     if (userAlreadyExists) throw new HttpError(403, 'User with this email address already exists!')
 
     //encrypt password
@@ -133,19 +134,53 @@ export class AuthServices {
     isWithGoogle?: boolean
     isWithFacebook?: boolean
   }) {
-    const { email } = params
+    const { email, isWithGoogle, isWithFacebook } = params
 
     //validate user
-    this.validateEmailUser(email)
+    const user = await this.usersRepository.findByEmail(email)
 
-    const user = await this.usersRepository.create(params)
+    //format success message
+    let message = ''
+    if (isWithGoogle) message = 'Logged in with Google successfully!'
+    if (isWithFacebook) message = 'Logged in with Facebook successfully!'
+
+    //if the user is not exists then create a new user
+    if (!user) {
+      const newUser = await this.usersRepository.create(params)
+      //create access token and refresh token
+      const accessToken = genDefaultJwt({ id: newUser._id })
+
+      //create refresh token
+      const { token: refreshToken } = await this.refreshTokenServices.createToken({
+        token: uuidv4(),
+        userId: newUser._id,
+      })
+
+      const { password: _, ...restUser } = newUser
+
+      return { user: restUser, accessToken, refreshToken, message }
+    }
+
+    if (user && !user.isWithFacebook && !user?.isWithGoogle) {
+      const usedMethod = isWithGoogle ? 'Google' : isWithFacebook ? 'Facebook' : 'Social Login'
+      throw new HttpError(
+        400,
+        `Email already registered with traditional login. Cannot use ${usedMethod}.`,
+      )
+    }
 
     //create access token and refresh token
     const accessToken = genDefaultJwt({ id: user._id })
-    const refreshToken = uuidv4()
+
+    //create refresh token
+    const { token: refreshToken } = await this.refreshTokenServices.createToken({
+      token: uuidv4(),
+      userId: user._id,
+    })
 
     const { password: _, ...restUser } = user
-    return { user: restUser, accessToken, refreshToken, message: 'Social Log in successfuly!' }
+
+    return { user: restUser, accessToken, refreshToken, message }
   }
 
   async forgotPassword(params: { email: string }) {
