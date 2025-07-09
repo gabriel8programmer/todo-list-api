@@ -88,7 +88,7 @@ export class AuthController {
     try {
       const user = SocialRequestUserSchema.parse(req.user)
       const data = await this.authServices.socialLogin(user)
-      res.json(data)
+      res.status(data.status).json(data)
     } catch (error) {
       next(error)
     }

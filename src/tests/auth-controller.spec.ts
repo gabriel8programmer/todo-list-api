@@ -1,13 +1,19 @@
-import request, { Response } from 'supertest'
+import request from 'supertest'
 import { app } from '../app'
 import { IUsersRepository } from '../repositories/users-repository'
 import { MongooseUsersRepository } from '../repositories/mongoose/mongoose-users-repository'
 import { CodeServices } from '../services/code-services'
 import { ICodesRepository } from '../repositories/codes-repository'
 import { MongooseCodesRepository } from '../repositories/mongoose/mongoose-codes-repository'
+import {
+  IRegisterCustomResponse,
+  loginWithEmailAndPassword,
+  registerUserWithEmailAndPassword,
+} from './helpers/auth-helpers'
 
 let usersRepository: IUsersRepository
-let userRegisteredResponse: Response
+// create a test user
+let _userTester: IRegisterCustomResponse
 let codesRepository: ICodesRepository
 let codeServices: CodeServices
 
@@ -17,27 +23,27 @@ beforeAll(() => {
   codeServices = new CodeServices(codesRepository)
 })
 
+let userBaseTester: any
+
 beforeEach(async () => {
-  userRegisteredResponse = await request(app).post('/api/auth/register').send({
+  userBaseTester = {
     name: 'teste',
     email: 'teste@gmail.com',
     password: '123',
-  })
+  }
+
+  _userTester = await registerUserWithEmailAndPassword(userBaseTester)
 })
 
 describe('Register controller method', () => {
   it('Should be able to register a user', async () => {
-    expect(userRegisteredResponse.status).toBe(201)
-    expect(userRegisteredResponse.body).toHaveProperty('user')
-    expect(userRegisteredResponse.body.user).toHaveProperty('_id')
+    expect(_userTester.status).toBe(201)
+    expect(_userTester.body).toHaveProperty('user')
+    expect(_userTester.body.user).toHaveProperty('_id')
   })
 
   it('Should not be able to register a user with the same email', async () => {
-    const res = await request(app).post('/api/auth/register').send({
-      name: 'teste',
-      email: 'teste@gmail.com',
-      password: '123',
-    })
+    const res = await registerUserWithEmailAndPassword(userBaseTester)
 
     expect(res.status).toBe(403)
     expect(res.body).toHaveProperty('message')
@@ -48,13 +54,10 @@ describe('Register controller method', () => {
 describe('Login controller method', () => {
   it("Should be able to log in normaly if the user's email is verified", async () => {
     //manipuling body for to test
-    const { user } = userRegisteredResponse.body
+    const { user } = _userTester.body
     await usersRepository.updateById(user._id, { emailVerified: true })
 
-    const res = await request(app).post('/api/auth/login').send({
-      email: 'teste@gmail.com',
-      password: '123',
-    })
+    const res = await loginWithEmailAndPassword(userBaseTester)
 
     expect(res.status).toBe(200)
     expect(res.body).toHaveProperty('accessToken')
@@ -62,10 +65,7 @@ describe('Login controller method', () => {
   })
 
   it("Should not be able to log in with user's email not verified", async () => {
-    const res = await request(app).post('/api/auth/login').send({
-      email: 'teste@gmail.com',
-      password: '123',
-    })
+    const res = await loginWithEmailAndPassword(userBaseTester)
 
     expect(res.status).toBe(200)
     expect(res.body.accessToken).toBeUndefined()
@@ -76,56 +76,39 @@ describe('Login controller method', () => {
   })
 
   it('Should not be able to log in with invalid email or password', async () => {
-    let res
-
-    res = await request(app).post('/api/auth/login').send({
-      email: 'teste1@gmail.com', //invalid email
-      password: '123', //valid password
-    })
+    const res = await loginWithEmailAndPassword({ ...userBaseTester, email: 'teste123@gmail.com' })
+    const res2 = await loginWithEmailAndPassword({ ...userBaseTester, password: '321' })
 
     expect(res.status).toBe(400)
     expect(res.body.message).toBe('Invalid email or password!')
-
-    res = await request(app).post('/api/auth/login').send({
-      email: 'teste@gmail.com', // valid email
-      password: '1234', //invalid password
-    })
-
-    expect(res.status).toBe(400)
-    expect(res.body.message).toBe('Invalid email or password!')
+    expect(res2.status).toBe(400)
+    expect(res2.body.message).toBe('Invalid email or password!')
   })
 })
 
 describe('Verify email controller method', () => {
   it('Should be able to verify email', async () => {
-    //create fake code
     const { code: verificationCode } = await codeServices.create({
       code: codeServices.getRandomCodeWithLength(4),
-      userId: userRegisteredResponse.body.user._id,
+      userId: _userTester.body.user._id,
     })
 
-    const email = 'teste@gmail.com'
-
-    const res = await request(app).post('/api/auth/verify-email').send({
-      email,
-      verificationCode,
-    })
+    const res = await request(app)
+      .post('/api/auth/verify-email')
+      .send({ ...userBaseTester, verificationCode })
 
     expect(res.status).toBe(200)
     expect(res.body.message).toBe('Email verified successfuly!')
   })
 
   it('Should not be able to verify invalid email', async () => {
-    //create fake code
     const { code: verificationCode } = await codeServices.create({
       code: codeServices.getRandomCodeWithLength(4),
-      userId: userRegisteredResponse.body.user._id,
+      userId: _userTester.body.user._id,
     })
 
-    const email = 'teste123@gmail.com'
-
     const res = await request(app).post('/api/auth/verify-email').send({
-      email, //invalid email
+      email: 'teste123@gmail.com',
       verificationCode,
     })
 
@@ -149,7 +132,7 @@ describe('Verify email controller method', () => {
     //create fake code
     await codeServices.create({
       code: codeServices.getRandomCodeWithLength(4),
-      userId: userRegisteredResponse.body.user._id,
+      userId: _userTester.body.user._id,
     })
 
     const email = 'teste@gmail.com'
@@ -167,19 +150,14 @@ describe('Verify email controller method', () => {
 describe('Logout controller method', () => {
   beforeAll(async () => {
     //manipuling body for to test
-    const { user } = userRegisteredResponse.body
+    const { user } = _userTester.body
     await usersRepository.updateById(user._id, { emailVerified: true })
 
-    await request(app).post('/api/auth/login').send({
-      email: 'teste@gmail.com',
-      password: '123',
-    })
+    await loginWithEmailAndPassword(userBaseTester)
   })
 
   it('Should be able to logout', async () => {
-    const res = await request(app).post('/api/auth/logout').send({
-      email: 'teste@gmail.com',
-    })
+    const res = await request(app).post('/api/auth/logout').send(userBaseTester)
 
     expect(res.status).toBe(200)
     expect(res.body).toHaveProperty('message')
@@ -199,13 +177,10 @@ describe('Logout controller method', () => {
 describe('Refresh controller method', () => {
   beforeEach(async () => {
     //manipuling body for to test
-    const { user } = userRegisteredResponse.body
+    const { user } = _userTester.body
     await usersRepository.updateById(user._id, { emailVerified: true })
 
-    await request(app).post('/api/auth/login').send({
-      email: 'teste@gmail.com',
-      password: '123',
-    })
+    await loginWithEmailAndPassword(userBaseTester)
   })
 
   it('Should be able to refresh tokens', async () => {
@@ -247,7 +222,7 @@ describe('Forgot password controller method', () => {
 
   it('Should not be able to request a verification code with invalid email', async () => {
     const res = await request(app).post('/api/auth/forgot-password').send({
-      email: 'teste1@gmail.com', // invalid email
+      email: 'teste1@gmail.com',
     })
 
     expect(res.status).toBe(404)
@@ -261,15 +236,13 @@ describe('Reset password controller method', () => {
   //code required
   beforeEach(async () => {
     code = codeServices.getRandomCodeWithLength(4)
-    await codeServices.create({ code, userId: userRegisteredResponse.body.user._id })
+    await codeServices.create({ code, userId: _userTester.body.user._id })
   })
 
   it('Should be able to reset password', async () => {
-    const res = await request(app).post('/api/auth/reset-password').send({
-      email: 'teste@gmail.com',
-      newPassword: '321', // new password
-      verificationCode: code,
-    })
+    const res = await request(app)
+      .post('/api/auth/reset-password')
+      .send({ ...userBaseTester, newPassword: '321', verificationCode: code })
 
     expect(res.status).toBe(200)
     expect(res.body.message).toBe('Password successfuly reset.')
@@ -277,9 +250,9 @@ describe('Reset password controller method', () => {
 
   it('Should not be able to reset password with invalid email', async () => {
     const res = await request(app).post('/api/auth/reset-password').send({
-      email: 'teste1@gmail.com', //invalid email
-      newPassword: '321', // valid password
-      verificationCode: code, // valid code
+      email: 'teste1@gmail.com',
+      newPassword: '321',
+      verificationCode: code,
     })
 
     expect(res.status).toBe(404)
@@ -287,29 +260,22 @@ describe('Reset password controller method', () => {
   })
 
   it('Should not be able to reset password if the user has not requested the verification code', async () => {
-    //delete codes for this user for to test
-    await codeServices.deleteAllCodesByUserId(userRegisteredResponse.body.user._id)
+    await codeServices.deleteAllCodesByUserId(_userTester.body.user._id)
 
-    const res = await request(app).post('/api/auth/reset-password').send({
-      email: 'teste@gmail.com', //valid email
-      newPassword: '321', // valid password
-      verificationCode: code, // the code no longer exists
-    })
+    const res = await request(app)
+      .post('/api/auth/reset-password')
+      .send({ ...userBaseTester, newPassword: '321', verificationCode: code })
 
     expect(res.status).toBe(400)
     expect(res.body.message).toBe('There is no code available for this user!')
   })
 
   it("Should not be able to reset password if the user's code is invalid", async () => {
-    const res = await request(app).post('/api/auth/reset-password').send({
-      email: 'teste@gmail.com', //valid email
-      newPassword: '321', // valid password
-      verificationCode: '1234', // invalid code
-    })
+    const res = await request(app)
+      .post('/api/auth/reset-password')
+      .send({ ...userBaseTester, newPassword: '321', verificationCode: '1234' })
 
     expect(res.status).toBe(400)
     expect(res.body.message).toBe('Invalid verification code!')
   })
 })
-
-describe('Social controller method', () => {})

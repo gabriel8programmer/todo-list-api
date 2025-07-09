@@ -158,7 +158,7 @@ export class AuthServices {
 
       const { password: _, ...restUser } = newUser
 
-      return { user: restUser, accessToken, refreshToken, message }
+      return { user: restUser, accessToken, refreshToken, message, status: 201 }
     }
 
     if (user && !user.isWithFacebook && !user?.isWithGoogle) {
@@ -180,7 +180,7 @@ export class AuthServices {
 
     const { password: _, ...restUser } = user
 
-    return { user: restUser, accessToken, refreshToken, message }
+    return { user: restUser, accessToken, refreshToken, message, status: 200 }
   }
 
   async forgotPassword(params: { email: string }) {
