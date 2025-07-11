@@ -10,9 +10,9 @@ import {
   loginWithEmailAndPassword,
   registerUserWithEmailAndPassword,
 } from './helpers/auth-helpers'
+import { createFakeCodeWithUserId } from './helpers/code-helpers'
 
 let usersRepository: IUsersRepository
-// create a test user
 let _userTester: IRegisterCustomResponse
 let codesRepository: ICodesRepository
 let codeServices: CodeServices
@@ -23,16 +23,16 @@ beforeAll(() => {
   codeServices = new CodeServices(codesRepository)
 })
 
-let userBaseTester: any
+let userBaseData: any
 
 beforeEach(async () => {
-  userBaseTester = {
+  userBaseData = {
     name: 'teste',
     email: 'teste@gmail.com',
     password: '123',
   }
 
-  _userTester = await registerUserWithEmailAndPassword(userBaseTester)
+  _userTester = await registerUserWithEmailAndPassword(userBaseData)
 })
 
 describe('Register controller method', () => {
@@ -43,7 +43,7 @@ describe('Register controller method', () => {
   })
 
   it('Should not be able to register a user with the same email', async () => {
-    const res = await registerUserWithEmailAndPassword(userBaseTester)
+    const res = await registerUserWithEmailAndPassword(userBaseData)
 
     expect(res.status).toBe(403)
     expect(res.body).toHaveProperty('message')
@@ -53,11 +53,10 @@ describe('Register controller method', () => {
 
 describe('Login controller method', () => {
   it("Should be able to log in normaly if the user's email is verified", async () => {
-    //manipuling body for to test
     const { user } = _userTester.body
     await usersRepository.updateById(user._id, { emailVerified: true })
 
-    const res = await loginWithEmailAndPassword(userBaseTester)
+    const res = await loginWithEmailAndPassword(userBaseData)
 
     expect(res.status).toBe(200)
     expect(res.body).toHaveProperty('accessToken')
@@ -65,7 +64,7 @@ describe('Login controller method', () => {
   })
 
   it("Should not be able to log in with user's email not verified", async () => {
-    const res = await loginWithEmailAndPassword(userBaseTester)
+    const res = await loginWithEmailAndPassword(userBaseData)
 
     expect(res.status).toBe(200)
     expect(res.body.accessToken).toBeUndefined()
@@ -76,8 +75,8 @@ describe('Login controller method', () => {
   })
 
   it('Should not be able to log in with invalid email or password', async () => {
-    const res = await loginWithEmailAndPassword({ ...userBaseTester, email: 'teste123@gmail.com' })
-    const res2 = await loginWithEmailAndPassword({ ...userBaseTester, password: '321' })
+    const res = await loginWithEmailAndPassword({ ...userBaseData, email: 'teste123@gmail.com' })
+    const res2 = await loginWithEmailAndPassword({ ...userBaseData, password: '321' })
 
     expect(res.status).toBe(400)
     expect(res.body.message).toBe('Invalid email or password!')
@@ -88,24 +87,24 @@ describe('Login controller method', () => {
 
 describe('Verify email controller method', () => {
   it('Should be able to verify email', async () => {
-    const { code: verificationCode } = await codeServices.create({
-      code: codeServices.getRandomCodeWithLength(4),
-      userId: _userTester.body.user._id,
-    })
+    const { code: verificationCode } = await createFakeCodeWithUserId(
+      codeServices,
+      _userTester.body.user._id,
+    )
 
     const res = await request(app)
       .post('/api/auth/verify-email')
-      .send({ ...userBaseTester, verificationCode })
+      .send({ ...userBaseData, verificationCode })
 
     expect(res.status).toBe(200)
     expect(res.body.message).toBe('Email verified successfuly!')
   })
 
   it('Should not be able to verify invalid email', async () => {
-    const { code: verificationCode } = await codeServices.create({
-      code: codeServices.getRandomCodeWithLength(4),
-      userId: _userTester.body.user._id,
-    })
+    const { code: verificationCode } = await createFakeCodeWithUserId(
+      codeServices,
+      _userTester.body.user._id,
+    )
 
     const res = await request(app).post('/api/auth/verify-email').send({
       email: 'teste123@gmail.com',
@@ -117,30 +116,23 @@ describe('Verify email controller method', () => {
   })
 
   it('Should not be able to verify email if the user did not request a code', async () => {
-    const email = 'teste@gmail.com'
-
-    const res = await request(app).post('/api/auth/verify-email').send({
-      email,
-      verificationCode: '1234',
-    })
+    const res = await request(app)
+      .post('/api/auth/verify-email')
+      .send({ ...userBaseData, verificationCode: '1234' })
 
     expect(res.status).toBe(400)
     expect(res.body.message).toBe('There is no code available for this user!')
   })
 
   it('Should not be able to verify email if the code is invalid', async () => {
-    //create fake code
-    await codeServices.create({
-      code: codeServices.getRandomCodeWithLength(4),
-      userId: _userTester.body.user._id,
-    })
+    await createFakeCodeWithUserId(codeServices, _userTester.body.user._id)
 
-    const email = 'teste@gmail.com'
-
-    const res = await request(app).post('/api/auth/verify-email').send({
-      email,
-      verificationCode: '1234', // invalid code
-    })
+    const res = await request(app)
+      .post('/api/auth/verify-email')
+      .send({
+        ...userBaseData,
+        verificationCode: '1234',
+      })
 
     expect(res.status).toBe(400)
     expect(res.body.message).toBe('Invalid verification code!')
@@ -153,11 +145,11 @@ describe('Logout controller method', () => {
     const { user } = _userTester.body
     await usersRepository.updateById(user._id, { emailVerified: true })
 
-    await loginWithEmailAndPassword(userBaseTester)
+    await loginWithEmailAndPassword(userBaseData)
   })
 
   it('Should be able to logout', async () => {
-    const res = await request(app).post('/api/auth/logout').send(userBaseTester)
+    const res = await request(app).post('/api/auth/logout').send(userBaseData)
 
     expect(res.status).toBe(200)
     expect(res.body).toHaveProperty('message')
@@ -180,7 +172,7 @@ describe('Refresh controller method', () => {
     const { user } = _userTester.body
     await usersRepository.updateById(user._id, { emailVerified: true })
 
-    await loginWithEmailAndPassword(userBaseTester)
+    await loginWithEmailAndPassword(userBaseData)
   })
 
   it('Should be able to refresh tokens', async () => {
@@ -233,16 +225,15 @@ describe('Forgot password controller method', () => {
 describe('Reset password controller method', () => {
   let code: string
 
-  //code required
   beforeEach(async () => {
-    code = codeServices.getRandomCodeWithLength(4)
-    await codeServices.create({ code, userId: _userTester.body.user._id })
+    const { code: _code } = await createFakeCodeWithUserId(codeServices, _userTester.body.user._id)
+    code = _code
   })
 
   it('Should be able to reset password', async () => {
     const res = await request(app)
       .post('/api/auth/reset-password')
-      .send({ ...userBaseTester, newPassword: '321', verificationCode: code })
+      .send({ ...userBaseData, newPassword: '321', verificationCode: code })
 
     expect(res.status).toBe(200)
     expect(res.body.message).toBe('Password successfuly reset.')
@@ -264,7 +255,7 @@ describe('Reset password controller method', () => {
 
     const res = await request(app)
       .post('/api/auth/reset-password')
-      .send({ ...userBaseTester, newPassword: '321', verificationCode: code })
+      .send({ ...userBaseData, newPassword: '321', verificationCode: code })
 
     expect(res.status).toBe(400)
     expect(res.body.message).toBe('There is no code available for this user!')
@@ -273,7 +264,7 @@ describe('Reset password controller method', () => {
   it("Should not be able to reset password if the user's code is invalid", async () => {
     const res = await request(app)
       .post('/api/auth/reset-password')
-      .send({ ...userBaseTester, newPassword: '321', verificationCode: '1234' })
+      .send({ ...userBaseData, newPassword: '321', verificationCode: '1234' })
 
     expect(res.status).toBe(400)
     expect(res.body.message).toBe('Invalid verification code!')
