@@ -28,7 +28,7 @@ export class UserServices {
     return this.formatUserWithOutPassword(user)
   }
 
-  async createUser(params: ICreateUserParams) {
+  async createUser(params: Omit<ICreateUserParams, 'isWithGoogle' | 'isWithFacebook'>) {
     const userExists = await this.usersRepository.findByEmail(params.email)
     if (userExists) throw new HttpError(403, 'User email address already to use!')
 
@@ -43,7 +43,10 @@ export class UserServices {
     return { message: 'User created successfuly!', user }
   }
 
-  async updateUserById(_id: string, params: Partial<ICreateUserParams>) {
+  async updateUserById(
+    _id: string,
+    params: Partial<Omit<ICreateUserParams, 'isWithGoogle' | 'isWithFacebook'>>,
+  ) {
     const { password: rawPassword } = params
 
     if (rawPassword) {

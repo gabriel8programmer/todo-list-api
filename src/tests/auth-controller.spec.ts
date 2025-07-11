@@ -66,7 +66,7 @@ describe('Login controller method', () => {
   it("Should not be able to log in with user's email not verified", async () => {
     const res = await loginWithEmailAndPassword(userBaseData)
 
-    expect(res.status).toBe(200)
+    expect(res.status).toBe(202)
     expect(res.body.accessToken).toBeUndefined()
     expect(res.body.refreshToken).toBeUndefined()
     expect(res.body.message).toBe(

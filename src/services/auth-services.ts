@@ -24,11 +24,9 @@ export class AuthServices {
   async register(params: { name: string; email: string; password: string }) {
     const { name, email, password: rawPassword } = params
 
-    //validate user
     const userAlreadyExists = await this.usersRepository.findByEmail(email)
     if (userAlreadyExists) throw new HttpError(403, 'User with this email address already exists!')
 
-    //encrypt password
     const password = await bcrypt.hash(rawPassword, 10)
 
     const data = { name, email, password }
@@ -52,32 +50,33 @@ export class AuthServices {
     if (!user.emailVerified) {
       await this.emailServices?.sendEmailWithVerificationCode(email, user._id)
       return {
-        requiresEmailVerification: true,
         message:
           'Verification email required. Please, check your inbox to receive the verification code.',
+        status: 202,
       }
     }
 
-    //create access token
     const accessToken = genDefaultJwt({ id: user._id })
-
-    //create refresh token
     const { token: refreshToken } = await this.refreshTokenServices.createToken({
       token: uuidv4(),
       userId: user._id,
     })
 
     const { password: _, ...userWithOutPassword } = user
-    return { accessToken, refreshToken, user: userWithOutPassword, message: 'Log in successfuly!' }
+    return {
+      accessToken,
+      refreshToken,
+      user: userWithOutPassword,
+      message: 'Log in successfuly!',
+      status: 200,
+    }
   }
 
   async verifyEmail(params: { email: string; verificationCode: string }) {
     const { email, verificationCode } = params
 
-    //validate user and destructuring
     const { _id } = await this.validateEmailUser(email)
 
-    //validate code
     const codes = await this.codeServices.findCodeByUserId(_id)
 
     if (!codes || codes?.length <= 0)
@@ -86,10 +85,8 @@ export class AuthServices {
     const codeContainInCodes = codes.find(code => code.code === verificationCode)
     if (!codeContainInCodes) throw new HttpError(400, 'Invalid verification code!')
 
-    //delete codes from user
     await this.codeServices.deleteAllCodesByUserId(_id)
 
-    //update email verified in user
     await this.usersRepository.updateById(_id, { emailVerified: true })
 
     return { message: 'Email verified successfuly!' }
@@ -98,10 +95,8 @@ export class AuthServices {
   async logout(params: { email: string }) {
     const { email } = params
 
-    //validate user
     const user = await this.validateEmailUser(email)
 
-    //remove refresh tokens this user
     await this.refreshTokenServices.deleteTokensByUserId(user._id)
 
     return { message: 'Logout done successfuly!' }
@@ -110,13 +105,11 @@ export class AuthServices {
   async refresh(params: { email: string }) {
     const { email } = params
 
-    //validate user
     const { _id } = await this.validateEmailUser(email)
 
     const tokens = await this.refreshTokenServices.getTokensByUserId(_id)
     if (tokens.length === 0) throw new HttpError(401, 'Session expired or user is logged out!')
 
-    //generate new accesstoken and refresh token
     const accessToken = await genDefaultJwt({ id: _id })
 
     const { token: refreshToken } = await this.refreshTokenServices.createToken({
@@ -136,21 +129,16 @@ export class AuthServices {
   }) {
     const { email, isWithGoogle, isWithFacebook } = params
 
-    //validate user
     const user = await this.usersRepository.findByEmail(email)
 
-    //format success message
     let message = ''
     if (isWithGoogle) message = 'Logged in with Google successfully!'
     if (isWithFacebook) message = 'Logged in with Facebook successfully!'
 
-    //if the user is not exists then create a new user
     if (!user) {
       const newUser = await this.usersRepository.create(params)
-      //create access token and refresh token
       const accessToken = genDefaultJwt({ id: newUser._id })
 
-      //create refresh token
       const { token: refreshToken } = await this.refreshTokenServices.createToken({
         token: uuidv4(),
         userId: newUser._id,
@@ -169,10 +157,8 @@ export class AuthServices {
       )
     }
 
-    //create access token and refresh token
     const accessToken = genDefaultJwt({ id: user._id })
 
-    //create refresh token
     const { token: refreshToken } = await this.refreshTokenServices.createToken({
       token: uuidv4(),
       userId: user._id,
@@ -185,10 +171,8 @@ export class AuthServices {
 
   async forgotPassword(params: { email: string }) {
     const { email } = params
-    //validate user and destructuring
     const { _id: userId } = await this.validateEmailUser(email)
 
-    //send verification email
     await this.emailServices?.sendEmailWithVerificationCode(email, userId)
 
     return { message: 'Verification code sent.' }
@@ -197,10 +181,8 @@ export class AuthServices {
   async resetPassword(params: { email: string; newPassword: string; verificationCode: string }) {
     const { email, newPassword, verificationCode } = params
 
-    //validate user and destructuring
     const { _id } = await this.validateEmailUser(email)
 
-    //validate code
     const codes = await this.codeServices.findCodeByUserId(_id)
 
     if (!codes || codes?.length <= 0)
@@ -209,13 +191,10 @@ export class AuthServices {
     const codeContainInCodes = codes.find(code => code.code === verificationCode)
     if (!codeContainInCodes) throw new HttpError(400, 'Invalid verification code!')
 
-    //delete codes from user
     await this.codeServices.deleteAllCodesByUserId(_id)
 
-    //encrypt password
     const password = await bcrypt.hash(newPassword, 10)
 
-    //update password
     await this.usersRepository.updateById(_id, { password })
 
     return { message: 'Password successfuly reset.' }

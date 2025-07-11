@@ -35,8 +35,6 @@ const registerUserTest = async (overrides?: {}): Promise<{ user: IUser; message:
 
 let userRegistered: IUser
 
-jest.mock('')
-
 beforeEach(async () => {
   userRegistered = (await registerUserTest()).user
 })
@@ -72,7 +70,6 @@ describe('Login service', () => {
       isWithGoogle: true,
     })
 
-    //email and password valids
     await expect(authServices.login({ email: 'teste@gmail.com', password: '123' })).rejects.toThrow(
       'User already authenticated with social method!',
     )
@@ -82,7 +79,8 @@ describe('Login service', () => {
     //email and password valids
     const data = await authServices.login({ email: 'teste@gmail.com', password: '123' })
 
-    expect(data).toHaveProperty('requiresEmailVerification')
+    expect(data).toHaveProperty('status')
+    expect(data.status).toBe(202)
     expect(data.accessToken).toBe(undefined)
     expect(data.refreshToken).toBe(undefined)
     expect(data.user).toBe(undefined)

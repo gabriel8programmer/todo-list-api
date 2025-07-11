@@ -16,60 +16,6 @@
     }
   ],
   "paths": {
-    "/auth/login": {
-      "post": {
-        "summary": "Fazer Login",
-        "description": "Fazer Login tradicional com email e senha",
-        "tags": ["Auth"],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Login"
-              },
-              "examples": {
-                "login": {
-                  "value": {
-                    "email": "john@gmail.com",
-                    "password": "123"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "400": {
-            "description": "Bad Request!"
-          },
-          "401": {
-            "description": "Unauthorized!"
-          },
-          "200": {
-            "description": "OK!",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "default": "Logged successfuly!"
-                    },
-                    "user": {
-                      "$ref": "#/components/schemas/UserResponse"
-                    },
-                    "accessToken": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/auth/register": {
       "post": {
         "summary": "Registrar usuário",
@@ -79,16 +25,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Register"
-              },
-              "examples": {
-                "register": {
-                  "value": {
-                    "name": "John Doe",
-                    "email": "john@gmail.com",
-                    "password": "123"
-                  }
-                }
+                "$ref": "#/components/schemas/RegisterBody"
               }
             }
           }
@@ -109,7 +46,7 @@
                   "properties": {
                     "message": {
                       "type": "string",
-                      "default": "User regitered with successfuly!"
+                      "default": "User Registered successfuly. Log in now!"
                     },
                     "user": {
                       "$ref": "#/components/schemas/UserResponse"
@@ -122,11 +59,310 @@
         }
       }
     },
-    "/auth/verify-login": {},
-    "/auth/logout": {},
-    "/auth/refresh": {},
-    "/auth/forgot-password": {},
-    "/auth/reset-password": {},
+    "/auth/login": {
+      "post": {
+        "summary": "Fazer Login",
+        "description": "Fazer Login com email e senha",
+        "tags": ["Auth"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request!"
+          },
+          "401": {
+            "description": "Unauthorized!"
+          },
+          "200": {
+            "description": "OK!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "default": "Log in successfuly!"
+                    },
+                    "user": {
+                      "$ref": "#/components/schemas/UserResponse"
+                    },
+                    "accessToken": {
+                      "type": "string"
+                    },
+                    "refreshToken": {
+                      "type": "string"
+                    },
+                    "status": { "type": "number", "default": 200 }
+                  }
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "default": "Verification email required. Please, check your inbox to receive the verification code."
+                    },
+                    "status": { "type": "number", "default": 202 }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/verify-email": {
+      "post": {
+        "summary": "Verificar email",
+        "description": "Verificar email com código de verificação",
+        "tags": ["Auth"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string", "format": "email" },
+                  "vericationCode": { "type": "string" }
+                },
+                "example": {
+                  "email": "johndoe@gmail.com",
+                  "vericationCode": "9999"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request!"
+          },
+
+          "404": {
+            "description": "Not Found!"
+          },
+
+          "200": {
+            "description": "OK!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "default": "Email verified successfuly!"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "summary": "Fazer Logout",
+        "description": "Fazer Logout com email",
+        "tags": ["Auth"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string", "format": "email" }
+                },
+                "example": {
+                  "email": "johndoe@gmail.com"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request!"
+          },
+          "404": {
+            "description": "Not Found!"
+          },
+          "200": {
+            "description": "OK!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "default": "Logout done successfuly!"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "summary": "Fazer refresh",
+        "description": "Fazer refresh dos tokens de acesso",
+        "tags": ["Auth"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string", "format": "email" }
+                },
+                "example": {
+                  "email": "johndoe@gmail.com"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request!"
+          },
+          "401": {
+            "description": "Unauthorized!"
+          },
+          "404": {
+            "description": "Not Found!"
+          },
+          "200": {
+            "description": "OK!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "default": "Access tokens refreshed successfuly!"
+                    },
+                    "accessToken": {
+                      "type": "string"
+                    },
+                    "refreshToken": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/forgot-password": {
+      "post": {
+        "summary": "Esqueceu a senha?",
+        "description": "Esqueceu a senha? Envie um código de verificação para redefinir a senha.",
+        "tags": ["Auth"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": { "type": "string", "format": "email" }
+                },
+                "example": {
+                  "email": "johndoe@gmail.com"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request!"
+          },
+          "404": {
+            "description": "Not Found!"
+          },
+          "200": {
+            "description": "OK!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "default": "Verification code sent."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/reset-password": {
+      "post": {
+        "summary": "Redefinir senha",
+        "description": "Redefinir senha passando código de verificação com nova senha.",
+        "tags": ["Auth"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPassword"
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request!"
+          },
+          "404": {
+            "description": "Not Found!"
+          },
+          "200": {
+            "description": "OK!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "default": "Password successfuly reset."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/auth/social/google": {
       "post": {
         "summary": "Login ou registro com o google",
@@ -149,13 +385,24 @@
                   "properties": {
                     "message": {
                       "type": "string",
-                      "default": "Logged successfuly!"
+                      "enum": [
+                        "Logged in with Google successfully!",
+                        "Logged in with Facebook successfully!"
+                      ],
+                      "default": ""
                     },
                     "user": {
                       "$ref": "#/components/schemas/UserResponse"
                     },
                     "accessToken": {
                       "type": "string"
+                    },
+                    "refreshToken": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "number",
+                      "default": 200
                     }
                   }
                 }
@@ -171,13 +418,24 @@
                   "properties": {
                     "message": {
                       "type": "string",
-                      "default": "User regitered with successfuly!"
+                      "enum": [
+                        "Logged in with Google successfully!",
+                        "Logged in with Facebook successfully!"
+                      ],
+                      "default": ""
                     },
                     "user": {
                       "$ref": "#/components/schemas/UserResponse"
                     },
                     "accessToken": {
                       "type": "string"
+                    },
+                    "refreshToken": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "number",
+                      "default": 201
                     }
                   }
                 }
@@ -224,17 +482,7 @@
           "content": {
             "aplication/json": {
               "schema": {
-                "$ref": "#/components/schemas/User"
-              },
-              "examples": {
-                "user": {
-                  "value": {
-                    "name": "Jonh doe",
-                    "email": "john@gmail.com",
-                    "password": "123",
-                    "role": "CLIENT"
-                  }
-                }
+                "$ref": "#/components/schemas/CreateUserAsAdminBody"
               }
             }
           }
@@ -261,7 +509,7 @@
                       "default": "User created successfuly!"
                     },
                     "data": {
-                      "$ref": "#/components/schemas/UserResponseWithTasks"
+                      "$ref": "#/components/schemas/UserResponse"
                     }
                   }
                 }
@@ -415,6 +663,38 @@
         }
       }
     },
+    "/admin/users/delete-all": {
+      "delete": {
+        "summary": "Remover todos os usuários",
+        "description": "Remover todos os usuários",
+        "tags": ["Admin (users)"],
+        "security": [{ "bearer_auth": [] }],
+        "responses": {
+          "400": {
+            "description": "Bad Request!"
+          },
+          "401": {
+            "description": "Unauthorized!"
+          },
+          "200": {
+            "description": "OK!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "default": "All users are deleted successfuly!"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/admin/tasks": {
       "get": {
         "summary": "",
@@ -436,6 +716,117 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/Task"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "",
+        "description": "",
+        "tags": ["Admin (Tasks)"],
+        "security": [{ "bearer_auth": [] }],
+        "responses": {
+          "400": {
+            "description": "Bad Request!"
+          },
+          "401": {
+            "description": "Unauthorized!"
+          },
+          "200": {
+            "description": "OK!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Task"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/admin/tasks/{taskId}": {
+      "get": {
+        "summary": "",
+        "description": "",
+        "tags": ["Admin (Tasks)"],
+        "security": [{ "bearer_auth": [] }],
+        "parameters": [
+          {
+            "name": "taskId",
+            "description": "Id da task",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request!"
+          },
+          "401": {
+            "description": "Unauthorized!"
+          },
+          "404": {
+            "description": "Not Found!"
+          },
+          "200": {
+            "description": "OK!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "default": "Task deleted successfuly!"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "",
+        "description": "",
+        "tags": ["Admin (Tasks)"],
+        "security": [{ "bearer_auth": [] }],
+        "parameters": [
+          {
+            "name": "taskId",
+            "description": "Id da task",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request!"
+          },
+          "401": {
+            "description": "Unauthorized!"
+          },
+          "404": {
+            "description": "Not Found!"
+          },
+          "200": {
+            "description": "OK!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "default": "Task deleted successfuly!"
+                    }
                   }
                 }
               }
@@ -485,11 +876,190 @@
         }
       }
     },
-    "/users/:id/tasks": {
+    "/admin/tasks/delete-all": {
+      "delete": {
+        "summary": "",
+        "description": "",
+        "tags": ["Admin (Tasks)"],
+        "security": [{ "bearer_auth": [] }],
+        "responses": {
+          "400": {
+            "description": "Bad Request!"
+          },
+          "401": {
+            "description": "Unauthorized!"
+          },
+          "404": {
+            "description": "Not Found!"
+          },
+          "200": {
+            "description": "OK!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "default": "All Tasks deleted successfuly!"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "summary": "Obter um usuário",
+        "description": "Obter um usuário a partir do seu id",
+        "tags": ["Users"],
+        "security": [{ "bearer_auth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Id de usuário",
+            "required": true
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found!"
+          },
+          "200": {
+            "description": "OK!",
+            "content": {
+              "aplication/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/UserResponseWithPopulatedTasks"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Atualizar um usuário",
+        "description": "Atualizar um usuário a partir do seu id",
+        "tags": ["Users"],
+        "security": [{ "bearer_auth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Id de usuário",
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUser"
+              },
+              "examples": {
+                "User": {
+                  "value": {
+                    "name": "John Doe - Updated",
+                    "email": "john123@gmail.com",
+                    "password": "321"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request!"
+          },
+          "401": {
+            "description": "Unauthorized!"
+          },
+          "403": {
+            "description": "Forbidden!"
+          },
+          "404": {
+            "description": "Not Found!"
+          },
+          "200": {
+            "description": "OK!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "default": "User id successfuly!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/UserResponseWithPopulatedTasks"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remover um usuário",
+        "description": "Remover um usuário a partir do seu id",
+        "tags": ["Users"],
+        "security": [{ "bearer_auth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Id do usuário",
+            "required": true
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request!"
+          },
+          "401": {
+            "description": "Unauthorized!"
+          },
+          "404": {
+            "description": "Not Found!"
+          },
+          "200": {
+            "description": "OK!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "default": "User deleted successfuly!"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{id}/tasks": {
       "get": {
         "summary": "Obter todas as tasks",
         "description": "Obter todas as tasks de um usuário específico",
-        "tags": ["User's Tasks"],
+        "tags": ["Users"],
         "security": [{ "bearer_auth": [] }],
         "parameters": [
           {
@@ -527,7 +1097,7 @@
       "post": {
         "summary": "Criar nova task",
         "description": "Criar nova task para um usuário",
-        "tags": ["User's Tasks"],
+        "tags": ["Users"],
         "security": [{ "bearer_auth": [] }],
         "parameters": [
           {
@@ -580,11 +1150,11 @@
         }
       }
     },
-    "/users/:id/tasks/:taskId": {
+    "/users/{id}/tasks/{taskId}": {
       "get": {
         "summary": "Obter uma task",
         "description": "Obter uma task pelo seu id",
-        "tags": ["User's Tasks"],
+        "tags": ["Users"],
         "security": [{ "bearer_auth": [] }],
         "parameters": [
           {
@@ -625,7 +1195,7 @@
       "put": {
         "summary": "Atualizar uma task",
         "description": "Atualizar uma task pelo seu id",
-        "tags": ["User's Tasks"],
+        "tags": ["Users"],
         "security": [{ "bearer_auth": [] }],
         "parameters": [
           {
@@ -693,7 +1263,7 @@
       "delete": {
         "summary": "Remover uma task",
         "description": "Remover uma task pelo seu id",
-        "tags": ["User's Tasks"],
+        "tags": ["Users"],
         "security": [{ "bearer_auth": [] }],
         "parameters": [
           {
@@ -738,20 +1308,12 @@
         }
       }
     },
-    "/users/:id/tasks/delete-all": {
+    "/users/{id}/tasks/delete-all": {
       "delete": {
         "summary": "Remover todas as tasks",
         "description": "Remover todas as tasks",
-        "tags": ["User's Tasks"],
+        "tags": ["Users"],
         "security": [{ "bearer_auth": [] }],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "Id do usuário",
-            "required": true
-          }
-        ],
         "responses": {
           "400": {
             "description": "Bad Request!"
@@ -784,15 +1346,20 @@
   },
   "components": {
     "schemas": {
-      "BaseUserFields": {
+      "UserResponse": {
         "type": "object",
         "properties": {
+          "_id": { "type": "string" },
           "name": { "type": "string" },
           "email": { "type": "string" },
           "role": {
             "type": "string",
             "enum": ["ADMIN", "CLIENT"],
             "default": "CLIENT"
+          },
+          "emailVerified": {
+            "type": "boolean",
+            "default": false
           },
           "isWithGoogle": {
             "type": "boolean",
@@ -801,8 +1368,97 @@
           "isWithFacebook": {
             "type": "boolean",
             "default": false
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date"
+          },
+          "tasks": {
+            "type": "array",
+            "default": []
           }
         }
+      },
+      "RegisterBody": {
+        "type": "object",
+        "required": ["name", "email", "password"],
+        "properties": {
+          "name": { "type": "string" },
+          "email": { "type": "string", "format": "email" },
+          "password": { "type": "string" }
+        },
+        "example": {
+          "name": "John doe",
+          "email": "johndoe@gmail.com",
+          "password": "123"
+        }
+      },
+      "LoginBody": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "name": { "type": "string" },
+          "email": { "type": "string", "format": "email" },
+          "password": { "type": "string" }
+        },
+        "example": {
+          "email": "johndoe@gmail.com",
+          "password": "123"
+        }
+      },
+      "ResetPassword": {
+        "type": "object",
+        "required": ["email", "newPassword", "vericationCode"],
+        "properties": {
+          "email": { "type": "string", "format": "email" },
+          "newPassword": { "type": "string" },
+          "verificationCode": { "type": "string" }
+        },
+        "example": {
+          "email": "johndoe@gmail.com",
+          "newPassword": "321",
+          "vericationCode": "9999"
+        }
+      },
+      "CreateUserAsAdminBody": {
+        "allOf": [
+          { "$ref": "#/components/schemas/RegisterBody" },
+          {
+            "type": "object",
+            "properties": {
+              "role": { "type": "string", "enum": ["ADMIN", "CLIENT"], "default": "CLIENT" },
+              "emailVerified": { "type": "boolean", "default": false }
+            }
+          }
+        ],
+        "example": {
+          "name": "John doe",
+          "email": "johndoe@gmail.com",
+          "password": "123",
+          "role": "ADMIN",
+          "emailVerified": true
+        }
+      },
+      "BaseUserFields": {},
+      "BaseUserFieldsWithTasks": {
+        "allOf": [
+          { "$ref": "#/components/schemas/BaseUserFields" },
+          {
+            "type": "object",
+            "properties": {
+              "tasks": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Task"
+                }
+              }
+            }
+          }
+        ]
       },
       "User": {
         "allOf": [
@@ -827,13 +1483,13 @@
           }
         ]
       },
-      "UserResponse": {
+      "UserResponse1": {
         "allOf": [
           { "$ref": "#/components/schemas/BaseUserFields" },
           {
             "type": "object",
             "properties": {
-              "id": { "type": "string" }
+              "_id": { "type": "string" }
             }
           }
         ]

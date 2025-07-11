@@ -28,7 +28,7 @@ export class AuthController {
     try {
       const body = LoginRequestBodySchema.parse(req.body)
       const data = await this.authServices.login(body)
-      res.json(data)
+      res.status(data.status).json(data)
     } catch (error) {
       next(error)
     }
