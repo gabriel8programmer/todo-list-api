@@ -141,7 +141,6 @@ describe('Verify email controller method', () => {
 
 describe('Logout controller method', () => {
   beforeAll(async () => {
-    //manipuling body for to test
     const { user } = _userTester.body
     await usersRepository.updateById(user._id, { emailVerified: true })
 

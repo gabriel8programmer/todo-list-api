@@ -110,20 +110,6 @@ Acesse a documentação interativa com Swagger no seguinte endereço:
 
 👉 [`http://localhost:3333/docs`](http://localhost:3333/docs)
 
-Ou acesse a versão de produção no seguinte endereço:
-
-👉 [`https://todo-list-api-yl9j.onrender.com/docs/`](https://todo-list-api-yl9j.onrender.com/docs/)
-
-### 🔁 Alternância entre ambientes (Local e Produção)
-
-⚙️ A própria interface da documentação Swagger permite alternar facilmente entre a versão local e a de produção da API.
-
-Isso é útil para testar endpoints em diferentes ambientes sem precisar sair da documentação.
-
-![image](https://github.com/user-attachments/assets/792c1193-4432-4ab1-bbcf-4415d3d9d9ad)
-
----
-
 ## 🧪 Rodando os testes automatizados
 
 Você pode executar os testes para garantir que a aplicação está funcionando corretamente.  
@@ -137,16 +123,16 @@ npm test
 
 ### 🔑 Endpoints de Autenticação
 
-| Método | Rota                        | Descrição                            | Autenticação |
-| ------ | --------------------------- | ------------------------------------ | ------------ |
-| POST   | `/api/auth/login`           | Faz login com email e senha          | 🔓 Não       |
-| POST   | `/api/auth/register`        | Faz registro com nome, email e senha | 🔓 Não       |
-| POST   | `/api/auth/verify-email`    | Verifica o email com código          | 🔓 Não       |
-| POST   | `/api/auth/logout`    | Faz logout         | 🔓 Não       |
-| POST   | `/api/auth/refresh`    | Faz refresh de tokens de autenticação         | 🔓 Não       |
-| POST   | `/api/auth/forgot-password` | Esqueceu a senha?                    | 🔓 Não       |
-| POST   | `/api/auth/reset-password`  | Recupera a senha                     | 🔓 Não       |
-| POST   | `/api/auth/social/google`   | Faz login com google                 | 🔓 Não       |
+| Método | Rota                        | Descrição                             | Autenticação |
+| ------ | --------------------------- | ------------------------------------- | ------------ |
+| POST   | `/api/auth/login`           | Faz login com email e senha           | 🔓 Não       |
+| POST   | `/api/auth/register`        | Faz registro com nome, email e senha  | 🔓 Não       |
+| POST   | `/api/auth/verify-email`    | Verifica o email com código           | 🔓 Não       |
+| POST   | `/api/auth/logout`          | Faz logout                            | 🔓 Não       |
+| POST   | `/api/auth/refresh`         | Faz refresh de tokens de autenticação | 🔓 Não       |
+| POST   | `/api/auth/forgot-password` | Esqueceu a senha?                     | 🔓 Não       |
+| POST   | `/api/auth/reset-password`  | Recupera a senha                      | 🔓 Não       |
+| POST   | `/api/auth/social/google`   | Faz login com google                  | 🔓 Não       |
 
 ### ✅ Endpoints públicos (requer autenticação com token de cliente ou admin)
 
@@ -166,14 +152,14 @@ npm test
 
 1. Usuários
 
-| Método | Rota                   | Descrição                   | Autenticação |
-| ------ | ---------------------- | --------------------------- | ------------ |
-| GET    | `/api/admin/users`     | Lista todos os usuários     | 🔒 Sim       |
-| GET    | `/api/admin/users/:id` | Obtém um usuário pelo ID    | 🔒 Sim       |
-| POST   | `/api/admin/users`     | Cria um novo usuário        | 🔒 Sim       |
-| PUT    | `/api/admin/users/:id` | Atualiza um usuário pelo ID | 🔒 Sim       |
-| DELETE | `/api/admin/users/:id` | Remove um usuário pelo ID   | 🔒 Sim       |
-| DELETE | `/api/admin/users/delete-all` | Remove todos os usuários  | 🔒 Sim       |
+| Método | Rota                          | Descrição                   | Autenticação |
+| ------ | ----------------------------- | --------------------------- | ------------ |
+| GET    | `/api/admin/users`            | Lista todos os usuários     | 🔒 Sim       |
+| GET    | `/api/admin/users/:id`        | Obtém um usuário pelo ID    | 🔒 Sim       |
+| POST   | `/api/admin/users`            | Cria um novo usuário        | 🔒 Sim       |
+| PUT    | `/api/admin/users/:id`        | Atualiza um usuário pelo ID | 🔒 Sim       |
+| DELETE | `/api/admin/users/:id`        | Remove um usuário pelo ID   | 🔒 Sim       |
+| DELETE | `/api/admin/users/delete-all` | Remove todos os usuários    | 🔒 Sim       |
 
 2. Tasks
 
