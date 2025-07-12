@@ -508,7 +508,7 @@
                       "type": "string",
                       "default": "User created successfuly!"
                     },
-                    "data": {
+                    "user": {
                       "$ref": "#/components/schemas/UserResponse"
                     }
                   }
@@ -573,16 +573,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateUser"
-              },
-              "examples": {
-                "User": {
-                  "value": {
-                    "name": "John Doe - Updated",
-                    "email": "john123@gmail.com",
-                    "password": "321"
-                  }
-                }
+                "$ref": "#/components/schemas/UpdateUserAsAdminBody"
               }
             }
           }
@@ -609,10 +600,10 @@
                   "properties": {
                     "message": {
                       "type": "string",
-                      "default": "User id successfuly!"
+                      "default": "User updated successfuly!"
                     },
-                    "data": {
-                      "$ref": "#/components/schemas/UserResponseWithPopulatedTasks"
+                    "user": {
+                      "$ref": "#/components/schemas/UserResponse"
                     }
                   }
                 }
@@ -1440,6 +1431,21 @@
           "email": "johndoe@gmail.com",
           "password": "123",
           "role": "ADMIN",
+          "emailVerified": true
+        }
+      },
+      "UpdateUserAsAdminBody": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "email": { "type": "string", "format": "email" },
+          "password": { "type": "string" },
+          "emailVerified": { "type": "boolean" }
+        },
+        "example": {
+          "name": "John Doe updated",
+          "email": "johndoe1@gmail.com",
+          "password": "321",
           "emailVerified": true
         }
       },

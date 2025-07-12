@@ -47,19 +47,28 @@ export class UserServices {
     _id: string,
     params: Partial<Omit<ICreateUserParams, 'isWithGoogle' | 'isWithFacebook'>>,
   ) {
-    const { password: rawPassword } = params
+    const { password: rawPassword, email } = params
 
     if (rawPassword) {
-      //encrypt password
       const password = await bcrypt.hash(rawPassword as string, 10)
       Object.assign(params, { password })
     }
 
+    const currentUser = await this.usersRepository.findById(_id)
+    if (!currentUser) throw new HttpError(404, 'User not found!')
+
+    const userAlreadyExists = await this.usersRepository.findByEmail(email as string)
+
+    if (currentUser?.email !== email && userAlreadyExists)
+      throw new HttpError(
+        403,
+        'User email address already to use!User email address already to use!',
+      )
+
     const updatedUser = await this.usersRepository.updateById(_id, params)
-    if (!updatedUser) throw new HttpError(404, 'User not found!')
 
     return {
-      user: this.formatUserWithOutPassword(updatedUser),
+      user: this.formatUserWithOutPassword(updatedUser as IUser),
       message: 'User updated successfuly!',
     }
   }
